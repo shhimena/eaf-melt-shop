@@ -18,7 +18,7 @@ Chemistry dispositions, out-of-spec results, operator spec performance and bille
 | --- | --- |
 | **Chemistry Disposition** | How many heats were OK, reapplied, diverted, returned to the furnace or scrapped, by crew. |
 | **Out-of-Spec Chemistry** | Which elements missed spec, on which heats, and whether they ran above the maximum or below the minimum. |
-| **Operators** | How often each furnace operator's and caster operator's heats landed inside every spec limit, and how each pairing performed. |
+| **Operators** | How often each furnace operator's and caster operator's heats landed inside every spec limit, how each pairing performed, and each heat's path from furnace to caster (for example, in spec at the furnace but returned to the furnace at the caster). |
 | **Billet Production** | Daily billet tons against plan, the variance to plan and the estimated production loss. |
 | **Data & definitions** | Which Excel file each month came from, the days it covers, and how every number is worked out. |
 
@@ -29,6 +29,10 @@ Each page has a month picker and its own filters (crew, grade, disposition, spec
 | ![Out-of-Spec Chemistry page](docs/screenshots/out-of-spec.png) | ![Operators page](docs/screenshots/operators.png) |
 | **Billet Production** | **Import Excel** |
 | ![Billet Production page](docs/screenshots/billet-production.png) | ![Import Excel panel](docs/screenshots/import-excel.png) |
+
+**Furnace to caster** (Operators page)
+
+![Furnace to caster: each heat's chemistry at the furnace next to its disposition at the caster](docs/screenshots/furnace-to-caster.png)
 
 ## Adding a new month
 
@@ -57,6 +61,7 @@ The dashboard link shows the new data within a minute or two.
 - **Duplicate heats.** A heat listed twice is counted once. The row with a disposition wins, then the latest date.
 - **Spec toggle.** *Daily sheet* checks each heat against its own sheet's `SPEC.` row. *Power BI table* uses the fixed Grade 60 / A615 limits from the original Power BI report and matches its numbers.
 - **Readings toggle.** *Exact* compares the lab reading as reported. *Rounded to spec* first rounds it to the spec's decimal places (ASTM E29 style).
+- **Furnace to caster.** *At the furnace* is the heat's chemistry result: in spec, missed spec, no spec to check against, or no chemistry entered. *At the caster* is its disposition category. **In spec, not OK at caster** counts heats with in-spec chemistry that were still reapplied, diverted, returned to the furnace or scrapped.
 - **Targets.** Rates of 90% and up are on target, 80–90% are flagged to watch, and anything lower is below target.
 - **Billet.** Planned and actual tons come from the *EAF Daily Objective* sheet. Estimated production loss is the tons short of plan times the billet price you pick.
 

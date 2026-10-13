@@ -270,6 +270,38 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
 .matrix td button.few { opacity: .55; }
 .matrix td button[aria-pressed="true"] { outline: 2px solid var(--heat); outline-offset: 1px; }
 .matrix td.none { background: var(--panel-2); border-radius: 7px; }
+#ops-heats-card { scroll-margin-top: 130px; }
+.flow-lead { font-size: 14px; margin: 0 0 10px; line-height: 1.5; max-width: 110ch; }
+.flow-x { border-collapse: separate; border-spacing: 4px; font-variant-numeric: tabular-nums; width: 100%; min-width: 660px; }
+.flow-x th { font-size: 12px; font-weight: 600; color: var(--muted); padding: 4px 6px; text-align: center; white-space: nowrap; vertical-align: bottom; }
+.flow-x th .cat { justify-content: center; }
+.flow-x th.rowh { text-align: left; color: var(--ink); font-size: 13.5px; vertical-align: middle; padding-right: 12px; }
+.flow-x th.rowh small { display: block; font-weight: 400; color: var(--muted); font-size: 11.5px; }
+.flow-x th.grp { color: var(--faint); font-weight: 600; letter-spacing: .05em; text-transform: uppercase; font-size: 11px; text-align: left; }
+.flow-x td { padding: 0; }
+.flow-x td button { all: unset; box-sizing: border-box; display: grid; place-items: center; width: 100%; min-width: 62px; height: 48px; border-radius: 7px; cursor: pointer; background: var(--panel-2); line-height: 1.15; text-align: center; }
+.flow-x td button b { font-family: var(--font-num); font-size: 17px; font-weight: 600; }
+.flow-x td button small { font-size: 11px; color: var(--muted); }
+.flow-x td button:hover { box-shadow: inset 0 0 0 1px var(--faint); }
+.flow-x td button:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.flow-x td button.good { background: var(--good-tint); color: var(--good-ink); }
+.flow-x td button.bad { background: var(--bad-tint); color: var(--bad-ink); }
+.flow-x td button.sum { background: transparent; box-shadow: inset 0 0 0 1px var(--line); }
+.flow-x td button[aria-pressed="true"] { outline: 2px solid var(--heat); outline-offset: 1px; }
+.flow-x td.zero { text-align: center; color: var(--faint); background: var(--panel-2); border-radius: 7px; opacity: .55; height: 48px; }
+.flow-x tr.total th.rowh { color: var(--muted); }
+#flow-ops th .th-btn { white-space: nowrap; }
+.flow-x th.rowh { position: sticky; left: 0; z-index: 1; background: var(--panel); }
+@media (max-width: 720px) { .flow-x th.rowh small { display: none; } .flow-x th.grp { white-space: normal; min-width: 96px; } }
+.flow-sub { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px; margin: 18px 0 6px; }
+.flow-sub h3 { font-size: 14.5px; font-weight: 600; margin: 0; }
+.tbl .opname { all: unset; cursor: pointer; font-weight: 600; border-radius: 4px; }
+.tbl .opname:hover { text-decoration: underline; }
+.tbl .opname:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tbl .opname[aria-pressed="true"] { box-shadow: inset 0 -2px 0 var(--heat); }
+.tbl .of { color: var(--muted); font-size: 12px; margin-left: 6px; }
+.tbl .dd { color: var(--muted); font-size: 12.5px; margin-left: 6px; }
+.tbl-tools select { font: inherit; font-size: 13px; padding: 5px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel-2); color: var(--ink); max-width: 100%; }
 .miss { color: var(--bad-ink); }
 .schema { display: grid; gap: 10px; margin: 0; }
 .schema div { display: grid; grid-template-columns: minmax(150px, max-content) 1fr; gap: 4px 16px; align-items: baseline; }
@@ -489,7 +521,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     <section class="pg" id="operators" aria-labelledby="ops-title" hidden>
       <div class="pg-head">
         <h1 class="pg-title" id="ops-title">Operator Spec Performance <span class="month js-month-label"></span></h1>
-        <p class="pg-sub">Furnace and caster operators as recorded on each shift's MELTER line (furnace / caster), and how often their heats hit the chemistry spec.</p>
+        <p class="pg-sub">Furnace and caster operators as recorded on each shift's MELTER line (furnace / caster), how often their heats hit the chemistry spec, and what happened to each heat at the caster.</p>
       </div>
       <div class="filters">
         <label class="fld">Month<select class="js-month" id="ops-month"></select></label>
@@ -517,16 +549,49 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
           <ol class="rank" id="rank-caster"></ol>
         </div>
       </div>
+      <div class="card mb" id="flow-card">
+        <h2>Furnace to caster</h2>
+        <p class="note">Each heat's chemistry when it left the furnace, next to its disposition at the caster. Click a number to see those heats below.</p>
+        <p class="flow-lead" id="flow-lead"></p>
+        <div class="tbl-wrap"><table class="flow-x" id="flow-cross"><thead></thead><tbody></tbody></table></div>
+        <div class="flow-sub">
+          <h3>By operator</h3>
+          <div class="seg js-flowby" role="group" aria-label="Operators to list"><button type="button" data-val="Crew">Furnace operators</button><button type="button" data-val="CasterOp">Caster operators</button></div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl" id="flow-ops">
+            <thead><tr>
+              <th data-field="Name"><button class="th-btn" type="button">Operator</button></th>
+              <th data-field="Heats" class="num"><button class="th-btn" type="button">Heats</button></th>
+              <th data-field="InSpecPct" class="num"><button class="th-btn" type="button">In spec at furnace</button></th>
+              <th data-field="OKPct" class="num"><button class="th-btn" type="button">OK at caster</button></th>
+              <th data-field="Reapply" class="num"><button class="th-btn" type="button">Reapply</button></th>
+              <th data-field="Divert" class="num"><button class="th-btn" type="button">Divert</button></th>
+              <th data-field="RTF" class="num"><button class="th-btn" type="button">RTF</button></th>
+              <th data-field="Scrap" class="num"><button class="th-btn" type="button">Scrap</button></th>
+              <th data-field="Unclassified" class="num"><button class="th-btn" type="button">Unclassified</button></th>
+              <th data-field="Slipped" class="num"><button class="th-btn" type="button">In spec, not OK at caster</button></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
       <div class="card mb">
         <h2>Who worked together</h2>
         <p class="note">Hit-spec rate for each furnace and caster pairing on shift. Faded cells have fewer than 5 heats. Click a cell to see those heats.</p>
         <div class="tbl-wrap"><table class="matrix" id="pair-matrix"><thead></thead><tbody></tbody></table></div>
       </div>
-      <div class="card">
+      <div class="card" id="ops-heats-card">
         <div class="tbl-tools">
           <h2 id="ops-heats-title">Heats</h2>
           <div class="vk-actions">
-            <label class="chk"><input type="checkbox" id="ops-only-miss" checked> Only heats that missed spec</label>
+            <label class="chk">Show <select id="ops-show">
+              <option value="all">All heats</option>
+              <option value="miss">Missed spec at furnace</option>
+              <option value="slipped">In spec, not OK at caster</option>
+              <option value="notok">Not OK at caster</option>
+              <option value="rtf">Returned to furnace</option>
+            </select></label>
             <input type="search" id="ops-search" placeholder="Search heat, element…" aria-label="Search operator heats">
           </div>
         </div>
@@ -536,13 +601,13 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
             <thead><tr>
               <th data-field="Date"><button class="th-btn" type="button">Date</button></th>
               <th data-field="HeatNo"><button class="th-btn" type="button">Heat</button></th>
-              <th data-field="Crew"><button class="th-btn" type="button">Furnace</button></th>
-              <th data-field="CasterOp"><button class="th-btn" type="button">Caster</button></th>
+              <th data-field="Crew"><button class="th-btn" type="button">Furnace op</button></th>
+              <th data-field="CasterOp"><button class="th-btn" type="button">Caster op</button></th>
               <th data-field="Grade"><button class="th-btn" type="button">Grade</button></th>
               <th data-field="Product"><button class="th-btn" type="button">Product</button></th>
-              <th data-field="Result"><button class="th-btn" type="button">Result</button></th>
+              <th data-field="AtFurnace"><button class="th-btn" type="button">At the furnace</button></th>
               <th data-field="Misses"><button class="th-btn" type="button">Out of spec</button></th>
-              <th data-field="DispositionCategory"><button class="th-btn" type="button">Disposition</button></th>
+              <th data-field="AtCaster"><button class="th-btn" type="button">At the caster</button></th>
             </tr></thead>
             <tbody></tbody>
           </table>
@@ -665,6 +730,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
             <li><b>Spec: Power BI table</b>: the fixed 60/A615 (#13/#4) limits from the Power BI model. Other grades are not checked, matching the Power BI report exactly.</li>
             <li><b>Readings: rounded to spec</b>: a reading is rounded to the decimals the limit is written in before comparing, the way ASTM E29 rounding works (0.7416 against .74 counts as in spec). Exact compares the full reading.</li>
             <li><b>Hit spec</b>: a heat with chemistry results where every checked element is inside its limits. Heats with no chemistry entered are left out.</li>
+            <li><b>Furnace to caster</b>: on the Operators page, <i>at the furnace</i> is the heat's chemistry result (in spec, missed spec, no spec to check against, or no chemistry recorded) and <i>at the caster</i> is its disposition category. <b>In spec, not OK at caster</b> counts heats whose chemistry was in spec but that were reapplied, diverted, returned to the furnace or scrapped.</li>
             <li><b>Planned tons to date</b>: planned daily tons through the latest day that has actual tons. <b>Estimated production loss</b>: tons short of plan × billet price per ton; price per billet = price per ton × 0.98 t.</li>
           </ul>
         </div>
@@ -1104,7 +1170,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
   const $$ = (s) => [...app.querySelectorAll(s)];
 
   const state = { page: 'chemistry', month: null, crew: 'All', grade: 'All', cat: 'All', spec: 'Sheet', round: false, price: 700,
-    bview: 'daily', oosBy: 'Crew', dbTable: 'heats', opF: null, opC: null, onlyMiss: true, sort: {}, search: { heat: '', oos: '', ops: '', db: '' } };
+    bview: 'daily', oosBy: 'Crew', dbTable: 'heats', opF: null, opC: null, opsShow: 'all', flowBy: 'Crew', flowPick: null, sort: {}, search: { heat: '', oos: '', ops: '', db: '' } };
 
   // ---------- formatting ----------
   const loc = d3.formatLocale({ decimal: '.', thousands: ',', grouping: [3], currency: ['$', ''], minus: '-' });
@@ -1201,7 +1267,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
   }
   let BILLET_SUM = billetSummary(DATA);
   function dataRefreshed() { CACHE = {}; BILLET_SUM = billetSummary(DATA); }
-  function dataChanged() { dataRefreshed(); state.month = null; state.opF = null; state.opC = null; }
+  function dataChanged() { dataRefreshed(); state.month = null; state.opF = null; state.opC = null; state.flowPick = null; }
 
   // ---------- filters ----------
   const months = () => [...new Set([...DATA.heats.map((h) => h.Month), ...DATA.billet_daily.map((d) => d.Month)])].sort();
@@ -1235,7 +1301,8 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     $$('.js-cat').forEach((s) => setOptions(s, [['All', 'All'], ...a.cats.map((c) => [c, c])], state.cat));
     $$('.js-price').forEach((s) => setOptions(s, PRICES.map((p) => [String(p), '$' + p]), String(state.price)));
     const seg = (cls, val) => $$(cls).forEach((g) => g.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.val === val))));
-    seg('.js-dbtable', state.dbTable); seg('.js-spec', state.spec); seg('.js-round', state.round ? 'round' : 'exact'); seg('.js-bview', state.bview); seg('.js-oosby', state.oosBy);
+    seg('.js-dbtable', state.dbTable); seg('.js-spec', state.spec); seg('.js-round', state.round ? 'round' : 'exact'); seg('.js-bview', state.bview); seg('.js-oosby', state.oosBy); seg('.js-flowby', state.flowBy);
+    $('#ops-show').value = state.opsShow;
     $$('.js-month-label').forEach((el) => { el.textContent = monthShort(m); });
   }
   app.addEventListener('change', (ev) => {
@@ -1245,7 +1312,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     else if (t.classList.contains('js-grade')) state.grade = t.value;
     else if (t.classList.contains('js-cat')) state.cat = t.value;
     else if (t.classList.contains('js-price')) state.price = Number(t.value);
-    else if (t.id === 'ops-only-miss') state.onlyMiss = t.checked;
+    else if (t.id === 'ops-show') { state.opsShow = t.value; state.flowPick = null; }
     else return;
     draw();
   });
@@ -1257,6 +1324,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     else if (g.classList.contains('js-round')) state.round = b.dataset.val === 'round';
     else if (g.classList.contains('js-bview')) state.bview = b.dataset.val;
     else if (g.classList.contains('js-oosby')) state.oosBy = b.dataset.val;
+    else if (g.classList.contains('js-flowby')) state.flowBy = b.dataset.val;
     else if (g.classList.contains('js-dbtable')) state.dbTable = b.dataset.val;
     else return;
     draw();
@@ -1265,7 +1333,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
   $('#oos-search').addEventListener('input', (e) => { state.search.oos = e.target.value.trim().toLowerCase(); drawOOS(); });
   $('#db-search').addEventListener('input', (e) => { state.search.db = e.target.value.trim().toLowerCase(); drawDatabase(); });
   $('#ops-search').addEventListener('input', (e) => { state.search.ops = e.target.value.trim().toLowerCase(); drawOps(); });
-  $('#ops-clear').addEventListener('click', () => { state.opF = null; state.opC = null; drawOps(); });
+  $('#ops-clear').addEventListener('click', () => { state.opF = null; state.opC = null; state.flowPick = null; drawOps(); });
 
   // ---------- chart helpers ----------
   const clear = (box) => { box.replaceChildren(); return box; };
@@ -1654,23 +1722,181 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     rankList($('#rank-furnace'), fStats, 'F');
     rankList($('#rank-caster'), cStats, 'C');
     pairMatrix($('#pair-matrix'), heats, oset, fStats.map((s) => s.Name), cStats.map((s) => s.Name));
+    // every heat in the month and grade, with or without chemistry, for the furnace-to-caster view
+    const all = DATA.heats.filter((h) => inMonth(h, m) && (state.grade === 'All' || h.Grade === state.grade));
+    const byOp = (h) => (!state.opF || h.Crew === state.opF) && (!state.opC || h.CasterOp === state.opC);
+    drawFlow(all.filter(byOp), oset);
+    drawFlowOps(all, oset);
+    const p = state.flowPick;
     const clr = $('#ops-clear');
-    const picked = [state.opF && 'Furnace: ' + state.opF, state.opC && 'Caster: ' + state.opC].filter(Boolean);
+    const names = [state.opF, state.opC].filter(Boolean);
+    const picked = [state.opF && 'Furnace: ' + state.opF, state.opC && 'Caster: ' + state.opC, p && flowPickLabel(p)].filter(Boolean);
     clr.hidden = !picked.length;
     clr.textContent = picked.join(' · ') + '  ✕';
-    clr.setAttribute('aria-label', 'Clear operator selection: ' + picked.join(', '));
-    $('#ops-heats-title').textContent = picked.length ? 'Heats for ' + picked.join(' and ').replace(/Furnace: |Caster: /g, '') : 'Heats';
+    clr.setAttribute('aria-label', 'Clear selection: ' + picked.join(', '));
+    $('#ops-heats-title').textContent = (names.length ? 'Heats for ' + names.join(' and ') : 'Heats') + (p ? ' · ' + flowPickLabel(p) : '');
     const q = state.search.ops;
-    const rows = heats.filter((h) => (!state.opF || h.Crew === state.opF) && (!state.opC || h.CasterOp === state.opC)).map((h) => {
+    const show = { all: () => true, miss: (r) => r.F === 'miss', slipped: (r) => r.F === 'in' && NOT_OK.has(r.C), notok: (r) => r.C !== 'OK', rtf: (r) => r.C === 'RTF' }[state.opsShow] || (() => true);
+    const rows = all.filter(byOp).map((h) => {
       const miss = oset.byHeat.get(heatKey(h)) || [];
-      return { ...h, Result: miss.length ? 'Missed' : 'Hit', Misses: miss.map((r) => `${r.Element} ${fAct(r.Actual)} ${r.Direction === 'Above Maximum' ? '> max ' + fAct(r.SpecMax) : '< min ' + fAct(r.SpecMin)}`).join(' · ') };
-    }).filter((h) => (!state.onlyMiss || h.Result === 'Missed') && (!q || [h.HeatNo, h.Crew, h.CasterOp, h.Misses, h.Grade, h.Product].join(' ').toLowerCase().includes(q)));
+      const F = furnaceState(h, oset), C = casterCat(h);
+      return { ...h, F, C, AtFurnace: F_LABEL[F], AtCaster: CASTER_LABEL[C], Detail: dispDetail(h),
+        Misses: miss.map((r) => `${r.Element} ${fAct(r.Actual)} ${r.Direction === 'Above Maximum' ? '> max ' + fAct(r.SpecMax) : '< min ' + fAct(r.SpecMin)}`).join(' · ') };
+    }).filter((r) => (!p || ((!p.f || r.F === p.f) && (!p.c || r.C === p.c))) && show(r)
+      && (!q || [r.HeatNo, r.Crew, r.CasterOp, r.Misses, r.Grade, r.Product, r.AtFurnace, r.AtCaster, r.Disposition].join(' ').toLowerCase().includes(q)));
     $('#ops-count').textContent = fInt(rows.length) + (rows.length === 1 ? ' heat' : ' heats');
     fillTable($('#ops-table'), rows, [
       { field: 'Date', fmt: fDate }, { field: 'HeatNo', cls: 'strong' }, { field: 'Crew' }, { field: 'CasterOp' }, { field: 'Grade', cls: 'muted' }, { field: 'Product', cls: 'muted' },
-      { field: 'Result', render: (td, v) => { const p = document.createElement('span'); p.className = 'pill ' + (v === 'Hit' ? 'good' : 'bad'); p.textContent = v === 'Hit' ? 'Hit spec' : 'Missed'; td.appendChild(p); } },
-      { field: 'Misses', cls: 'wrap' }, { field: 'DispositionCategory', render: catCell },
+      { field: 'AtFurnace', render: (td, v, r) => { const s = document.createElement('span'); s.className = 'pill ' + ({ in: 'good', miss: 'bad' }[r.F] || 'neutral'); s.textContent = v; td.appendChild(s); } },
+      { field: 'Misses', cls: 'wrap' },
+      { field: 'AtCaster', cls: 'wrap', render: (td, v, r) => { catCell(td, r.C); if (r.Detail) { const d = document.createElement('span'); d.className = 'dd'; d.textContent = r.Detail; td.appendChild(d); } } },
     ], { defaultSort: { field: 'Date', dir: 'asc' } });
+  }
+
+  // ---------- Operators: furnace to caster ----------
+  const F_STATES = [
+    { key: 'in', label: 'In spec', note: 'every checked element inside its limits' },
+    { key: 'miss', label: 'Missed spec', note: 'one or more elements out of spec' },
+    { key: 'nospec', label: 'No spec to check', note: 'chemistry, but no limits for it' },
+    { key: 'nochem', label: 'No chemistry', note: 'no results entered for the heat' },
+  ];
+  const F_LABEL = Object.fromEntries(F_STATES.map((s) => [s.key, s.label]));
+  const CASTER_CATS = ['OK', 'Reapply', 'Divert', 'RTF', 'Scrap', 'Unclassified'];
+  const CASTER_LABEL = { OK: 'OK', Reapply: 'Reapply', Divert: 'Divert', RTF: 'Return to furnace', Scrap: 'Scrap', Unclassified: 'Unclassified' };
+  const CASTER_VERB = { OK: 'OK', Reapply: 'reapplied', Divert: 'diverted', RTF: 'returned to the furnace', Scrap: 'scrapped', Unclassified: 'unclassified' };
+  const F_HAD = { in: 'had in-spec chemistry', miss: 'had missed spec', nospec: 'had no spec to check against', nochem: 'had no chemistry entered' };
+  const NOT_OK = new Set(['Reapply', 'Divert', 'RTF', 'Scrap']);
+  const furnaceState = (h, oset) => (!isChecked(h) ? (h.HasChem ? 'nospec' : 'nochem') : oset.byHeat.has(heatKey(h)) ? 'miss' : 'in');
+  const casterCat = (h) => (CASTER_CATS.includes(h.DispositionCategory) ? h.DispositionCategory : 'Unclassified');
+  const LEAD_WORD = { OK: /^ok\b/i, RTF: /^(r\.?\s?t\.?\s?f\.?|return(ed)? to furnace)/i, Reapply: /^reapply\b/i, Divert: /^divert\b/i, Scrap: /^scrap\b/i };
+  const dispDetail = (h) => {
+    const t = String(h.Disposition || '').trim();
+    const re = LEAD_WORD[casterCat(h)];
+    return (re ? t.replace(re, '') : t).replace(/^[\s.,:;/-]+/, '').trim();
+  };
+  const flowPickLabel = (p) => [p.f && F_LABEL[p.f], p.c && CASTER_LABEL[p.c]].filter(Boolean).join(' → ');
+  const fP0 = (v) => (v > 0 && v < 0.005 ? '<1%' : loc.format('.0%')(v));
+  const andList = (xs) => (xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' and ' + xs[xs.length - 1]);
+  function rich(el, parts) {
+    el.replaceChildren();
+    for (const x of parts) {
+      if (typeof x === 'string') el.append(x);
+      else { const b = document.createElement('b'); b.textContent = x.b; el.append(b); }
+    }
+  }
+  function pickFlow(f, c) {
+    const p = state.flowPick;
+    const same = p && p.f === f && p.c === c;
+    state.flowPick = same ? null : { f, c };
+    if (!same) state.opsShow = 'all';
+    drawOps();
+    if (!same) { const card = $('#ops-heats-card'); if (card && card.scrollIntoView) card.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  }
+  function drawFlow(heats, oset) {
+    const fr = heats.map((h) => ({ f: furnaceState(h, oset), c: casterCat(h) }));
+    const n = (f, c) => fr.filter((r) => (!f || r.f === f) && (!c || r.c === c)).length;
+    const who = [state.opF, state.opC].filter(Boolean).join(' with ');
+    const lead = $('#flow-lead');
+    if (!fr.length) rich(lead, ['No heats for this selection.']);
+    else {
+      const parts = who ? [who + ': '] : [];
+      const inN = n('in');
+      if (inN) {
+        const outs = CASTER_CATS.map((c) => [c, n('in', c)]).filter(([, k]) => k);
+        parts.push({ b: fInt(inN) }, ` heat${inN === 1 ? ' was' : 's were'} in spec at the furnace. At the caster: `);
+        outs.forEach(([c, k], i) => { parts.push({ b: fInt(k) }, ' ' + CASTER_VERB[c] + (i < outs.length - 2 ? ', ' : i === outs.length - 2 ? ' and ' : '. ')); });
+      } else parts.push('No heats were in spec at the furnace. ');
+      const rtf = n(null, 'RTF');
+      if (rtf) {
+        const why = F_STATES.map((s) => [s.key, n(s.key, 'RTF')]).filter(([, k]) => k).map(([f, k]) => `${fInt(k)} ${F_HAD[f]}`);
+        parts.push({ b: fInt(rtf) }, ` heat${rtf === 1 ? ' was' : 's were'} returned to the furnace: ${andList(why)}.`);
+      } else parts.push('No heats were returned to the furnace.');
+      rich(lead, parts);
+    }
+    const table = $('#flow-cross');
+    const thead = table.tHead, tbody = table.tBodies[0];
+    thead.replaceChildren(); tbody.replaceChildren();
+    if (!fr.length) return;
+    const hr = document.createElement('tr');
+    const corner = document.createElement('th'); corner.className = 'grp'; corner.textContent = 'At the furnace ↓   At the caster →'; hr.appendChild(corner);
+    const th0 = document.createElement('th'); th0.textContent = 'Heats'; hr.appendChild(th0);
+    for (const c of CASTER_CATS) { const th = document.createElement('th'); th.scope = 'col'; catCell(th, c); hr.appendChild(th); }
+    thead.appendChild(hr);
+    const p = state.flowPick;
+    const cellBtn = (f, c, k, sub, cls, label) => {
+      const td = document.createElement('td');
+      if (!k) { td.className = 'zero'; td.textContent = '–'; td.setAttribute('aria-label', label + ': no heats'); return td; }
+      const b = document.createElement('button'); b.type = 'button';
+      if (cls) b.className = cls;
+      b.setAttribute('aria-pressed', String(!!(p && p.f === f && p.c === c)));
+      b.setAttribute('aria-label', `${label}: ${k} heat${k === 1 ? '' : 's'}. Show them below.`);
+      const bb = document.createElement('b'); bb.textContent = fInt(k);
+      const sm = document.createElement('small'); sm.textContent = sub;
+      b.append(bb, sm);
+      b.addEventListener('click', () => pickFlow(f, c));
+      td.appendChild(b); return td;
+    };
+    const total = fr.length;
+    for (const s of F_STATES) {
+      const rowN = n(s.key);
+      if (!rowN && (s.key === 'nospec' || s.key === 'nochem')) continue;
+      const tr = document.createElement('tr');
+      const th = document.createElement('th'); th.className = 'rowh'; th.scope = 'row'; th.textContent = s.label;
+      const sm = document.createElement('small'); sm.textContent = s.note; th.appendChild(sm); tr.appendChild(th);
+      tr.appendChild(cellBtn(s.key, null, rowN, fP0(rowN / total) + ' of heats', 'sum', s.label + ' at the furnace'));
+      for (const c of CASTER_CATS) {
+        const k = n(s.key, c);
+        const cls = s.key === 'in' ? (c === 'OK' ? 'good' : NOT_OK.has(c) ? 'bad' : '') : '';
+        tr.appendChild(cellBtn(s.key, c, k, rowN ? fP0(k / rowN) + ' of row' : '', cls, `${s.label} at the furnace, ${CASTER_LABEL[c]} at the caster`));
+      }
+      tbody.appendChild(tr);
+    }
+    const tr = document.createElement('tr'); tr.className = 'total';
+    const th = document.createElement('th'); th.className = 'rowh'; th.scope = 'row'; th.textContent = 'All heats'; tr.appendChild(th);
+    const tdT = document.createElement('td'); tdT.className = 'zero'; tdT.style.opacity = 1; tdT.style.background = 'transparent';
+    const bT = document.createElement('b'); bT.textContent = fInt(total); tdT.appendChild(bT); tr.appendChild(tdT);
+    for (const c of CASTER_CATS) { const k = n(null, c); tr.appendChild(cellBtn(null, c, k, fP0(k / total) + ' of heats', 'sum', `${CASTER_LABEL[c]} at the caster`)); }
+    tbody.appendChild(tr);
+  }
+  function drawFlowOps(heats, oset) {
+    const field = state.flowBy;
+    const sel = field === 'Crew' ? state.opF : state.opC;
+    const stat = (Name, hs) => {
+      const r = { Name, Heats: hs.length, InSpec: 0, Checked: 0, OK: 0, Reapply: 0, Divert: 0, RTF: 0, Scrap: 0, Unclassified: 0, Slipped: 0 };
+      for (const h of hs) {
+        const f = furnaceState(h, oset), c = casterCat(h);
+        if (f === 'in' || f === 'miss') r.Checked += 1;
+        if (f === 'in') r.InSpec += 1;
+        r[c] += 1;
+        if (f === 'in' && NOT_OK.has(c)) r.Slipped += 1;
+      }
+      r.InSpecPct = r.Checked ? r.InSpec / r.Checked : null;
+      r.OKPct = r.Heats ? r.OK / r.Heats : null;
+      return r;
+    };
+    const rows = d3.groups(heats, (h) => h[field]).map(([Name, hs]) => stat(Name, hs));
+    const tot = stat('All ' + (field === 'Crew' ? 'furnace' : 'caster') + ' operators', heats);
+    const nOf = (k, pct, of, unit) => (td, v, r) => {
+      if (r[k] == null) return;
+      td.textContent = fInt(r[k]);
+      if (r[pct] != null) { const s = document.createElement('span'); s.className = 'of'; s.textContent = fP1(r[pct]); td.appendChild(s); }
+      td.title = `${fInt(r[k])} of ${fInt(r[of])} ${unit}`;
+    };
+    const plain = (k) => ({ field: k, num: true, fmt: fInt });
+    fillTable($('#flow-ops'), rows, [
+      { field: 'Name', render: (td, v, r, cls) => {
+        if (cls === 'total') { td.textContent = v; return; }
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'opname'; b.textContent = v;
+        b.setAttribute('aria-pressed', String(sel === v));
+        b.addEventListener('click', () => { if (field === 'Crew') state.opF = state.opF === v ? null : v; else state.opC = state.opC === v ? null : v; drawOps(); });
+        td.appendChild(b);
+      } },
+      plain('Heats'),
+      { field: 'InSpecPct', num: true, render: nOf('InSpec', 'InSpecPct', 'Checked', 'heats with chemistry and a spec') },
+      { field: 'OKPct', num: true, render: nOf('OK', 'OKPct', 'Heats', 'heats') },
+      plain('Reapply'), plain('Divert'), plain('RTF'), plain('Scrap'), plain('Unclassified'),
+      { field: 'Slipped', num: true, render: (td, v) => { td.textContent = fInt(v); if (v) td.classList.add('miss', 'strong'); } },
+    ], { defaultSort: { field: 'Heats', dir: 'desc' }, total: tot });
   }
 
   // ---------- Billet ----------
