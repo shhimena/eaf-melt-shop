@@ -69,7 +69,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
 .vk-nav a { display: block; padding: 12px 12px 11px; color: var(--chrome-muted); text-decoration: none; font-size: 14.5px; font-weight: 500; border-bottom: 3px solid transparent; }
 .vk-nav a:hover { color: var(--chrome-ink); }
 .vk-nav a[aria-current="page"] { color: var(--chrome-ink); font-weight: 600; border-bottom-color: var(--heat); }
-.vk-nav .new { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--heat); margin-left: 6px; vertical-align: 2px; }
+#vk-app .pg { scroll-margin-top: 400px; } /* a link straight to a page (…#oos) opens at the top, title showing */
 .btn { font: inherit; font-size: 13.5px; font-weight: 500; padding: 7px 14px; border-radius: 7px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 7px; line-height: 1.25; }
 .btn:hover { border-color: var(--faint); }
 .btn.primary { background: var(--heat); color: var(--heat-ink); border-color: var(--heat); font-weight: 600; }
@@ -288,7 +288,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
         <li><a href="#oos" data-page="oos">Out-of-Spec Chemistry</a></li>
         <li><a href="#operators" data-page="operators">Operators</a></li>
         <li><a href="#billet" data-page="billet">Billet Production</a></li>
-        <li><a href="#database" data-page="database">Database<span class="new">New</span></a></li>
+        <li id="nav-db" hidden><a href="#database" data-page="database">Database</a></li>
         <li><a href="#data" data-page="data">Data &amp; definitions</a></li>
       </ul>
     </nav>
@@ -1910,9 +1910,13 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
 
   // ---------- pages ----------
   const PAGES = { chemistry: drawChem, oos: drawOOS, operators: drawOps, billet: drawBillet, database: drawDatabase, data: drawData };
-  function draw() { fillControls(); drawFreshness(); drawImportBar(); PAGES[state.page](); }
+  // The Database tab stays out of the menu. Editors on the Claude link see it; anyone else opens it at #database.
+  let dbTabOpened = false;
+  const drawDbTab = () => { $('#nav-db').hidden = !(dbTabOpened || db.canWrite === true); };
+  function draw() { fillControls(); drawFreshness(); drawImportBar(); drawDbTab(); PAGES[state.page](); }
   function showPage(id, push) {
     if (!PAGES[id]) id = 'chemistry';
+    if (id === 'database') dbTabOpened = true;
     state.page = id;
     $$('.vk-nav a').forEach((a) => (a.dataset.page === id ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
     $$('.pg').forEach((s) => { s.hidden = s.id !== id; });
