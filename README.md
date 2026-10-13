@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/vinton-steel-logo.png" alt="Vinton Steel, Kyoei Steel Group" width="300">
+
 # EAF Melt Shop KPIs
 
 Chemistry dispositions, out-of-spec results, operator spec performance and billet production for the Vinton Steel EAF Melt Shop, built from the monthly Excel reports.
@@ -65,7 +67,7 @@ The **Data & definitions** page lists every month that is included and flags mon
 | Path | What it is |
 | --- | --- |
 | `index.html` | The whole dashboard in one file: the page, the charts, the Excel reader and the data. GitHub Pages serves it at the link above. A downloaded copy also opens by double-clicking it (the charts need an internet connection). |
-| `docs/screenshots/` | The images in this guide. |
+| `docs/` | The Vinton Steel logo and the screenshots in this guide. |
 | `.nojekyll` | Tells GitHub Pages to serve the files as they are. |
 
 ## Built with
