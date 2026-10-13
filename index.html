@@ -76,6 +76,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
 .btn.primary:hover { filter: brightness(1.05); }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 .vk-bar .btn { background: var(--chrome-2); color: var(--chrome-ink); border-color: var(--chrome-line); }
+.vk-bar .btn.primary { background: var(--heat); color: var(--heat-ink); border-color: var(--heat); }
 .vk-bar .btn:hover { border-color: var(--chrome-muted); }
 .vk-main { max-width: 1480px; margin: 0 auto; padding: 26px 28px 36px; }
 .vk-foot { max-width: 1480px; margin: 0 auto; padding: 0 28px 30px; font-size: 12.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 18px; }
@@ -90,6 +91,26 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
 
 /* ---- update panel ---- */
 .vk-update { background: var(--panel); border-bottom: 1px solid var(--line); }
+.imp-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 10px 20px; }
+.drop { display: grid; justify-items: center; gap: 10px; text-align: center; border: 2px dashed var(--line); border-radius: var(--r); padding: 22px 16px; background: var(--panel-2); transition: border-color .15s, background .15s; }
+.drop.over { border-color: var(--heat); background: var(--panel); }
+.drop svg { color: var(--heat); }
+.drop b { display: block; font-size: 15px; font-weight: 600; }
+.drop span { color: var(--muted); font-size: 13px; }
+.imp-help { font-size: 13.5px; color: var(--muted); max-width: 90ch; }
+.imp-help summary { cursor: pointer; color: var(--ink); font-weight: 600; width: max-content; max-width: 100%; }
+.imp-help ul { margin: 8px 0 0; padding-left: 18px; line-height: 1.5; }
+.imp-help li { margin-bottom: 4px; }
+.imp-help code { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 12.5px; color: var(--ink); }
+.imp-problems { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.5; color: var(--warn-ink); }
+.imp-problems li { margin-bottom: 3px; }
+.imp-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 18px; background: var(--warn-tint); border-radius: var(--r); padding: 12px 16px; margin-bottom: 18px; }
+.imp-bar b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); }
+.imp-bar span { font-size: 13px; color: var(--muted); }
+.imp-bar[hidden] { display: none; }
+.drop-overlay { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(17, 25, 34, .55); pointer-events: none; }
+.drop-overlay div { background: var(--panel); color: var(--ink); border: 2px dashed var(--heat); border-radius: 14px; padding: 26px 34px; font-size: 18px; font-weight: 600; box-shadow: var(--tip-shadow); }
+.drop-overlay[hidden] { display: none; }
 .vk-update-inner { max-width: 1480px; margin: 0 auto; padding: 18px 28px; display: grid; gap: 12px; }
 .vk-update h2 { font-family: var(--font-num); font-size: 19px; font-weight: 700; margin: 0 0 4px; }
 .vk-update p { margin: 0; max-width: 80ch; line-height: 1.5; color: var(--muted); }
@@ -257,9 +278,9 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
         <div><b>EAF Melt Shop</b> <span>Chemistry · Operators · Billet</span></div>
       </div>
       <span class="vk-live off" id="db-chip"><i></i><span>Connecting…</span></span>
-      <span class="vk-pill" id="preview-pill" hidden>Preview</span>
+      <span class="vk-pill" id="preview-pill" hidden>Imported</span>
       <span class="vk-fresh" id="freshness"></span>
-      <button class="btn" type="button" id="update-open" aria-expanded="false" aria-controls="update-panel">Update data</button>
+      <button class="btn primary" type="button" id="update-open" aria-expanded="false" aria-controls="update-panel"><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 11V2.5M4.5 6 8 2.5 11.5 6M2.5 10.5v2a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>Import Excel</button>
     </div>
     <nav class="vk-nav" aria-label="Report pages">
       <ul>
@@ -275,32 +296,53 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
 
   <section class="vk-update" id="update-panel" aria-labelledby="update-title" hidden>
     <div class="vk-update-inner">
-      <div>
-        <h2 id="update-title">Update data from the Vinton KPIs folder</h2>
-        <p>Choose the synced <b>Lares, Javier - Vinton KPIs</b> folder, or only the new month's files. The site reads the Chemistry and Billet Excel reports right here in your browser and shows the result as a preview. Nothing changes for anyone else until you save it to the database.</p>
-      </div>
-      <div class="vk-actions">
-        <label class="btn primary" for="pick-folder">Choose folder…</label>
-        <input class="sr-only" type="file" id="pick-folder" webkitdirectory multiple>
-        <label class="btn" for="pick-files">Choose files…</label>
-        <input class="sr-only" type="file" id="pick-files" multiple accept=".xlsx,.xlsm">
+      <div class="imp-head">
+        <div>
+          <h2 id="update-title">Import Excel reports</h2>
+          <p>Add the monthly <b>Melt Shop Chemistry Results Report</b> and <b>VT_STEEL Production and Shipments</b> workbooks. They are read right here in your browser and are not uploaded anywhere.</p>
+        </div>
         <button class="btn" type="button" id="update-close">Close</button>
       </div>
+      <div class="drop" id="drop-zone">
+        <svg width="30" height="30" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 11V2.5M4.5 6 8 2.5 11.5 6M2.5 10.5v2a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div><b>Drag Excel files, or the whole Vinton KPIs folder, onto this page</b><span>or pick them</span></div>
+        <div class="vk-actions">
+          <label class="btn primary" for="pick-files">Choose files…</label>
+          <input class="sr-only" type="file" id="pick-files" multiple accept=".xlsx,.xlsm">
+          <label class="btn" for="pick-folder">Choose a folder…</label>
+          <input class="sr-only" type="file" id="pick-folder" webkitdirectory multiple>
+        </div>
+      </div>
+      <details class="imp-help">
+        <summary>Which files work?</summary>
+        <ul>
+          <li><b>Chemistry:</b> <code>Melt Shop Chemistry Results Report October 2026.xlsx</code>, with one sheet per day named <code>10.01.26</code>, <code>10.02.26</code>… holding HEAT NO., the element columns, DISPOSITION and MELTER.</li>
+          <li><b>Billet:</b> <code>VT_STEEL_Production and Shipments_Template October 2026.xlsx</code>, read from its "EAF Daily Objective" sheet.</li>
+          <li>The month and year must be in the file name. A "Copy of" file is used only when there is no original for that month, and other files in a folder are ignored.</li>
+          <li>Each month you import replaces that month; every other month stays as published. Importing more files later adds to what you already imported.</li>
+        </ul>
+      </details>
       <p class="vk-status" id="update-status" role="status"></p>
+      <ul class="imp-problems" id="update-problems" hidden></ul>
       <div class="tbl-wrap" id="update-result" hidden>
         <table class="tbl" id="update-table">
-          <thead><tr><th><span class="th-btn">Month</span></th><th><span class="th-btn">Report</span></th><th><span class="th-btn">File read</span></th><th><span class="th-btn">Coverage</span></th><th class="num"><span class="th-btn">Heats / days</span></th><th class="num"><span class="th-btn">Before</span></th></tr></thead>
+          <thead><tr><th><span class="th-btn">Month</span></th><th><span class="th-btn">Report</span></th><th><span class="th-btn">File read</span></th><th><span class="th-btn">Coverage</span></th><th class="num"><span class="th-btn">Heats / days</span></th><th class="num"><span class="th-btn">Published</span></th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
-      <div class="vk-actions" id="update-commit" hidden>
-        <button class="btn primary" type="button" id="publish-btn">Save to database</button>
-        <button class="btn" type="button" id="discard-btn">Discard preview</button>
-      </div>
     </div>
   </section>
+  <div class="drop-overlay" id="drop-overlay" hidden><div>Drop Excel reports to import</div></div>
 
   <main class="vk-main">
+    <div class="imp-bar" id="import-bar" role="region" aria-label="Imported files" hidden>
+      <div><b id="import-bar-title">Showing Excel files you imported</b><span id="import-bar-sub"></span></div>
+      <div class="vk-actions">
+        <button class="btn primary" type="button" id="save-db-btn" hidden>Save to database</button>
+        <button class="btn" type="button" id="download-site-btn">Download updated site</button>
+        <button class="btn" type="button" id="remove-import-btn">Remove imported files</button>
+      </div>
+    </div>
     <!-- ============ Chemistry Disposition ============ -->
     <section class="pg" id="chemistry" aria-labelledby="chem-title">
       <div class="pg-head">
@@ -891,32 +933,50 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
   function parseFiles(XLSX, files, firstMonth = '2026-05') {
     const chosen = new Map();
     const skipped = [];
+    const tooOld = [];
+    const problems = [];
     [...files].sort((a, b) => a.name.localeCompare(b.name)).forEach((f) => {
       const base = f.name.split(/[\\/]/).pop();
       if (base.startsWith('~$') || !/\.xls[xm]$/i.test(base)) return;
       const kind = kindOf(base);
       const month = monthFromName(base);
       if (!kind || !month) { skipped.push(base); return; }
-      if (month < firstMonth) return;
+      if (month < firstMonth) { tooOld.push(base); return; }
       const isCopy = /^copy of/i.test(base);
       const key = kind + '|' + month;
       const cur = chosen.get(key);
       if (!cur || (cur.isCopy && !isCopy)) chosen.set(key, { f, base, kind, month, isCopy });
     });
-    const out = { chemistry: {}, billet: {}, files: [], skipped };
+    const out = { chemistry: {}, billet: {}, files: [], skipped, tooOld, problems };
     for (const { f, base, kind, month, isCopy } of chosen.values()) {
-      const wb = XLSX.read(f.data, { type: 'array', cellDates: true });
-      if (kind === 'Chemistry') {
-        const p = parseChemistry(XLSX, wb, month);
-        out.chemistry[month] = p;
-        out.files.push({ Month: month, Report: kind, File: base, CopyFile: isCopy ? 'Yes' : 'No', Coverage: p.coverage, Rows: p.rows });
-      } else {
-        const p = parseBillet(XLSX, wb, month);
-        out.billet[month] = p;
-        out.files.push({ Month: month, Report: kind, File: base, CopyFile: isCopy ? 'Yes' : 'No', Coverage: p.coverage, Rows: p.rows });
+      let wb;
+      try { wb = XLSX.read(f.data, { type: 'array', cellDates: true }); }
+      catch (e) { problems.push({ File: base, Problem: 'Excel could not open this file (it may be password-protected or damaged).' }); continue; }
+      try {
+        if (kind === 'Chemistry') {
+          const p = parseChemistry(XLSX, wb, month);
+          // never let an unreadable file replace a month that has data
+          if (!p.rows) { problems.push({ File: base, Problem: 'No heats found. Daily sheets must be named like ' + month.slice(5, 7) + '.01.' + month.slice(2, 4) + ' with HEAT NO. in column A.' }); continue; }
+          out.chemistry[month] = p;
+          out.files.push({ Month: month, Report: kind, File: base, CopyFile: isCopy ? 'Yes' : 'No', Coverage: p.coverage, Rows: p.rows });
+        } else {
+          const p = parseBillet(XLSX, wb, month);
+          if (!p.billet.length) { problems.push({ File: base, Problem: 'No days found on an "EAF Daily Objective" sheet.' }); continue; }
+          out.billet[month] = p;
+          out.files.push({ Month: month, Report: kind, File: base, CopyFile: isCopy ? 'Yes' : 'No', Coverage: p.coverage, Rows: p.rows });
+        }
+      } catch (e) {
+        problems.push({ File: base, Problem: 'The layout did not match the monthly report: ' + (e && e.message ? e.message : 'unknown error') });
       }
     }
     return out;
+  }
+
+  /* Layer a newer import over an older one, month by month and report by report. */
+  function combineParsed(older, newer) {
+    if (!older) return newer;
+    const files = older.files.filter((o) => !newer.files.some((n) => n.Month === o.Month && n.Report === o.Report)).concat(newer.files);
+    return { chemistry: { ...older.chemistry, ...newer.chemistry }, billet: { ...older.billet, ...newer.billet }, files, skipped: [], tooOld: [], problems: [] };
   }
 
   /* Replace the months found in `parsed`, keep every other month of `data`. */
@@ -1000,7 +1060,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     }
     return out;
   }
-  const api = { parseFiles, merge, parseSpec, toDocs, fromDocs, SPECS, MONTHS, ELEMENTS };
+  const api = { parseFiles, combineParsed, merge, parseSpec, toDocs, fromDocs, SPECS, MONTHS, ELEMENTS };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else global.VintonParse = api;
 })(typeof window !== 'undefined' ? window : globalThis);
@@ -1017,8 +1077,15 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
 
   const SNAPSHOT = JSON.parse(byId('vk-data').textContent);
   let BASE = SNAPSHOT;   // what everyone sees: the live database when it answers, else the copy saved in the page
-  let DATA = BASE;       // what this view draws: BASE, or a preview of picked files
-  let preview = null;
+  let DATA = BASE;       // what this view draws: BASE with any imported months laid over it
+  let preview = null;    // {parsed, at}: Excel files imported in this browser
+  const IMPORT_KEY = 'eaf-melt-shop-imports-v1';
+  const withImport = (base) => {
+    if (!preview) return base;
+    const d = window.VintonParse.merge(base, preview.parsed);
+    d.spec_limits = base.spec_limits && base.spec_limits.length ? base.spec_limits : SNAPSHOT.spec_limits;
+    return d;
+  };
   const db = { api: null, state: 'connecting', canWrite: null, downloads: null, days: null, months: null, meta: undefined, pbi: undefined, dayJson: new Map(), monthJson: new Map() };
   const app = byId('vk-app');
   app.replaceChildren(byId('vk-shell').content.cloneNode(true));
@@ -1717,10 +1784,11 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
   }
   function drawDatabase() {
     const live = db.state === 'live' && !preview;
-    const st = { live: 'Live', connecting: 'Connecting', empty: 'Empty', offline: 'Saved copy', error: 'Saved copy' }[db.state];
-    setText('k-db-status', preview ? 'Preview' : st);
+    const st = { live: 'Live', connecting: 'Connecting', empty: 'Empty', offline: 'Saved copy', error: 'Saved copy', static: 'Published copy' }[db.state];
+    setText('k-db-status', preview ? 'Imported' : st);
     $('#k-db-status').classList.toggle('c-good', live);
-    $('#k-db-status-sub').textContent = preview ? 'Files picked in this browser, not saved yet'
+    $('#k-db-status-sub').textContent = preview ? 'Excel files imported in this browser, on top of the published data'
+      : db.state === 'static' ? 'The data published with this page'
       : db.state === 'live' ? (db.canWrite === false ? 'Reading the shared database · view only' : 'Reading the shared database as you')
       : db.state === 'offline' ? 'Sign in to claude.ai to read the live database'
       : db.state === 'empty' ? 'Nothing saved yet · showing the copy in the page'
@@ -1769,12 +1837,12 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     if (!live.spec_limits.length) live.spec_limits = SNAPSHOT.spec_limits;
     BASE = live;
     db.state = 'live';
-    if (!preview) { DATA = live; dataRefreshed(); }
+    DATA = withImport(live); dataRefreshed();
     draw();
   }
   async function connectDb() {
     const c = window.claude;
-    if (!c || typeof c.use !== 'function') { db.state = 'offline'; draw(); return; }
+    if (!c || typeof c.use !== 'function') { db.state = 'static'; draw(); return; }
     const [api, user, dl] = await Promise.all(['db', 'user', 'downloads'].map((n) => c.use(n).catch(() => null)));
     db.downloads = dl;
     if (user) { try { db.canWrite = await user.can('data.write'); } catch (e) { db.canWrite = null; } }
@@ -1834,15 +1902,15 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     $('#preview-pill').hidden = !preview;
     const chip = $('#db-chip');
     chip.classList.toggle('off', db.state !== 'live');
-    chip.querySelector('span').textContent = { live: 'Live database', connecting: 'Connecting…', empty: 'Database empty', offline: 'Saved copy', error: 'Saved copy' }[db.state];
+    chip.querySelector('span').textContent = { live: 'Live database', connecting: 'Connecting…', empty: 'Database empty', offline: 'Saved copy', error: 'Saved copy', static: 'Published copy' }[db.state];
     chip.title = db.state === 'live' ? 'Numbers come from the shared database' : db.state === 'offline' ? 'Sign in to claude.ai to read the live database' : '';
     const up = DATA.updatedAt ? d3.timeFormat('%b %-d, %Y at %-I:%M %p')(new Date(DATA.updatedAt)) : null;
-    $('#foot-source').textContent = (preview ? 'Previewing files picked in this browser. ' : '') + (db.state === 'live' && !preview ? 'Live database. ' : '') + 'Data from the monthly Chemistry and Billet Excel reports in the Vinton KPIs folder' + (up && !preview ? ', last updated ' + up + '.' : '.');
+    $('#foot-source').textContent = (preview ? 'Includes Excel files imported in this browser. ' : '') + (db.state === 'live' && !preview ? 'Live database. ' : '') + 'Data from the monthly Chemistry and Billet Excel reports in the Vinton KPIs folder' + (up && !preview ? ', last updated ' + up + '.' : '.');
   }
 
   // ---------- pages ----------
   const PAGES = { chemistry: drawChem, oos: drawOOS, operators: drawOps, billet: drawBillet, database: drawDatabase, data: drawData };
-  function draw() { fillControls(); drawFreshness(); PAGES[state.page](); }
+  function draw() { fillControls(); drawFreshness(); drawImportBar(); PAGES[state.page](); }
   function showPage(id, push) {
     if (!PAGES[id]) id = 'chemistry';
     state.page = id;
@@ -1857,69 +1925,154 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
   window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(draw, 120); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw()).catch(() => {});
 
-  // ---------- update from the Vinton KPIs folder ----------
+  // ---------- import Excel reports ----------
   const panel = $('#update-panel');
   const say = (msg, err) => { const s = $('#update-status'); s.textContent = msg; s.classList.toggle('err', !!err); };
-  $('#update-open').addEventListener('click', () => { panel.hidden = !panel.hidden; $('#update-open').setAttribute('aria-expanded', String(!panel.hidden)); });
-  $('#update-close').addEventListener('click', () => { panel.hidden = true; $('#update-open').setAttribute('aria-expanded', 'false'); });
+  const openPanel = (open) => { panel.hidden = !open; $('#update-open').setAttribute('aria-expanded', String(open)); };
+  $('#update-open').addEventListener('click', () => openPanel(panel.hidden));
+  $('#update-close').addEventListener('click', () => openPanel(false));
   let xlsxPromise = null;
   function loadXLSX() {
     if (window.XLSX) return Promise.resolve(window.XLSX);
     if (!xlsxPromise) xlsxPromise = new Promise((resolve, reject) => {
       const s = document.createElement('script');
       s.src = XLSX_URL;
-      s.onload = () => (window.XLSX ? resolve(window.XLSX) : reject(new Error('Excel reader did not load')));
-      s.onerror = () => { xlsxPromise = null; reject(new Error('Excel reader did not load')); };
+      s.onload = () => (window.XLSX ? resolve(window.XLSX) : reject(new Error('the Excel reader did not load')));
+      s.onerror = () => { xlsxPromise = null; reject(new Error('the Excel reader did not load; check the internet connection')); };
       document.head.appendChild(s);
     });
     return xlsxPromise;
   }
+  const canSaveDb = () => !!(db.api && db.state === 'live' && db.canWrite !== false);
+  function keepImport() {
+    try {
+      if (preview) localStorage.setItem(IMPORT_KEY, JSON.stringify(preview));
+      else localStorage.removeItem(IMPORT_KEY);
+      return true;
+    } catch (e) { return false; }
+  }
+  function restoreImport() {
+    try {
+      const raw = localStorage.getItem(IMPORT_KEY);
+      const v = raw ? JSON.parse(raw) : null;
+      if (v && v.parsed && Array.isArray(v.parsed.files) && v.parsed.files.length) preview = v;
+    } catch (e) { preview = null; }
+  }
+  const importSummary = (files) => {
+    const byMonth = d3.groups(files, (f) => f.Month).sort((a, b) => cmp(a[0], b[0]));
+    return byMonth.map(([m, fs]) => monthLong(m) + ' ' + fs.map((f) => f.Report).sort((x, y) => (x === 'Chemistry' ? -1 : y === 'Chemistry' ? 1 : 0)).map((r) => (r === 'Chemistry' ? 'chemistry' : 'billet')).join(' and ')).join(', ');
+  };
+  function drawImportBar() {
+    const bar = $('#import-bar');
+    bar.hidden = !preview;
+    if (!preview) return;
+    const when = d3.timeFormat('%b %-d at %-I:%M %p')(new Date(preview.at));
+    $('#import-bar-sub').textContent = `${importSummary(preview.parsed.files)} · imported ${when}. ` + (canSaveDb()
+      ? 'Only you see these until you save them to the database.'
+      : 'Only you see these, in this browser. To share them, download the updated site and send it to the site owner.');
+    $('#save-db-btn').hidden = !canSaveDb();
+  }
+  function showProblems(parsed) {
+    const ul = $('#update-problems');
+    const items = [];
+    if (parsed.skipped.length) items.push(`Ignored ${parsed.skipped.length} file${parsed.skipped.length === 1 ? '' : 's'} that ${parsed.skipped.length === 1 ? 'is not a' : 'are not'} Chemistry or Production report${parsed.skipped.length === 1 ? '' : 's'}: ${parsed.skipped.slice(0, 6).join(', ')}${parsed.skipped.length > 6 ? '…' : ''}`);
+    if (parsed.tooOld.length) items.push(`Ignored ${parsed.tooOld.length} report${parsed.tooOld.length === 1 ? '' : 's'} from before May 2026: ${parsed.tooOld.join(', ')}`);
+    for (const p of parsed.problems) items.push(`${p.File}: ${p.Problem}`);
+    ul.replaceChildren(...items.map((t) => { const li = document.createElement('li'); li.textContent = t; return li; }));
+    ul.hidden = !items.length;
+  }
   async function readPicked(fileList) {
     const files = [...fileList].filter((f) => /\.xls[xm]$/i.test(f.name) && !f.name.startsWith('~$'));
-    if (!files.length) { say('No Excel files in what you picked. Choose the Vinton KPIs folder or the .xlsx reports.', true); return; }
+    openPanel(true);
+    if (!files.length) { say('There are no Excel (.xlsx) files in what you picked.', true); return; }
     try {
       say('Loading the Excel reader…');
       const XLSX = await loadXLSX();
       say(`Reading ${files.length} Excel file${files.length === 1 ? '' : 's'}…`);
       const buffers = await Promise.all(files.map(async (f) => ({ name: f.webkitRelativePath || f.name, data: await f.arrayBuffer() })));
       const parsed = window.VintonParse.parseFiles(XLSX, buffers);
-      if (!parsed.files.length) { say('None of these files is a "Melt Shop Chemistry Results Report" or a "Production and Shipments" report from May 2026 on.', true); return; }
-      const merged = window.VintonParse.merge(BASE, parsed);
-      merged.spec_limits = BASE.spec_limits && BASE.spec_limits.length ? BASE.spec_limits : SNAPSHOT.spec_limits;
-      preview = { data: merged, parsed };
-      DATA = merged;
+      showProblems(parsed);
+      if (!parsed.files.length) { say('Nothing was imported. The files need to be the monthly Chemistry or Production reports from May 2026 on.', true); return; }
+      preview = { parsed: window.VintonParse.combineParsed(preview && preview.parsed, parsed), at: new Date().toISOString() };
+      const kept = keepImport();
+      DATA = withImport(BASE);
       dataChanged();
       showUpdateResult(parsed);
-      say(`Read ${parsed.files.length} report${parsed.files.length === 1 ? '' : 's'}. The site now shows them as a preview.`);
+      const one = parsed.files.length === 1;
+      say(`Imported ${parsed.files.length} report${one ? '' : 's'}. The site now includes ${one ? 'it' : 'them'}` + (kept ? `, and this browser keeps ${one ? 'it' : 'them'} for your next visit.` : `. This browser could not keep ${one ? 'it' : 'them'}, so ${one ? 'it lasts' : 'they last'} until you close the page.`));
       draw();
     } catch (e) {
-      say('Could not read the files: ' + (e && e.message ? e.message : 'unknown error') + '. Check that they are the monthly .xlsx reports and try again.', true);
+      say('Could not read the files: ' + (e && e.message ? e.message : 'unknown error') + '.', true);
     }
   }
   function showUpdateResult(parsed) {
-    const before = new Map(BASE.source_files.map((s) => [s.Month + '|' + s.Report, s.Rows]));
+    const before = new Map(BASE.source_files.filter((s) => s.Rows > 0).map((s) => [s.Month + '|' + s.Report, s.Rows]));
     const rows = parsed.files.slice().sort((a, b) => cmp(b.Month, a.Month) || cmp(a.Report, b.Report));
     $('#update-table').tBodies[0].replaceChildren(...rows.map((r) => {
       const tr = document.createElement('tr');
       const prev = before.get(r.Month + '|' + r.Report);
       if (prev !== r.Rows) tr.className = 'changed';
-      [monthLong(r.Month), r.Report, r.File, r.Coverage, fInt(r.Rows), prev == null ? 'new' : fInt(prev)].forEach((v, i) => {
+      [monthLong(r.Month), r.Report, r.File, r.Coverage, fInt(r.Rows), prev == null ? 'new month' : fInt(prev)].forEach((v, i) => {
         const td = document.createElement('td'); td.textContent = v; if (i >= 4) td.className = 'num'; if (i === 2 || i === 3) td.classList.add('wrap'); tr.appendChild(td);
       });
       return tr;
     }));
     $('#update-result').hidden = false;
-    $('#update-commit').hidden = false;
-    $('#publish-btn').disabled = db.canWrite === false;
-    if (db.canWrite === false) say('You can view this site but not change its data, so this preview stays in your browser only.', true);
   }
   $('#pick-folder').addEventListener('change', (e) => { readPicked(e.target.files); e.target.value = ''; });
   $('#pick-files').addEventListener('change', (e) => { readPicked(e.target.files); e.target.value = ''; });
-  $('#discard-btn').addEventListener('click', () => {
-    preview = null; DATA = BASE; dataChanged();
-    $('#update-result').hidden = true; $('#update-commit').hidden = true;
-    say('Preview discarded. The site shows the saved data again.');
+  function removeImport(message) {
+    preview = null; keepImport(); DATA = BASE; dataChanged();
+    $('#update-result').hidden = true; $('#update-problems').hidden = true;
+    if (message) say(message);
     draw();
+  }
+  $('#remove-import-btn').addEventListener('click', () => removeImport('Imported files removed. The site shows the published data again.'));
+
+  // drag and drop anywhere on the page, folders included
+  const overlay = $('#drop-overlay');
+  const hasFiles = (ev) => ev.dataTransfer && [...ev.dataTransfer.types].includes('Files');
+  let dragDepth = 0;
+  window.addEventListener('dragenter', (ev) => { if (!hasFiles(ev)) return; ev.preventDefault(); dragDepth += 1; overlay.hidden = false; $('#drop-zone').classList.add('over'); });
+  window.addEventListener('dragover', (ev) => { if (!hasFiles(ev)) return; ev.preventDefault(); ev.dataTransfer.dropEffect = 'copy'; });
+  window.addEventListener('dragleave', (ev) => { if (!hasFiles(ev)) return; dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) { overlay.hidden = true; $('#drop-zone').classList.remove('over'); } });
+  window.addEventListener('drop', async (ev) => {
+    if (!hasFiles(ev)) return;
+    ev.preventDefault();
+    dragDepth = 0; overlay.hidden = true; $('#drop-zone').classList.remove('over');
+    const entries = [...(ev.dataTransfer.items || [])].map((i) => (i.webkitGetAsEntry ? i.webkitGetAsEntry() : null)).filter(Boolean);
+    const loose = [...ev.dataTransfer.files];
+    if (!entries.length) { readPicked(loose); return; }
+    const out = [];
+    const walk = async (entry) => {
+      if (entry.isFile) { out.push(await new Promise((res, rej) => entry.file(res, rej))); return; }
+      if (!entry.isDirectory) return;
+      const reader = entry.createReader();
+      for (;;) {
+        const batch = await new Promise((res, rej) => reader.readEntries(res, rej));
+        if (!batch.length) break;
+        for (const e of batch) await walk(e);
+      }
+    };
+    try { for (const e of entries) await walk(e); readPicked(out); }
+    catch (e) { readPicked(loose); }
+  });
+
+  // a copy of the whole site with the imported months built in
+  $('#download-site-btn').addEventListener('click', async () => {
+    const html = buildDocument({ ...DATA, updatedAt: new Date().toISOString() });
+    const name = 'EAF-Melt-Shop-KPIs-' + d3.timeFormat('%Y-%m-%d')(new Date()) + '.html';
+    if (db.downloads) {
+      try { await db.downloads.save({ filename: name, data: html }); say(`Downloaded ${name}. Send it to the site owner, or open it in any browser.`); }
+      catch (e) { if (!(e && e.code === 'declined')) say('The download did not start. Try again in a moment.', true); }
+      return;
+    }
+    const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+    const a = document.createElement('a');
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    openPanel(true);
+    say(`Downloaded ${name}. Send it to the site owner to publish, or open it in any browser.`);
   });
 
   const json = (data) => JSON.stringify(data).replace(/</g, '\\u003c');
@@ -1937,54 +2090,41 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
       + '<script id="vk-main">' + byId('vk-main').textContent + '<\/script>'
       + '</body></html>';
   }
-  $('#publish-btn').addEventListener('click', async () => {
-    if (!preview) return;
-    const btn = $('#publish-btn');
+  $('#save-db-btn').addEventListener('click', async () => {
+    if (!preview || !canSaveDb()) return;
+    const btn = $('#save-db-btn');
     btn.disabled = true;
-    const next = { ...preview.data, updatedAt: new Date().toISOString() };
-    let savedDb = false;
-    if (db.api && db.state !== 'error') {
-      try {
-        const n = await writeDb(next, preview.parsed);
-        savedDb = true;
-        say(`Saved ${fInt(n)} changed record${n === 1 ? '' : 's'} to the database.`);
-      } catch (e) {
-        const c = e && e.code;
-        if (c === 'invalid_argument') say('You can view this site but not change its data, so this update stays in your browser only.', true);
-        else if (c === 'quota_exceeded') say('The database is full: ' + (e.message || 'a storage limit was reached') + '. Ask Claude to archive older months.', true);
-        else if (c === 'resource_exhausted') { say('The database asked to slow down partway through. Wait a minute and save again; records already saved are kept.', true); btn.disabled = false; }
-        else { say('Saving to the database failed. Try again in a moment.', true); btn.disabled = false; }
-        return;
-      }
-    }
-    // keep the copy built into the page current, for visitors who are not signed in
-    const art = window.claude && typeof window.claude.use === 'function' ? await window.claude.use('artifact').catch(() => null) : null;
-    if (!art) {
-      if (savedDb) { preview = null; DATA = BASE; dataChanged(); draw(); say('Saved to the database. Everyone signed in sees it now.'); }
-      else say('Saving works only when this site is open on claude.ai by someone who can edit it. The preview stays in this browser.', true);
-      return;
-    }
-    const doc = buildDocument(next);
-    say((savedDb ? 'Saved to the database. ' : '') + 'Refreshing the copy built into the page…');
-    const attempt = () => art.publish(doc);
+    openPanel(true);
+    const next = { ...withImport(BASE), updatedAt: new Date().toISOString() };
     try {
-      try { await attempt(); }
-      catch (e) {
-        if (e && e.code === 'upstream_error') { await new Promise((r) => setTimeout(r, 800 + Math.random() * 1200)); await attempt(); }
-        else throw e;
-      }
-      say('Saved. The site is reloading with the new data.');
+      const n = await writeDb(next, preview.parsed);
+      say(`Saved ${fInt(n)} changed record${n === 1 ? '' : 's'} to the database.`);
     } catch (e) {
       const c = e && e.code;
-      if (savedDb) { preview = null; DATA = BASE; dataChanged(); draw(); say('Saved to the database, so everyone signed in sees it. Only an editor can refresh the copy built into the page for signed-out visitors.'); return; }
-      if (c === 'conflict') say('A newer version was just published, and the site is reloading to it. Pick the files again after it loads.');
-      else if (['not_writer', 'not_granted', 'consent_required', 'capability_disabled', 'capability_removed', 'not_declared'].includes(c)) say('You can view this site but not change it, so this update stays in your browser only.', true);
-      else if (c === 'too_large') say('This update is too large to save. Pick fewer months.', true);
-      else if (c === 'rate_limited') { say('Too many updates in a short time. Wait a minute, then save again.', true); btn.disabled = false; }
-      else { say('Saving failed. Try again in a moment.', true); btn.disabled = false; }
+      btn.disabled = false;
+      if (c === 'invalid_argument') { db.canWrite = false; say('You can view this site but not change its data, so your imported files stay in this browser only.', true); draw(); }
+      else if (c === 'quota_exceeded') say('The database is full: ' + (e.message || 'a storage limit was reached') + '. Ask Claude to archive older months.', true);
+      else if (c === 'resource_exhausted') say('The database asked to slow down partway through. Wait a minute and save again; records already saved are kept.', true);
+      else say('Saving to the database failed. Try again in a moment.', true);
+      return;
+    }
+    btn.disabled = false;
+    removeImport();
+    // keep the copy built into the page current, for visitors who are not signed in
+    const art = window.claude && typeof window.claude.use === 'function' ? await window.claude.use('artifact').catch(() => null) : null;
+    if (!art) { say('Saved to the database. Everyone signed in sees it now.'); return; }
+    say('Saved to the database. Refreshing the copy built into the page…');
+    try {
+      try { await art.publish(buildDocument(next)); }
+      catch (e) { if (e && e.code === 'upstream_error') { await new Promise((r) => setTimeout(r, 800 + Math.random() * 1200)); await art.publish(buildDocument(next)); } else throw e; }
+      say('Saved. The site is reloading with the new data.');
+    } catch (e) {
+      say('Saved to the database, so everyone signed in sees it. Only an editor can refresh the copy built into the page for signed-out visitors.');
     }
   });
 
+  restoreImport();
+  if (preview) { DATA = withImport(BASE); dataChanged(); }
   showPage(location.hash.slice(1), false);
   connectDb();
 })();
