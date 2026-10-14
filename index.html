@@ -290,11 +290,28 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
 .flow-x td button[aria-pressed="true"] { outline: 2px solid var(--heat); outline-offset: 1px; }
 .flow-x td.zero { text-align: center; color: var(--faint); background: var(--panel-2); border-radius: 7px; opacity: .55; height: 48px; }
 .flow-x tr.total th.rowh { color: var(--muted); }
-#flow-ops th .th-btn { white-space: nowrap; }
 .flow-x th.rowh { position: sticky; left: 0; z-index: 1; background: var(--panel); }
 @media (max-width: 720px) { .flow-x th.rowh small { display: none; } .flow-x th.grp { white-space: normal; min-width: 96px; } }
-.flow-sub { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px; margin: 18px 0 6px; }
-.flow-sub h3 { font-size: 14.5px; font-weight: 600; margin: 0; }
+.flow-legend { margin: 0 0 6px; }
+.flow-legend .grp { font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--faint); }
+.flowrank button { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.5fr) 104px; }
+.flowrank .bars { grid-column: 2; grid-row: 1 / span 3; display: grid; gap: 6px; align-self: center; }
+.flowrank .brow { display: grid; grid-template-columns: 48px minmax(0, 1fr); align-items: center; gap: 8px; }
+.flowrank .bl { font-size: 11px; color: var(--muted); }
+.flowrank .segbar { display: flex; height: 9px; border-radius: 5px; overflow: hidden; background: var(--line-2); }
+.flowrank .segbar i { display: block; height: 100%; flex: none; box-shadow: inset -1px 0 0 var(--panel); }
+.flowrank .segbar i:last-child { box-shadow: none; }
+.flowrank .segbar i.soft { opacity: .5; }
+.flowrank .res { grid-row: 1 / span 3; }
+.flowrank .meta2 { grid-column: 1; font-size: 12px; color: var(--muted); }
+.flowrank .meta2 b { font-weight: 600; color: var(--bad-ink); }
+@media (max-width: 560px) {
+  .flowrank button { grid-template-columns: minmax(0, 1fr) auto; }
+  .flowrank .bars { grid-column: 1 / -1; grid-row: 2; margin: 4px 0 2px; }
+  .flowrank .res { grid-row: 1; }
+  .flowrank .meta { grid-row: 3; }
+  .flowrank .meta2 { grid-column: 1 / -1; grid-row: 4; }
+}
 .tbl .opname { all: unset; cursor: pointer; font-weight: 600; border-radius: 4px; }
 .tbl .opname:hover { text-decoration: underline; }
 .tbl .opname:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
@@ -554,26 +571,19 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
         <p class="note">Each heat's chemistry when it left the furnace, next to its disposition at the caster. Click a number to see those heats below.</p>
         <p class="flow-lead" id="flow-lead"></p>
         <div class="tbl-wrap"><table class="flow-x" id="flow-cross"><thead></thead><tbody></tbody></table></div>
-        <div class="flow-sub">
-          <h3>By operator</h3>
-          <div class="seg js-flowby" role="group" aria-label="Operators to list"><button type="button" data-val="Crew">Furnace operators</button><button type="button" data-val="CasterOp">Caster operators</button></div>
+      </div>
+      <div class="grid-half mb">
+        <div class="card">
+          <h2>Furnace operators: furnace to caster</h2>
+          <p class="note">Top bar: their heats' chemistry at the furnace. Bottom bar: the disposition at the caster. The number is the share that was OK at the caster. Click a name to see their heats below.</p>
+          <div class="legend flow-legend" aria-hidden="true"></div>
+          <ol class="rank flowrank" id="flow-furnace"></ol>
         </div>
-        <div class="tbl-wrap">
-          <table class="tbl" id="flow-ops">
-            <thead><tr>
-              <th data-field="Name"><button class="th-btn" type="button">Operator</button></th>
-              <th data-field="Heats" class="num"><button class="th-btn" type="button">Heats</button></th>
-              <th data-field="InSpecPct" class="num"><button class="th-btn" type="button">In spec at furnace</button></th>
-              <th data-field="OKPct" class="num"><button class="th-btn" type="button">OK at caster</button></th>
-              <th data-field="Reapply" class="num"><button class="th-btn" type="button">Reapply</button></th>
-              <th data-field="Divert" class="num"><button class="th-btn" type="button">Divert</button></th>
-              <th data-field="RTF" class="num"><button class="th-btn" type="button">RTF</button></th>
-              <th data-field="Scrap" class="num"><button class="th-btn" type="button">Scrap</button></th>
-              <th data-field="Unclassified" class="num"><button class="th-btn" type="button">Unclassified</button></th>
-              <th data-field="Slipped" class="num"><button class="th-btn" type="button">In spec, not OK at caster</button></th>
-            </tr></thead>
-            <tbody></tbody>
-          </table>
+        <div class="card">
+          <h2>Caster operators: furnace to caster</h2>
+          <p class="note">The same view for the second name on the MELTER line.</p>
+          <div class="legend flow-legend" aria-hidden="true"></div>
+          <ol class="rank flowrank" id="flow-caster"></ol>
         </div>
       </div>
       <div class="card mb">
@@ -1170,7 +1180,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
   const $$ = (s) => [...app.querySelectorAll(s)];
 
   const state = { page: 'chemistry', month: null, crew: 'All', grade: 'All', cat: 'All', spec: 'Sheet', round: false, price: 700,
-    bview: 'daily', oosBy: 'Crew', dbTable: 'heats', opF: null, opC: null, opsShow: 'all', flowBy: 'Crew', flowPick: null, sort: {}, search: { heat: '', oos: '', ops: '', db: '' } };
+    bview: 'daily', oosBy: 'Crew', dbTable: 'heats', opF: null, opC: null, opsShow: 'all', flowPick: null, sort: {}, search: { heat: '', oos: '', ops: '', db: '' } };
 
   // ---------- formatting ----------
   const loc = d3.formatLocale({ decimal: '.', thousands: ',', grouping: [3], currency: ['$', ''], minus: '-' });
@@ -1301,7 +1311,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     $$('.js-cat').forEach((s) => setOptions(s, [['All', 'All'], ...a.cats.map((c) => [c, c])], state.cat));
     $$('.js-price').forEach((s) => setOptions(s, PRICES.map((p) => [String(p), '$' + p]), String(state.price)));
     const seg = (cls, val) => $$(cls).forEach((g) => g.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.val === val))));
-    seg('.js-dbtable', state.dbTable); seg('.js-spec', state.spec); seg('.js-round', state.round ? 'round' : 'exact'); seg('.js-bview', state.bview); seg('.js-oosby', state.oosBy); seg('.js-flowby', state.flowBy);
+    seg('.js-dbtable', state.dbTable); seg('.js-spec', state.spec); seg('.js-round', state.round ? 'round' : 'exact'); seg('.js-bview', state.bview); seg('.js-oosby', state.oosBy);
     $('#ops-show').value = state.opsShow;
     $$('.js-month-label').forEach((el) => { el.textContent = monthShort(m); });
   }
@@ -1324,7 +1334,6 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     else if (g.classList.contains('js-round')) state.round = b.dataset.val === 'round';
     else if (g.classList.contains('js-bview')) state.bview = b.dataset.val;
     else if (g.classList.contains('js-oosby')) state.oosBy = b.dataset.val;
-    else if (g.classList.contains('js-flowby')) state.flowBy = b.dataset.val;
     else if (g.classList.contains('js-dbtable')) state.dbTable = b.dataset.val;
     else return;
     draw();
@@ -1726,7 +1735,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     const all = DATA.heats.filter((h) => inMonth(h, m) && (state.grade === 'All' || h.Grade === state.grade));
     const byOp = (h) => (!state.opF || h.Crew === state.opF) && (!state.opC || h.CasterOp === state.opC);
     drawFlow(all.filter(byOp), oset);
-    drawFlowOps(all, oset);
+    drawFlowRanks(all, oset);
     const p = state.flowPick;
     const clr = $('#ops-clear');
     const names = [state.opF, state.opC].filter(Boolean);
@@ -1858,45 +1867,87 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     for (const c of CASTER_CATS) { const k = n(null, c); tr.appendChild(cellBtn(null, c, k, fP0(k / total) + ' of heats', 'sum', `${CASTER_LABEL[c]} at the caster`)); }
     tbody.appendChild(tr);
   }
-  function drawFlowOps(heats, oset) {
-    const field = state.flowBy;
-    const sel = field === 'Crew' ? state.opF : state.opC;
-    const stat = (Name, hs) => {
-      const r = { Name, Heats: hs.length, InSpec: 0, Checked: 0, OK: 0, Reapply: 0, Divert: 0, RTF: 0, Scrap: 0, Unclassified: 0, Slipped: 0 };
-      for (const h of hs) {
-        const f = furnaceState(h, oset), c = casterCat(h);
-        if (f === 'in' || f === 'miss') r.Checked += 1;
-        if (f === 'in') r.InSpec += 1;
-        r[c] += 1;
-        if (f === 'in' && NOT_OK.has(c)) r.Slipped += 1;
-      }
-      r.InSpecPct = r.Checked ? r.InSpec / r.Checked : null;
-      r.OKPct = r.Heats ? r.OK / r.Heats : null;
-      return r;
-    };
-    const rows = d3.groups(heats, (h) => h[field]).map(([Name, hs]) => stat(Name, hs));
-    const tot = stat('All ' + (field === 'Crew' ? 'furnace' : 'caster') + ' operators', heats);
-    const nOf = (k, pct, of, unit) => (td, v, r) => {
-      if (r[k] == null) return;
-      td.textContent = fInt(r[k]);
-      if (r[pct] != null) { const s = document.createElement('span'); s.className = 'of'; s.textContent = fP1(r[pct]); td.appendChild(s); }
-      td.title = `${fInt(r[k])} of ${fInt(r[of])} ${unit}`;
-    };
-    const plain = (k) => ({ field: k, num: true, fmt: fInt });
-    fillTable($('#flow-ops'), rows, [
-      { field: 'Name', render: (td, v, r, cls) => {
-        if (cls === 'total') { td.textContent = v; return; }
-        const b = document.createElement('button'); b.type = 'button'; b.className = 'opname'; b.textContent = v;
-        b.setAttribute('aria-pressed', String(sel === v));
-        b.addEventListener('click', () => { if (field === 'Crew') state.opF = state.opF === v ? null : v; else state.opC = state.opC === v ? null : v; drawOps(); });
-        td.appendChild(b);
-      } },
-      plain('Heats'),
-      { field: 'InSpecPct', num: true, render: nOf('InSpec', 'InSpecPct', 'Checked', 'heats with chemistry and a spec') },
-      { field: 'OKPct', num: true, render: nOf('OK', 'OKPct', 'Heats', 'heats') },
-      plain('Reapply'), plain('Divert'), plain('RTF'), plain('Scrap'), plain('Unclassified'),
-      { field: 'Slipped', num: true, render: (td, v) => { td.textContent = fInt(v); if (v) td.classList.add('miss', 'strong'); } },
-    ], { defaultSort: { field: 'Heats', dir: 'desc' }, total: tot });
+  const F_SEG = [
+    { key: 'in', label: 'In spec', color: 'var(--good)' },
+    { key: 'miss', label: 'Missed spec', color: 'var(--bad)', soft: true },
+    { key: 'none', label: 'No chemistry or spec', color: 'var(--faint)', soft: true },
+  ];
+  const C_COLOR = { OK: 'var(--ok)', Reapply: 'var(--reapply)', Divert: 'var(--divert)', RTF: 'var(--rtf)', Scrap: 'var(--scrap)', Unclassified: 'var(--uncl)' };
+  function flowLegend() {
+    for (const box of $$('.flow-legend')) {
+      if (box.childElementCount) continue;
+      const add = (label, color, soft) => { const s = document.createElement('span'); s.className = 'lg'; const w = document.createElement('i'); w.className = 'sw'; w.style.background = color; if (soft) w.style.opacity = '.5'; s.append(w, label); box.appendChild(s); };
+      const grp = (t) => { const g = document.createElement('span'); g.className = 'grp'; g.textContent = t; box.appendChild(g); };
+      grp('Furnace'); F_SEG.forEach((f) => add(f.label, f.color, f.soft));
+      grp('Caster'); CASTER_CATS.forEach((c) => add(CASTER_LABEL[c], C_COLOR[c]));
+    }
+  }
+  function flowStat(Name, hs, oset) {
+    const r = { Name, Heats: hs.length, in: 0, miss: 0, none: 0, OK: 0, Reapply: 0, Divert: 0, RTF: 0, Scrap: 0, Unclassified: 0, Slipped: 0 };
+    for (const h of hs) {
+      const f = furnaceState(h, oset), c = casterCat(h);
+      r[f === 'in' || f === 'miss' ? f : 'none'] += 1;
+      r[c] += 1;
+      if (f === 'in' && NOT_OK.has(c)) r.Slipped += 1;
+    }
+    r.Checked = r.in + r.miss;
+    r.OKPct = r.Heats ? r.OK / r.Heats : null;
+    return r;
+  }
+  function stackBar(parts, total) {
+    const bar = document.createElement('span'); bar.className = 'segbar';
+    for (const p of parts) {
+      if (!p.n) continue;
+      const i = document.createElement('i');
+      i.style.width = (p.n / total) * 100 + '%'; i.style.background = p.color;
+      if (p.soft) i.className = 'soft';
+      i.title = `${p.label}: ${fInt(p.n)} heat${p.n === 1 ? '' : 's'}`;
+      bar.appendChild(i);
+    }
+    return bar;
+  }
+  function flowRankList(ol, stats, role) {
+    ol.replaceChildren();
+    const sel = role === 'F' ? state.opF : state.opC;
+    if (!stats.length) { const li = document.createElement('li'); li.className = 'chart-empty'; li.textContent = 'No heats for this selection'; ol.appendChild(li); return; }
+    for (const s of stats) {
+      const li = document.createElement('li');
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(sel === s.Name));
+      if (s.Heats < 10) b.classList.add('few');
+      const who = document.createElement('span'); who.className = 'who'; who.textContent = s.Name;
+      const meta = document.createElement('span'); meta.className = 'meta';
+      meta.textContent = `${fInt(s.in)} of ${fInt(s.Checked)} in spec at the furnace · ${fInt(s.OK)} of ${fInt(s.Heats)} OK at the caster`;
+      const meta2 = document.createElement('span'); meta2.className = 'meta2';
+      const notes = [];
+      for (const c of ['RTF', 'Reapply', 'Divert', 'Scrap']) if (s[c]) notes.push(`${fInt(s[c])} ${CASTER_VERB[c].replace('returned to the furnace', 'returned to furnace')}`);
+      meta2.textContent = notes.join(' · ');
+      if (s.Slipped) { const w = document.createElement('b'); w.textContent = (notes.length ? ' · ' : '') + `${fInt(s.Slipped)} in spec but not OK`; meta2.appendChild(w); }
+      const bars = document.createElement('span'); bars.className = 'bars';
+      const row = (label, parts) => { const r = document.createElement('span'); r.className = 'brow'; const l = document.createElement('span'); l.className = 'bl'; l.textContent = label; r.append(l, stackBar(parts, s.Heats)); return r; };
+      bars.append(
+        row('Furnace', F_SEG.map((f) => ({ ...f, n: s[f.key] }))),
+        row('Caster', CASTER_CATS.map((c) => ({ label: CASTER_LABEL[c], color: C_COLOR[c], n: s[c] }))),
+      );
+      const res = document.createElement('span'); res.className = 'res';
+      const st = status(s.OKPct);
+      const v = document.createElement('b'); v.textContent = s.OKPct == null ? '—' : fP1(s.OKPct); v.title = 'OK at the caster';
+      const pill = document.createElement('span'); pill.className = 'pill ' + st; pill.textContent = s.Heats < 10 ? 'Few heats' : STATUS_WORD[st];
+      res.append(v, pill);
+      b.append(who, bars, res, meta, meta2);
+      b.setAttribute('aria-label', `${s.Name}: ${fP1(s.OKPct || 0)} OK at the caster, ${s.OK} of ${s.Heats} heats. At the furnace ${s.in} in spec, ${s.miss} missed spec, ${s.none} without chemistry or spec. At the caster ${CASTER_CATS.map((c) => `${s[c]} ${CASTER_LABEL[c]}`).join(', ')}.`);
+      b.addEventListener('click', () => { if (role === 'F') state.opF = state.opF === s.Name ? null : s.Name; else state.opC = state.opC === s.Name ? null : s.Name; drawOps(); });
+      li.appendChild(b);
+      ol.appendChild(li);
+    }
+  }
+  function drawFlowRanks(heats, oset) {
+    flowLegend();
+    const stats = (field) => d3.groups(heats, (h) => h[field]).map(([Name, hs]) => flowStat(Name, hs, oset))
+      .sort((a, b) => (b.OKPct ?? -1) - (a.OKPct ?? -1) || b.Heats - a.Heats);
+    flowRankList($('#flow-furnace'), stats('Crew'), 'F');
+    flowRankList($('#flow-caster'), stats('CasterOp'), 'C');
   }
 
   // ---------- Billet ----------
