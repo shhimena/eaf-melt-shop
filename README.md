@@ -60,17 +60,20 @@ The dashboard link shows the new data within a minute or two.
 
 ## Editing the ladles
 
-Anyone can view **Ladle's Life**. To change a ladle, click **Edit ladles**, paste the edit key, and add your name. The page remembers the key on that computer until **Remove edit key** is clicked. Each save updates `ladles.json` in this repository and shows for everyone within a minute or two.
+Anyone can view **Ladle's Life**. To change a ladle, click **Edit ladles**, type the editing password and your name, and click **Unlock**. The page remembers it on that computer until **Remove edit key** is clicked. Each save updates `ladles.json` in this repository and shows for everyone within a minute or two.
 
-### Making an edit key (site owner)
+### Setting up editing (site owner)
 
 1. On GitHub, open **Settings → Developer settings → Personal access tokens → Fine-grained tokens** and click **Generate new token**.
 2. Name it (for example *Ladle editor*) and pick an expiration date.
 3. Under **Repository access**, choose **Only select repositories** and pick **eaf-melt-shop**.
 4. Under **Permissions → Repository permissions**, set **Contents** to **Read and write**. Leave everything else as it is.
-5. Click **Generate token**, copy it (it starts with `github_pat_`), and send it privately to the person who updates the ladles.
+5. Click **Generate token** and copy it (it starts with `github_pat_`).
+6. On the dashboard, open **Ladle's Life**, click **Edit ladles**, paste the key and your name, and click **Unlock**.
+7. In **Editing password**, type a password of at least 12 characters twice and click **Save password**. A few words with spaces work well.
+8. Give that password to the people who update the ladles. They never need the GitHub key.
 
-The key can change files in this repository, so share it only with people who should edit the ladles. To take access away, delete the token on the same GitHub page. When it expires, make a new one the same way.
+The password unlocks the GitHub key, and the key can change files in this repository, so share the password only with people who should edit the ladles. Only the locked form of the key is saved in `ladles.json`. To change the password, unlock editing and save a new one. To take access away from everyone, delete the token on GitHub. When it expires, make a new one and repeat steps 6 and 7.
 
 ## How the numbers are worked out
 
