@@ -318,6 +318,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
 .ladle-edit .linkish { font: inherit; font-size: 12.5px; color: var(--muted); background: none; border: 0; padding: 4px 2px; cursor: pointer; text-decoration: underline; }
 .ladle-edit .act { justify-content: flex-end; }
 .ladle-limit-row { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; }
+.fld input[type=password], .fld input[type=text] { font: inherit; font-size: 14px; font-weight: 500; letter-spacing: 0; text-transform: none; padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel-2); color: var(--ink); width: 260px; max-width: 100%; }
 .fld input[type=number] { font: inherit; font-size: 14px; font-weight: 500; letter-spacing: 0; text-transform: none; padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel-2); color: var(--ink); width: 110px; }
 
 .flow-lead { font-size: 14px; margin: 0 0 10px; line-height: 1.5; max-width: 110ch; }
@@ -735,14 +736,17 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
         <span class="spacer"></span>
         <span class="vk-status" id="ladle-msg" role="status"></span>
         <button class="btn primary" type="button" id="ladle-saveall" hidden>Save all changes</button>
+        <button class="btn" type="button" id="ladle-forget" hidden>Remove edit key</button>
         <button class="btn" type="button" id="ladle-edit" aria-pressed="false" hidden>Edit ladles</button>
       </div>
-      <div class="kpis">
-        <div class="card kpi"><div class="lbl"><span class="dot" style="background:var(--total)"></span>In use</div><div class="val" id="k-l-inuse">—</div><div class="sub" id="k-l-inuse-sub"></div></div>
-        <div class="card kpi"><div class="lbl"><span class="dot" style="background:var(--heat)"></span>On preheater</div><div class="val" id="k-l-preheat">—</div><div class="sub" id="k-l-preheat-sub"></div></div>
-        <div class="card kpi"><div class="lbl"><span class="dot" style="background:var(--rtf)"></span>Relining</div><div class="val" id="k-l-reline">—</div><div class="sub" id="k-l-reline-sub"></div></div>
-        <div class="card kpi"><div class="lbl"><span class="dot" style="background:var(--uncl)"></span>Out of service</div><div class="val" id="k-l-oos">—</div><div class="sub" id="k-l-oos-sub"></div></div>
-        <div class="card kpi"><div class="lbl">Fewest left in use</div><div class="val" id="k-l-left">—</div><div class="sub" id="k-l-left-sub"></div></div>
+      <div class="card mb" id="ladle-key" hidden>
+        <h2>Unlock editing</h2>
+        <div class="ladle-limit-row">
+          <label class="fld">Edit key from the site owner<input type="password" id="key-token" autocomplete="off" spellcheck="false"></label>
+          <label class="fld">Your name<input type="text" id="key-name" autocomplete="name" maxlength="60"></label>
+          <button class="btn primary" type="button" id="key-save">Unlock</button>
+          <button class="btn" type="button" id="key-cancel">Cancel</button>
+        </div>
       </div>
       <div class="ladle-grid" id="ladle-grid"></div>
       <div class="card mb" id="ladle-limits" hidden>
@@ -840,7 +844,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
             <li><b>Hit spec</b>: a heat with chemistry results where every checked element is inside its limits. Heats with no chemistry entered are left out.</li>
             <li><b>Melter criteria</b> (Operators page default): from "Instructions for chemistry disposition" and the Vinton Grades Spec criteria, judged against the SPEC rows of the Vinton Grades Spec criteria sheet (40/A615 and 60/A615, #4 to #11, shown below). Grades and sizes not on that sheet, such as 60(A706/A615) DUAL and 80/A615, use the SPEC row on their daily sheet. <b>C, Mn, Si and V</b> must be inside the OK range, from 90% of the low spec up to the max spec; outside it is <i>out of spec</i>. <b>P and S</b> over the max are <i>out of spec</i>. <b>Ni, Mo and Cu</b> over the max are <i>out-of-spec scrap</i>. <b>Cr</b> under 90% of the low spec is <i>out of spec</i>; over the max is <i>out-of-spec scrap</i>. Other elements are not part of the melter criteria. <b>Melter OK %</b> = heats with no element outside the criteria ÷ heats checked; the target is 90%. The instructions call for the FL1 sample, but the monthly report only has the final chemistry (the average of the final samples), so the criteria are applied to that.</li>
             <li><b>Furnace to caster</b>: on the Operators page, <i>at the furnace</i> is the heat's chemistry result (in spec, out of spec, out-of-spec scrap, no spec to check against, or no chemistry recorded) and <i>at the caster</i> is its disposition category. <b>In spec, not OK at caster</b> counts heats whose chemistry was in spec but that were reapplied, diverted, returned to the furnace or scrapped.</li>
-            <li><b>Ladle's Life</b>: each ladle's current lining life against its safety life (75 unless changed on the page) and its service status: In Use, On Preheater, Relining or Out of Service. The gauge is green below the yellow limit (50), yellow from 50 and red from 60; the thin band outside the gauge marks those zones. On the Claude link the ladles are kept in the shared database: people with edit access change them on the page, and every change is logged with who made it and when. Other copies show the ladles as they were when the copy was saved.</li>
+            <li><b>Ladle's Life</b>: each ladle's current lining life against its safety life (75 unless changed on the page) and its service status: In Use, On Preheater, Relining or Out of Service. The gauge is green below the yellow limit (50), yellow from 50 and red from 60; the thin band outside the gauge marks those zones. The ladles are kept in ladles.json in the dashboard's GitHub repository. Anyone can view them; a person with an edit key from the site owner unlocks editing once on their computer, and each save is recorded in the change log with their name and the time. A copy opened without internet shows the ladles as they were when it was saved.</li>
             <li><b>Planned tons to date</b>: planned daily tons through the latest day that has actual tons. <b>Estimated production loss</b>: tons short of plan × billet price per ton; price per billet = price per ton × 0.98 t.</li>
           </ul>
         </div>
@@ -2303,17 +2307,28 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
   }
 
   // ---------- Ladle's Life ----------
+  /* Where the ladles live:
+     - "github": ladles.json in the GitHub repository. Everyone reads the published file; anyone holding an edit key
+       (a GitHub fine-grained token for this one repository) saves through the GitHub API, one commit per save.
+     - "db": the Claude link's shared database, when the GitHub file can't be reached from there.
+     - otherwise the copy saved in the page. */
+  const GH = { owner: 'shhimena', repo: 'eaf-melt-shop', branch: 'main', path: 'ladles.json', site: 'https://shhimena.github.io/eaf-melt-shop/' };
+  const GH_API = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${GH.path}`;
+  const GH_KEY = 'eaf-ladle-editor-v1';
   const LADLE_STATUSES = ['In Use', 'On Preheater', 'Relining', 'Out of Service'];
   const LADLE_COLOR = { 'In Use': 'var(--total)', 'On Preheater': 'var(--heat)', Relining: 'var(--rtf)', 'Out of Service': 'var(--uncl)' };
   const LADLE_SETTINGS = { max: 75, warn: 50, alarm: 60 };
-  const lad = { live: false, items: null, settings: null, log: [], editing: false, drafts: new Map(), busy: false, me: undefined };
+  const LOG_KEEP = 1000;
+  const lad = { source: 'snapshot', live: false, items: null, settings: null, log: [], editing: false, drafts: new Map(), busy: false, me: undefined, askKey: false, limitsTouched: false, fileAt: null };
   const ladleSnap = () => SNAPSHOT.ladles || { asOf: null, settings: LADLE_SETTINGS, items: [] };
   const ladleItems = () => (lad.live && lad.items && lad.items.length ? lad.items : ladleSnap().items || []).slice().sort((a, b) => a.Ladle - b.Ladle);
   const ladleSettings = () => {
     const s = { ...LADLE_SETTINGS, ...(ladleSnap().settings || {}), ...(lad.live && lad.settings ? lad.settings : {}) };
     return { max: Math.max(1, +s.max || 75), warn: +s.warn, alarm: +s.alarm };
   };
-  const canEditLadles = () => !!(db.api && lad.live && db.canWrite !== false);
+  const ghKey = () => { try { const v = JSON.parse(localStorage.getItem(GH_KEY) || 'null'); return v && v.token ? v : null; } catch (e) { return null; } };
+  const setGhKey = (v) => { try { if (v) localStorage.setItem(GH_KEY, JSON.stringify(v)); else localStorage.removeItem(GH_KEY); return true; } catch (e) { return false; } };
+  const canEditLadles = () => (lad.source === 'github' ? true : !!(db.api && lad.source === 'db' && db.canWrite !== false));
   function ladleSnapshotForPage() {
     const items = ladleItems().map((r) => ({ Ladle: r.Ladle, Life: r.Life, Status: r.Status, UpdatedAt: r.UpdatedAt || null }));
     const last = d3.max(items, (r) => r.UpdatedAt || '') || ladleSnap().asOf || null;
@@ -2323,24 +2338,93 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
   const whenShort = (iso) => (!iso ? '' : iso.length <= 10 ? d3.utcFormat('%b %-d')(utc(iso)) : d3.timeFormat('%b %-d, %-I:%M %p')(new Date(iso)));
   const lifeColor = (life, S) => (life >= S.alarm ? 'var(--bad)' : life >= S.warn ? 'var(--gauge-warn)' : 'var(--good)');
   const ladleMsg = (t, err) => { const m = $('#ladle-msg'); m.textContent = t || ''; m.classList.toggle('err', !!err); };
+  const redrawLadles = () => { if (state.page === 'ladles') drawLadles(); };
 
+  // ----- reading -----
+  function applyLadleFile(obj) {
+    if (!obj || !Array.isArray(obj.items)) return false;
+    lad.items = obj.items.filter((r) => r && Number.isFinite(+r.Ladle)).map((r) => ({ ...r, Ladle: +r.Ladle, Life: +r.Life || 0 }));
+    lad.settings = obj.settings || null;
+    lad.log = (Array.isArray(obj.log) ? obj.log : []).slice().sort((a, b) => cmp(b.At || '', a.At || ''));
+    lad.fileAt = obj.updatedAt || null;
+    lad.source = 'github'; lad.live = true;
+    return true;
+  }
+  async function loadLadleFile() {
+    const urls = [];
+    if (/^https?:$/.test(location.protocol) && location.hostname.endsWith('github.io')) urls.push(GH.path);
+    urls.push(GH.site + GH.path);
+    for (const u of urls) {
+      try {
+        const r = await fetch(u + '?t=' + Date.now(), { cache: 'no-store' });
+        if (r.ok && applyLadleFile(await r.json())) { redrawLadles(); return true; }
+      } catch (e) { /* not reachable from here */ }
+    }
+    return false;
+  }
+  let ladlePoll = null;
+  function startLadleFile() {
+    loadLadleFile().then((ok) => {
+      if (!ok || ladlePoll) return;
+      ladlePoll = setInterval(() => { if (!document.hidden && state.page === 'ladles' && !lad.busy && !lad.drafts.size) loadLadleFile(); }, 60000);
+    });
+  }
   function connectLadles(api) {
-    const fail = () => { lad.live = false; if (state.page === 'ladles') drawLadles(); };
-    const redraw = () => { if (state.page === 'ladles') drawLadles(); };
+    const take = () => lad.source !== 'github';
     try {
       api.collection('ladles').onSnapshot((snap) => {
+        if (!take()) return;
         lad.items = snap.docs.map((d) => d.data()).filter((r) => r && Number.isFinite(+r.Ladle)).map((r) => ({ ...r, Ladle: +r.Ladle, Life: +r.Life || 0 }));
-        lad.live = true; redraw();
-      }, fail);
-      api.doc('config/ladles').onSnapshot((snap) => { lad.settings = snap.exists ? snap.data() : null; redraw(); }, () => {});
-      api.collection('ladle_log').orderBy('At', 'desc').limit(500).onSnapshot((snap) => { lad.log = snap.docs.map((d) => d.data()); redraw(); }, () => {});
-    } catch (e) { fail(); }
+        lad.source = 'db'; lad.live = true; redrawLadles();
+      }, () => { if (take()) { lad.live = false; lad.source = 'snapshot'; redrawLadles(); } });
+      api.doc('config/ladles').onSnapshot((snap) => { if (take()) { lad.settings = snap.exists ? snap.data() : null; redrawLadles(); } }, () => {});
+      api.collection('ladle_log').orderBy('At', 'desc').limit(500).onSnapshot((snap) => { if (take()) { lad.log = snap.docs.map((d) => d.data()); redrawLadles(); } }, () => {});
+    } catch (e) { /* stays on the saved copy */ }
   }
   async function myId() {
     if (lad.me === undefined) { try { lad.me = db.user && db.user.id ? await db.user.id() : null; } catch (e) { lad.me = null; } }
     return lad.me;
   }
 
+  // ----- GitHub file -----
+  const b64encode = (str) => { const bytes = new TextEncoder().encode(str); let bin = ''; for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(bin); };
+  const b64decode = (b64) => new TextDecoder().decode(Uint8Array.from(atob(String(b64).replace(/\s/g, '')), (c) => c.charCodeAt(0)));
+  async function ghFetch(method, token, body) {
+    const r = await fetch(GH_API + (method === 'GET' ? `?ref=${GH.branch}&t=${Date.now()}` : ''), {
+      method, cache: 'no-store',
+      headers: { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + token, 'X-GitHub-Api-Version': '2022-11-28', ...(body ? { 'Content-Type': 'application/json' } : {}) },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    if (!r.ok) { const e = new Error('GitHub answered ' + r.status); e.status = r.status; throw e; }
+    return r.json();
+  }
+  async function ghRead(token) {
+    const j = await ghFetch('GET', token);
+    return { obj: JSON.parse(b64decode(j.content)), sha: j.sha };
+  }
+  async function ghSave(mutate, message) {
+    const key = ghKey();
+    if (!key) { const e = new Error('no key'); e.status = 401; throw e; }
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const { obj, sha } = await ghRead(key.token);
+      const next = mutate(JSON.parse(JSON.stringify(obj)), key.name || 'Someone');
+      next.updatedAt = new Date().toISOString();
+      if (Array.isArray(next.log) && next.log.length > LOG_KEEP) next.log = next.log.slice(-LOG_KEEP);
+      try {
+        await ghFetch('PUT', key.token, { message, content: b64encode(JSON.stringify(next, null, 1) + '\n'), sha, branch: GH.branch });
+        applyLadleFile(next);
+        return;
+      } catch (e) { if (e.status !== 409 && e.status !== 422) throw e; }
+    }
+    const e = new Error('conflict'); e.status = 409; throw e;
+  }
+  const ghError = (e) => (!e || !e.status ? 'Could not reach GitHub. Check the internet connection and try again.'
+    : e.status === 401 ? 'That edit key is not valid or has expired. Ask the site owner for a new one.'
+    : e.status === 403 || e.status === 404 ? 'That edit key cannot change the dashboard. Ask the site owner for a key with access to it.'
+    : e.status === 409 ? 'Someone else saved at the same moment. Try again.'
+    : 'GitHub refused the change (' + e.status + '). Try again in a moment.');
+
+  // ----- drawing -----
   function drawGauge(svgEl, life, S) {
     const R = 80, r = 57, cx = 100, cy = 96;
     const svg = d3.select(svgEl).attr('viewBox', '0 0 200 118');
@@ -2454,28 +2538,18 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     const chip = $('#ladle-live');
     chip.classList.toggle('off', !lad.live);
     chip.querySelector('span').textContent = lad.live ? 'Live' : 'Saved copy';
-    const last = d3.max(items, (r) => r.UpdatedAt || '') || ladleSnap().asOf;
+    const last = lad.source === 'github' ? lad.fileAt || d3.max(items, (r) => r.UpdatedAt || '') : d3.max(items, (r) => r.UpdatedAt || '') || ladleSnap().asOf;
     $('#ladle-asof').textContent = last ? (lad.live ? 'Last change ' : 'As of ') + whenText(last) : '';
     const editable = canEditLadles();
-    if (!editable) { lad.editing = false; lad.drafts.clear(); }
+    if (!editable) { lad.editing = false; lad.askKey = false; lad.drafts.clear(); }
     const eb = $('#ladle-edit');
     eb.hidden = !editable;
     eb.textContent = lad.editing ? 'Done editing' : 'Edit ladles';
     eb.setAttribute('aria-pressed', String(lad.editing));
+    $('#ladle-key').hidden = !(lad.askKey && lad.source === 'github');
+    $('#ladle-forget').hidden = !(lad.editing && lad.source === 'github' && ghKey());
     $('#ladle-limits').hidden = !lad.editing;
     if (lad.editing && !lad.limitsTouched) { $('#lim-max').value = S.max; $('#lim-warn').value = S.warn; $('#lim-alarm').value = S.alarm; }
-    // KPIs
-    const by = d3.rollup(items, (v) => v.length, (r) => r.Status);
-    const total = items.length;
-    const kp = (id, status) => { const n = by.get(status) || 0; setText(id, total ? n : null, fInt); $('#' + id + '-sub').textContent = total ? `of ${fInt(total)} ladles` : ''; };
-    kp('k-l-inuse', 'In Use'); kp('k-l-preheat', 'On Preheater'); kp('k-l-reline', 'Relining'); kp('k-l-oos', 'Out of Service');
-    const inUse = items.filter((r) => r.Status === 'In Use').sort((a, b) => b.Life - a.Life);
-    if (inUse.length) {
-      const top = inUse[0], left = S.max - top.Life;
-      setText('k-l-left', left, fInt, { status: top.Life >= S.alarm ? 0 : top.Life >= S.warn ? 0.85 : 1 });
-      $('#k-l-left-sub').textContent = `Ladle ${top.Ladle} · life ${fInt(top.Life)} of ${fInt(S.max)}`;
-    } else { setText('k-l-left', null); $('#k-l-left-sub').textContent = 'No ladle in use'; }
-    // cards
     const grid = $('#ladle-grid');
     if (!items.length) { grid.replaceChildren(); const p = document.createElement('p'); p.className = 'chart-empty'; p.textContent = 'No ladles recorded yet'; grid.appendChild(p); }
     else grid.replaceChildren(...items.map((it) => ladleCard(it, S)));
@@ -2488,16 +2562,19 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     const seq = ++logSeq;
     const rows = lad.live ? lad.log : [];
     let names = {};
-    const ids = [...new Set(rows.map((r) => r.By).filter(Boolean))];
-    if (ids.length && db.user && typeof db.user.profiles === 'function') { try { names = (await db.user.profiles(ids)) || {}; } catch (e) { names = {}; } }
-    if (seq !== logSeq) return;
+    if (lad.source === 'db') {
+      const ids = [...new Set(rows.map((r) => r.By).filter(Boolean))];
+      if (ids.length && db.user && typeof db.user.profiles === 'function') { try { names = (await db.user.profiles(ids)) || {}; } catch (e) { names = {}; } }
+      if (seq !== logSeq) return;
+    }
+    const byName = (r) => (!r.By ? '—' : lad.source === 'db' ? (names[r.By] && names[r.By].name) || 'Someone' : String(r.By));
     const view = rows.map((r) => ({
       ...r,
-      LifeTxt: r.LifeFrom != null && r.LifeFrom !== r.LifeTo ? `${fInt(r.LifeFrom)} → ${fInt(r.LifeTo)}` : fInt(r.LifeTo),
-      StatusTxt: r.StatusFrom && r.StatusFrom !== r.StatusTo ? `${r.StatusFrom} → ${r.StatusTo}` : r.StatusTo || '',
-      ByName: r.By ? (names[r.By] && names[r.By].name) || 'Someone' : '—',
+      LifeTxt: r.LifeFrom != null && r.LifeFrom !== r.LifeTo ? `${fInt(r.LifeFrom)} → ${fInt(r.LifeTo)}` : r.LifeTo != null ? fInt(r.LifeTo) : '',
+      StatusTxt: r.StatusFrom && r.StatusFrom !== r.StatusTo ? `${r.StatusFrom} → ${r.StatusTo}` : r.StatusTo || r.Note || '',
+      ByName: byName(r),
     }));
-    $('#ladle-log-count').textContent = !lad.live ? 'The change log is kept on the live dashboard.' : view.length ? `${fInt(view.length)} change${view.length === 1 ? '' : 's'}` : 'No changes yet.';
+    $('#ladle-log-count').textContent = !lad.live ? 'The change log is kept with the live ladles.' : view.length ? `${fInt(view.length)} change${view.length === 1 ? '' : 's'}` : 'No changes yet.';
     $('#ladle-log-csv').hidden = !view.length;
     lad.logView = view;
     fillTable($('#ladle-log'), view, [
@@ -2505,54 +2582,99 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     ], { defaultSort: { field: 'At', dir: 'desc' }, limit: 200 });
   }
 
+  // ----- saving -----
   async function saveLadles(nums) {
     if (lad.busy || !canEditLadles()) return;
     const items = ladleItems();
     const todo = nums.map((n) => items.find((r) => r.Ladle === n)).filter((it) => it && isDirty(it));
     if (!todo.length) return;
+    const changes = todo.map((it) => { const d = lad.drafts.get(it.Ladle); return { it, Life: Math.max(0, Math.min(999, Math.round(+d.Life || 0))), Status: d.Status }; });
     lad.busy = true; syncSaveAll();
-    const by = await myId();
-    let done = 0;
+    ladleMsg(changes.length === 1 ? `Saving ladle ${changes[0].it.Ladle}…` : `Saving ${changes.length} ladles…`);
     try {
-      for (const it of todo) {
-        const d = lad.drafts.get(it.Ladle);
-        const life = Math.max(0, Math.min(999, Math.round(+d.Life || 0)));
-        const now = new Date().toISOString();
-        ladleMsg(`Saving ladle ${it.Ladle}…`);
-        await retrying(() => db.api.doc('ladles/' + it.Ladle).set({ Ladle: it.Ladle, Life: life, Status: d.Status, UpdatedAt: now, UpdatedBy: by || null }));
-        const logId = now.replace(/\D/g, '').slice(0, 17) + '-' + it.Ladle;
-        try { await retrying(() => db.api.doc('ladle_log/' + logId).set({ At: now, Ladle: it.Ladle, LifeFrom: +it.Life, LifeTo: life, StatusFrom: it.Status || null, StatusTo: d.Status, By: by || null })); } catch (e) { /* the ladle itself is saved */ }
-        lad.drafts.delete(it.Ladle);
-        done += 1;
+      if (lad.source === 'github') {
+        const msg = changes.length === 1
+          ? `Ladle ${changes[0].it.Ladle}: life ${changes[0].Life}, ${changes[0].Status}`
+          : `Ladles ${changes.map((c) => c.it.Ladle).join(', ')} updated`;
+        await ghSave((obj, who) => {
+          obj.items = Array.isArray(obj.items) ? obj.items : [];
+          obj.log = Array.isArray(obj.log) ? obj.log : [];
+          for (const c of changes) {
+            const now = new Date().toISOString();
+            let row = obj.items.find((r) => +r.Ladle === c.it.Ladle);
+            if (!row) { row = { Ladle: c.it.Ladle, Life: 0, Status: null }; obj.items.push(row); }
+            obj.log.push({ At: now, Ladle: c.it.Ladle, LifeFrom: +row.Life, LifeTo: c.Life, StatusFrom: row.Status || null, StatusTo: c.Status, By: who });
+            Object.assign(row, { Life: c.Life, Status: c.Status, UpdatedAt: now, UpdatedBy: who });
+          }
+          obj.items.sort((a, b) => a.Ladle - b.Ladle);
+          return obj;
+        }, msg);
+        changes.forEach((c) => lad.drafts.delete(c.it.Ladle));
+        ladleMsg((changes.length === 1 ? `Saved ladle ${changes[0].it.Ladle}.` : `Saved ${changes.length} ladles.`) + ' Everyone sees it within a minute or two.');
+      } else {
+        const by = await myId();
+        for (const c of changes) {
+          const now = new Date().toISOString();
+          await retrying(() => db.api.doc('ladles/' + c.it.Ladle).set({ Ladle: c.it.Ladle, Life: c.Life, Status: c.Status, UpdatedAt: now, UpdatedBy: by || null }));
+          const logId = now.replace(/\D/g, '').slice(0, 17) + '-' + c.it.Ladle;
+          try { await retrying(() => db.api.doc('ladle_log/' + logId).set({ At: now, Ladle: c.it.Ladle, LifeFrom: +c.it.Life, LifeTo: c.Life, StatusFrom: c.it.Status || null, StatusTo: c.Status, By: by || null })); } catch (e) { /* the ladle itself is saved */ }
+          lad.drafts.delete(c.it.Ladle);
+        }
+        ladleMsg(changes.length === 1 ? `Saved ladle ${changes[0].it.Ladle}.` : `Saved ${changes.length} ladles.`);
       }
-      ladleMsg(done === 1 ? `Saved ladle ${todo[0].Ladle}.` : `Saved ${done} ladles.`);
     } catch (e) {
       const c = e && e.code;
-      ladleMsg(c === 'permission_denied' || c === 'not_granted' || c === 'unauthenticated' ? 'You can view the ladles but not change them. Ask the site owner for edit access.' : `Saving failed${done ? ` after ${done} ladle${done === 1 ? '' : 's'}` : ''}. Try again in a moment.`, true);
+      ladleMsg(lad.source === 'github' ? ghError(e)
+        : c === 'permission_denied' || c === 'not_granted' || c === 'unauthenticated' ? 'You can view the ladles but not change them. Ask the site owner for edit access.'
+        : 'Saving failed. Try again in a moment.', true);
+      if (lad.source === 'github' && e && e.status === 401) { setGhKey(null); lad.editing = false; lad.askKey = true; }
     } finally { lad.busy = false; drawLadles(); }
   }
   $('#ladle-edit').addEventListener('click', () => {
-    lad.editing = !lad.editing;
-    if (!lad.editing) lad.drafts.clear();
-    lad.limitsTouched = false; ladleMsg('');
+    ladleMsg('');
+    if (lad.editing) { lad.editing = false; lad.drafts.clear(); drawLadles(); return; }
+    if (lad.source === 'github' && !ghKey()) { lad.askKey = !lad.askKey; drawLadles(); if (lad.askKey) $('#key-token').focus(); return; }
+    lad.editing = true; lad.limitsTouched = false; drawLadles();
+  });
+  $('#key-cancel').addEventListener('click', () => { lad.askKey = false; ladleMsg(''); drawLadles(); });
+  $('#key-save').addEventListener('click', async () => {
+    const token = $('#key-token').value.trim(), name = $('#key-name').value.trim();
+    if (!token) { ladleMsg('Paste the edit key first.', true); return; }
+    if (!name) { ladleMsg('Add your name so the change log shows who made each change.', true); return; }
+    ladleMsg('Checking the key…');
+    try {
+      const { obj } = await ghRead(token);
+      setGhKey({ token, name });
+      $('#key-token').value = '';
+      applyLadleFile(obj);
+      lad.askKey = false; lad.editing = true; lad.limitsTouched = false;
+      ladleMsg('Editing unlocked on this computer.');
+    } catch (e) { ladleMsg(ghError(e), true); }
     drawLadles();
   });
+  $('#ladle-forget').addEventListener('click', () => { setGhKey(null); lad.editing = false; lad.drafts.clear(); ladleMsg('The edit key was removed from this computer.'); drawLadles(); });
   $('#ladle-saveall').addEventListener('click', () => saveLadles(ladleItems().filter(isDirty).map((r) => r.Ladle)));
   ['lim-max', 'lim-warn', 'lim-alarm'].forEach((id) => $('#' + id).addEventListener('input', () => { lad.limitsTouched = true; }));
   $('#lim-save').addEventListener('click', async () => {
     const max = Math.round(+$('#lim-max').value), warn = Math.round(+$('#lim-warn').value), alarm = Math.round(+$('#lim-alarm').value);
     if (!(max >= 1 && max <= 999) || !(warn >= 0) || !(alarm > warn) || alarm > max) { ladleMsg('Limits need 0 ≤ yellow < red ≤ safety life.', true); return; }
+    lad.busy = true;
     try {
-      await retrying(async () => db.api.doc('config/ladles').set({ max, warn, alarm, UpdatedAt: new Date().toISOString(), UpdatedBy: (await myId()) || null }));
+      if (lad.source === 'github') {
+        await ghSave((obj, who) => { obj.settings = { max, warn, alarm }; (obj.log = Array.isArray(obj.log) ? obj.log : []).push({ At: new Date().toISOString(), Ladle: null, Note: `Limits: safety life ${max}, yellow from ${warn}, red from ${alarm}`, By: who }); return obj; }, `Ladle gauge limits: ${max} / ${warn} / ${alarm}`);
+      } else {
+        await retrying(async () => db.api.doc('config/ladles').set({ max, warn, alarm, UpdatedAt: new Date().toISOString(), UpdatedBy: (await myId()) || null }));
+      }
       lad.limitsTouched = false; ladleMsg('Saved the gauge limits.');
-    } catch (e) { ladleMsg('Saving the limits failed. Try again in a moment.', true); }
+    } catch (e) { ladleMsg(lad.source === 'github' ? ghError(e) : 'Saving the limits failed. Try again in a moment.', true); }
+    lad.busy = false;
     drawLadles();
   });
   $('#ladle-log-csv').addEventListener('click', async () => {
     const rows = lad.logView || [];
     const q = (v) => { const t = v == null ? '' : String(v); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
-    const csv = [['When', 'Ladle', 'Life before', 'Life after', 'Status before', 'Status after', 'By'].join(','),
-      ...rows.map((r) => [r.At, r.Ladle, r.LifeFrom, r.LifeTo, r.StatusFrom, r.StatusTo, r.ByName].map(q).join(','))].join('\r\n');
+    const csv = [['When', 'Ladle', 'Life before', 'Life after', 'Status before', 'Status after', 'Note', 'By'].join(','),
+      ...rows.map((r) => [r.At, r.Ladle, r.LifeFrom, r.LifeTo, r.StatusFrom, r.StatusTo, r.Note, r.ByName].map(q).join(','))].join('\r\n');
     const name = 'ladle-change-log-' + d3.timeFormat('%Y-%m-%d')(new Date()) + '.csv';
     if (db.downloads) { try { await db.downloads.save({ filename: name, data: csv }); } catch (e) { /* declined */ } return; }
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
@@ -2925,6 +3047,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
   restoreImport();
   if (preview) { DATA = withImport(BASE); dataChanged(); }
   showPage(location.hash.slice(1), false);
+  startLadleFile();
   connectDb();
 })();
 </script>

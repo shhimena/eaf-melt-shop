@@ -1,0 +1,67 @@
+{
+ "updatedAt": "2026-10-15T14:49:30.914Z",
+ "settings": {
+  "max": 75,
+  "warn": 50,
+  "alarm": 60
+ },
+ "items": [
+  {
+   "Ladle": 1,
+   "Life": 42,
+   "Status": "In Use",
+   "UpdatedAt": "2026-10-15T14:49:30.914Z",
+   "UpdatedBy": null
+  },
+  {
+   "Ladle": 2,
+   "Life": 18,
+   "Status": "In Use",
+   "UpdatedAt": "2026-10-15T14:49:30.914Z",
+   "UpdatedBy": null
+  },
+  {
+   "Ladle": 3,
+   "Life": 65,
+   "Status": "Relining",
+   "UpdatedAt": "2026-10-15T14:49:30.914Z",
+   "UpdatedBy": null
+  },
+  {
+   "Ladle": 4,
+   "Life": 7,
+   "Status": "On Preheater",
+   "UpdatedAt": "2026-10-15T14:49:30.914Z",
+   "UpdatedBy": null
+  },
+  {
+   "Ladle": 5,
+   "Life": 51,
+   "Status": "In Use",
+   "UpdatedAt": "2026-10-15T14:49:30.914Z",
+   "UpdatedBy": null
+  },
+  {
+   "Ladle": 6,
+   "Life": 30,
+   "Status": "Out of Service",
+   "UpdatedAt": "2026-10-15T14:49:30.914Z",
+   "UpdatedBy": null
+  },
+  {
+   "Ladle": 7,
+   "Life": 12,
+   "Status": "In Use",
+   "UpdatedAt": "2026-10-15T14:49:30.914Z",
+   "UpdatedBy": null
+  },
+  {
+   "Ladle": 8,
+   "Life": 70,
+   "Status": "Relining",
+   "UpdatedAt": "2026-10-15T14:49:30.914Z",
+   "UpdatedBy": null
+  }
+ ],
+ "log": []
+}

@@ -20,7 +20,7 @@ Chemistry dispositions, out-of-spec results, operator spec performance and bille
 | **Out-of-Spec Chemistry** | Which elements missed spec, on which heats, and whether they ran above the maximum or below the minimum. |
 | **Operators** | Each melter's OK % under the furnace melter criteria, how often each furnace and caster operator's heats landed inside the spec, how each pairing performed, and each heat's path from furnace to caster (for example, in spec at the furnace but returned to the furnace at the caster). |
 | **Billet Production** | Daily billet tons against plan, the variance to plan and the estimated production loss. |
-| **Ladle's Life** | The lining life of the 8 ladles against their safety life, and each ladle's status: In Use, On Preheater, Relining or Out of Service. On the live Claude link, people with edit access update the numbers and statuses right on the page, and every change is logged. |
+| **Ladle's Life** | The lining life of the 8 ladles against their safety life, and each ladle's status: In Use, On Preheater, Relining or Out of Service. Anyone holding an edit key updates the numbers and statuses right on the page, and every change is logged. |
 | **Data & definitions** | Which Excel file each month came from, the days it covers, and how every number is worked out. |
 
 Each page has a month picker and its own filters (crew, grade, disposition, spec source), and the detail tables can be searched and sorted.
@@ -58,6 +58,20 @@ The files are read on your own computer and never uploaded anywhere.
 
 The dashboard link shows the new data within a minute or two.
 
+## Editing the ladles
+
+Anyone can view **Ladle's Life**. To change a ladle, click **Edit ladles**, paste the edit key, and add your name. The page remembers the key on that computer until **Remove edit key** is clicked. Each save updates `ladles.json` in this repository and shows for everyone within a minute or two.
+
+### Making an edit key (site owner)
+
+1. On GitHub, open **Settings → Developer settings → Personal access tokens → Fine-grained tokens** and click **Generate new token**.
+2. Name it (for example *Ladle editor*) and pick an expiration date.
+3. Under **Repository access**, choose **Only select repositories** and pick **eaf-melt-shop**.
+4. Under **Permissions → Repository permissions**, set **Contents** to **Read and write**. Leave everything else as it is.
+5. Click **Generate token**, copy it (it starts with `github_pat_`), and send it privately to the person who updates the ladles.
+
+The key can change files in this repository, so share it only with people who should edit the ladles. To take access away, delete the token on the same GitHub page. When it expires, make a new one the same way.
+
 ## How the numbers are worked out
 
 - **One sheet per day.** Each daily sheet in the chemistry workbook (named `MM.DD.YY`) is one production day. The `SPEC.` row on a sheet sets the grade, product and limits for the heats below it.
@@ -74,7 +88,7 @@ The dashboard link shows the new data within a minute or two.
   - **Melter OK %** is the share of a melter's heats with nothing outside these limits. The target is 90%.
   - The instructions call for the FL1 sample. The monthly report only carries the final chemistry (the average of the final samples), so the rules are applied to that.
 - **Furnace to caster.** *At the furnace* is the heat's chemistry result: in spec, out of spec, out-of-spec scrap, no spec to check against, or no chemistry entered. *At the caster* is its disposition category. **In spec, not OK at caster** counts heats with in-spec chemistry that were still reapplied, diverted, returned to the furnace or scrapped.
-- **Ladle's Life.** Each gauge runs from 0 to the safety life (75). It is green below 50, yellow from 50 and red from 60; editors can change those limits on the page. The copy on GitHub shows the ladles as they were when it was saved; the live, editable version is the Claude link.
+- **Ladle's Life.** Each gauge runs from 0 to the safety life (75). It is green below 50, yellow from 50 and red from 60; editors can change those limits on the page. The ladles live in `ladles.json` in this repository, and each save on the page is a commit to that file.
 - **Targets.** Rates of 90% and up are on target, 80–90% are flagged to watch, and anything lower is below target.
 - **Billet.** Planned and actual tons come from the *EAF Daily Objective* sheet. Estimated production loss is the tons short of plan times the billet price you pick.
 
@@ -86,6 +100,7 @@ The **Data & definitions** page lists every month that is included and flags mon
 | --- | --- |
 | `index.html` | The whole dashboard in one file: the page, the charts, the Excel reader and the data. GitHub Pages serves it at the link above. A downloaded copy also opens by double-clicking it (the charts need an internet connection). |
 | `docs/` | The Vinton Steel logo and the screenshots in this guide. |
+| `ladles.json` | The current ladle life and status, the gauge limits, and the change log. The Ladle's Life page reads and saves it. |
 | `.nojekyll` | Tells GitHub Pages to serve the files as they are. |
 
 ## Built with
