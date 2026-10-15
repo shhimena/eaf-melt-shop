@@ -119,6 +119,11 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
 .imp-bar b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); }
 .imp-bar span { font-size: 13px; color: var(--muted); }
 .imp-bar[hidden] { display: none; }
+.imp-bar.done { background: var(--good-tint); }
+.imp-unlock { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; }
+.imp-unlock[hidden] { display: none; }
+.imp-msg { flex-basis: 100%; margin: 0; }
+.imp-msg:empty { display: none; }
 .drop-overlay { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(17, 25, 34, .55); pointer-events: none; }
 .drop-overlay div { background: var(--panel); color: var(--ink); border: 2px dashed var(--vinton-accent); border-radius: 14px; padding: 26px 34px; font-size: 18px; font-weight: 600; box-shadow: var(--tip-shadow); }
 .drop-overlay[hidden] { display: none; }
@@ -413,7 +418,7 @@ a.btn { text-decoration: none; }
       <div class="imp-head">
         <div>
           <h2 id="update-title">Import Excel reports</h2>
-          <p>Add the monthly <b>Melt Shop Chemistry Results Report</b> and <b>VT_STEEL Production and Shipments</b> workbooks. They are read right here in your browser and are not uploaded anywhere.</p>
+          <p>Add the monthly <b>Melt Shop Chemistry Results Report</b> and <b>VT_STEEL Production and Shipments</b> workbooks. They are read right here in your browser, and nothing is shared until you publish it.</p>
         </div>
         <button class="btn" type="button" id="update-close">Close</button>
       </div>
@@ -452,10 +457,19 @@ a.btn { text-decoration: none; }
     <div class="imp-bar" id="import-bar" role="region" aria-label="Imported files" hidden>
       <div><b id="import-bar-title">Showing Excel files you imported</b><span id="import-bar-sub"></span></div>
       <div class="vk-actions">
+        <button class="btn primary" type="button" id="publish-gh-btn" hidden>Publish for everyone</button>
         <button class="btn primary" type="button" id="save-db-btn" hidden>Save to database</button>
         <button class="btn" type="button" id="download-site-btn">Download updated site</button>
         <button class="btn" type="button" id="remove-import-btn">Remove imported files</button>
       </div>
+      <div class="imp-unlock" id="publish-unlock" hidden>
+        <label class="fld" id="pub-pass-fld">Password<input type="password" id="pub-pass" autocomplete="current-password"></label>
+        <label class="fld" id="pub-key-fld">GitHub edit key<input type="password" id="pub-key" autocomplete="off" spellcheck="false"></label>
+        <label class="fld">Your name<input type="text" id="pub-name" autocomplete="name" maxlength="60"></label>
+        <button class="btn primary" type="button" id="pub-go">Unlock and publish</button>
+        <button class="btn" type="button" id="pub-cancel">Cancel</button>
+      </div>
+      <p class="vk-status imp-msg" id="publish-msg" role="status"></p>
     </div>
     <!-- ============ Chemistry Disposition ============ -->
     <section class="pg" id="chemistry" aria-labelledby="chem-title">
@@ -2459,7 +2473,7 @@ a.btn { text-decoration: none; }
   }
   const ghError = (e) => (!e || !e.status ? 'Could not reach GitHub. Check the internet connection and try again.'
     : e.status === 401 ? 'That GitHub key is not valid or has expired. Make a new one and unlock again.'
-    : (e.status === 403 || e.status === 404) && e.method !== 'GET' ? 'This GitHub key can read the ladles but cannot save them. On GitHub, open the key (Settings → Developer settings → Fine-grained tokens), set Repository access to eaf-melt-shop and Contents to Read and write, then try again.' + (e.ghMessage ? ' GitHub said: ' + e.ghMessage : '')
+    : (e.status === 403 || e.status === 404) && e.method !== 'GET' ? 'This GitHub key can read the dashboard but cannot save to it. On GitHub, open the key (Settings → Developer settings → Fine-grained tokens), set Repository access to eaf-melt-shop and Contents to Read and write, then try again.' + (e.ghMessage ? ' GitHub said: ' + e.ghMessage : '')
     : e.status === 403 || e.status === 404 ? 'That GitHub key cannot open the dashboard repository. Check that the key is for the shhimena account and includes eaf-melt-shop.'
     : e.status === 409 ? 'Someone else saved at the same moment. Try again.'
     : 'GitHub refused the change (' + e.status + (e.ghMessage ? ': ' + e.ghMessage : '') + '). Try again in a moment.');
@@ -2971,10 +2985,21 @@ a.btn { text-decoration: none; }
     bar.hidden = !preview;
     if (!preview) return;
     const when = d3.timeFormat('%b %-d at %-I:%M %p')(new Date(preview.at));
-    $('#import-bar-sub').textContent = `${importSummary(preview.parsed.files)} · imported ${when}. ` + (canSaveDb()
-      ? 'Only you see these until you save them to the database.'
-      : 'Only you see these, in this browser. To share them, download the updated site and send it to the site owner.');
-    $('#save-db-btn').hidden = !canSaveDb();
+    const gh = !canSaveDb() && !inClaude();
+    bar.classList.toggle('done', !!pubDone);
+    $('#import-bar-title').textContent = pubDone ? 'Published for everyone' : 'Showing Excel files you imported';
+    $('#import-bar-sub').textContent = pubDone
+      ? `${importSummary(preview.parsed.files)} · published ${d3.timeFormat('%b %-d at %-I:%M %p')(new Date(pubDone))}. Everyone sees it within a few minutes.`
+      : `${importSummary(preview.parsed.files)} · imported ${when}. ` + (canSaveDb() ? 'Only you see these until you save them to the database.'
+        : gh ? 'Only you see these until you publish them for everyone.'
+        : 'Only you see these, in this browser. To share them, download the updated site and send it to the site owner.');
+    $('#save-db-btn').hidden = !canSaveDb() || !!pubDone;
+    $('#publish-gh-btn').hidden = !gh || !!pubDone;
+    $('#download-site-btn').hidden = !!pubDone;
+    $('#remove-import-btn').textContent = pubDone ? 'Close' : 'Remove imported files';
+    $('#publish-unlock').hidden = !(pubAsk && gh && !pubDone);
+    $('#pub-pass-fld').hidden = !lad.lock;
+    $('#pub-key-fld').hidden = !!lad.lock;
   }
   function showProblems(parsed) {
     const ul = $('#update-problems');
@@ -3026,12 +3051,89 @@ a.btn { text-decoration: none; }
   $('#pick-folder').addEventListener('change', (e) => { readPicked(e.target.files); e.target.value = ''; });
   $('#pick-files').addEventListener('change', (e) => { readPicked(e.target.files); e.target.value = ''; });
   function removeImport(message) {
-    preview = null; keepImport(); DATA = BASE; dataChanged();
+    preview = null; pubDone = null; pubAsk = false; $('#publish-msg').textContent = ''; keepImport(); DATA = BASE; dataChanged();
     $('#update-result').hidden = true; $('#update-problems').hidden = true;
     if (message) say(message);
     draw();
   }
-  $('#remove-import-btn').addEventListener('click', () => removeImport('Imported files removed. The site shows the published data again.'));
+  $('#remove-import-btn').addEventListener('click', () => removeImport(pubDone ? '' : 'Imported files removed. The site shows the published data again.'));
+
+  // publish an import to the GitHub site for everyone, with the same editing password as the ladles
+  let pubDone = null, pubAsk = false;
+  const pubSay = (t, err) => { const m = $('#publish-msg'); m.textContent = t || ''; m.classList.toggle('err', !!err); };
+  const GH_REPO_API = `https://api.github.com/repos/${GH.owner}/${GH.repo}`;
+  const ghHeaders = (token, accept) => ({ Accept: accept || 'application/vnd.github+json', Authorization: 'Bearer ' + token, 'X-GitHub-Api-Version': '2022-11-28' });
+  async function ghErr(r, method) { const e = new Error('GitHub answered ' + r.status); e.status = r.status; e.method = method; try { e.ghMessage = (await r.json()).message || ''; } catch (x) { e.ghMessage = ''; } return e; }
+  async function ghGetIndex(token) {
+    const url = `${GH_REPO_API}/contents/index.html?ref=${GH.branch}&t=${Date.now()}`;
+    const m = await fetch(url, { cache: 'no-store', headers: ghHeaders(token, 'application/vnd.github.object+json') });
+    if (!m.ok) throw await ghErr(m, 'GET');
+    const sha = (await m.json()).sha;
+    let html = null;
+    try { const r = await fetch(url, { cache: 'no-store', headers: ghHeaders(token, 'application/vnd.github.raw+json') }); if (r.ok) html = await r.text(); } catch (e) { /* use this page's data */ }
+    return { sha, html };
+  }
+  function dataFromHtml(html) {
+    const m = html && html.match(/<script type="application\/json" id="vk-data">([\s\S]*?)<\/script>/);
+    if (!m) return null;
+    try { const d = JSON.parse(m[1]); return d && Array.isArray(d.heats) ? d : null; } catch (e) { return null; }
+  }
+  async function publishImport() {
+    const key = ghKey();
+    if (!key || !preview || pubDone) return;
+    const btn = $('#publish-gh-btn'); btn.disabled = true;
+    pubSay('Publishing… this takes a few seconds.');
+    try {
+      for (let attempt = 0; ; attempt++) {
+        const { sha, html } = await ghGetIndex(key.token);
+        const published = dataFromHtml(html) || BASE;
+        const merged = window.VintonParse.merge(published, preview.parsed);
+        if (!merged.spec_limits || !merged.spec_limits.length) merged.spec_limits = BASE.spec_limits;
+        merged.updatedAt = new Date().toISOString();
+        const doc = buildDocument(merged);
+        const r = await fetch(`${GH_REPO_API}/contents/index.html`, { method: 'PUT', headers: { ...ghHeaders(key.token), 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: `Add ${importSummary(preview.parsed.files)} from Excel (${key.name || 'someone'})`, content: b64encode(doc), sha, branch: GH.branch }) });
+        if (r.ok) {
+          BASE = merged;
+          pubDone = Date.now(); pubSay('');
+          drawImportBar();
+          return;
+        }
+        if ((r.status === 409 || r.status === 422) && attempt < 2) continue;
+        throw await ghErr(r, 'PUT');
+      }
+    } catch (e) {
+      pubSay(ghError(e), true);
+      if (e && e.status === 401) { setGhKey(null); }
+    } finally { btn.disabled = false; }
+  }
+  $('#publish-gh-btn').addEventListener('click', () => {
+    pubSay('');
+    if (ghKey()) { publishImport(); return; }
+    pubAsk = true; drawImportBar();
+    $(lad.lock ? '#pub-pass' : '#pub-key').focus();
+  });
+  $('#pub-cancel').addEventListener('click', () => { pubAsk = false; pubSay(''); drawImportBar(); });
+  $('#pub-go').addEventListener('click', async () => {
+    const name = $('#pub-name').value.trim();
+    let token = $('#pub-key').value.trim();
+    if (lad.lock && !$('#pub-pass').value) { pubSay('Type the password first.', true); return; }
+    if (!lad.lock && !token) { pubSay('Paste the GitHub edit key first.', true); return; }
+    if (!name) { pubSay('Add your name so the history shows who published.', true); return; }
+    if (lad.lock) {
+      pubSay('Checking the password…');
+      try { token = await openToken(lad.lock, $('#pub-pass').value); } catch (e) { pubSay('That password is not right.', true); return; }
+    } else pubSay('Checking the key…');
+    try {
+      await ghCanWrite(token);
+      setGhKey({ token, name });
+      $('#pub-pass').value = ''; $('#pub-key').value = '';
+      pubAsk = false; drawImportBar();
+      await publishImport();
+    } catch (e) {
+      pubSay(lad.lock && e && e.status === 401 ? 'The password is right, but the GitHub key behind it has expired or was deleted. The site owner needs to set the password again with a new key.' : ghError(e), true);
+    }
+  });
 
   // drag and drop anywhere on the page, folders included
   const overlay = $('#drop-overlay');

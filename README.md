@@ -48,15 +48,13 @@ Each page has a month picker and its own filters (crew, grade, disposition, spec
 3. Check the summary. It lists each file with the month and days it covers. Files that aren't one of these reports, or can't be read, are listed and skipped.
 4. The new month shows up on every page right away. It is kept **only in your browser** until you click **Remove import**.
 
-The files are read on your own computer and never uploaded anywhere.
+The files are read on your own computer. Nothing is shared until you publish it.
 
 ### Publishing it for everyone
 
-1. Click **Download updated site**. You get a file named `EAF-Melt-Shop-KPIs-<date>.html`.
-2. Rename it to `index.html`.
-3. In this repository, click **Add file → Upload files**, drop in `index.html` and click **Commit changes**.
+Click **Publish for everyone** in the yellow bar, type the editing password (the same one as for the ladles) and your name, and click **Unlock and publish**. The site updates for everyone within a few minutes. The computer remembers the password after the first time.
 
-The dashboard link shows the new data within a minute or two.
+Without the password, click **Download updated site** and send the file to the site owner, who can upload it here as `index.html`.
 
 ## Editing the ladles
 
