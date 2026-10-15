@@ -18,7 +18,7 @@ Chemistry dispositions, out-of-spec results, operator spec performance and bille
 | --- | --- |
 | **Chemistry Disposition** | How many heats were OK, reapplied, diverted, returned to the furnace or scrapped, by crew. |
 | **Out-of-Spec Chemistry** | Which elements missed spec, on which heats, and whether they ran above the maximum or below the minimum. |
-| **Operators** | How often each furnace operator's and caster operator's heats landed inside every spec limit, how each pairing performed, and each heat's path from furnace to caster (for example, in spec at the furnace but returned to the furnace at the caster). |
+| **Operators** | Each melter's OK % under the furnace melter criteria, how often each furnace and caster operator's heats landed inside the spec, how each pairing performed, and each heat's path from furnace to caster (for example, in spec at the furnace but returned to the furnace at the caster). |
 | **Billet Production** | Daily billet tons against plan, the variance to plan and the estimated production loss. |
 | **Data & definitions** | Which Excel file each month came from, the days it covers, and how every number is worked out. |
 
@@ -59,9 +59,16 @@ The dashboard link shows the new data within a minute or two.
 - **Operators.** The MELTER line reads `Furnace / Caster`. The first name is the furnace operator (also used as the crew), and the second is the caster operator. A ditto mark (`"`) repeats the name above, and spelling variants are merged (for example Nuñez and Nunes become Nunez).
 - **Dispositions.** Each heat is grouped as OK, Reapply, Divert, Return to furnace (RTF), Scrap or Unclassified.
 - **Duplicate heats.** A heat listed twice is counted once. The row with a disposition wins, then the latest date.
-- **Spec toggle.** *Daily sheet* checks each heat against its own sheet's `SPEC.` row. *Power BI table* uses the fixed Grade 60 / A615 limits from the original Power BI report and matches its numbers.
+- **Spec toggle.** *Melter criteria* (the Operators page default) applies the furnace melter rules below. *Daily sheet* checks each heat against its own sheet's `SPEC.` row. *Power BI table* uses the fixed Grade 60 / A615 limits from the original Power BI report and matches its numbers.
 - **Readings toggle.** *Exact* compares the lab reading as reported. *Rounded to spec* first rounds it to the spec's decimal places (ASTM E29 style).
-- **Furnace to caster.** *At the furnace* is the heat's chemistry result: in spec, missed spec, no spec to check against, or no chemistry entered. *At the caster* is its disposition category. **In spec, not OK at caster** counts heats with in-spec chemistry that were still reapplied, diverted, returned to the furnace or scrapped.
+- **Melter criteria.** From the *Instructions for chemistry disposition* and the *Vinton Grades Spec criteria*, applied to each heat's own `SPEC.` row:
+  - **C, Mn, Si, V** must be inside the OK range: 90% of the low spec up to the max spec. Outside it is *out of spec*.
+  - **P, S** over the max are *out of spec*.
+  - **Ni, Mo, Cu** over the max are *out-of-spec scrap*.
+  - **Cr** under 90% of the low spec is *out of spec*; over the max is *out-of-spec scrap*.
+  - **Melter OK %** is the share of a melter's heats with nothing outside these limits. The target is 90%.
+  - The instructions call for the FL1 sample. The monthly report only carries the final chemistry (the average of the final samples), so the rules are applied to that.
+- **Furnace to caster.** *At the furnace* is the heat's chemistry result: in spec, out of spec, out-of-spec scrap, no spec to check against, or no chemistry entered. *At the caster* is its disposition category. **In spec, not OK at caster** counts heats with in-spec chemistry that were still reapplied, diverted, returned to the furnace or scrapped.
 - **Targets.** Rates of 90% and up are on target, 80–90% are flagged to watch, and anything lower is below target.
 - **Billet.** Planned and actual tons come from the *EAF Daily Objective* sheet. Estimated production loss is the tons short of plan times the billet price you pick.
 
