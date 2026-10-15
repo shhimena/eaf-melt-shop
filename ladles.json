@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-10-15T14:49:30.914Z",
+ "updatedAt": "2026-10-15T15:52:34.658Z",
  "settings": {
   "max": 75,
   "warn": 50,
@@ -63,5 +63,20 @@
    "UpdatedBy": null
   }
  ],
- "log": []
+ "log": [
+  {
+   "At": "2026-10-15T15:52:34.658Z",
+   "Ladle": null,
+   "Note": "Editing password set",
+   "By": "Jimena"
+  }
+ ],
+ "lock": {
+  "v": 1,
+  "kdf": "PBKDF2-SHA256",
+  "iter": 600000,
+  "salt": "f3ZraADva4qBWjMR3asVKA==",
+  "iv": "jGHhJciDpBOJiW3M",
+  "ct": "WyQgN46cQ2l84xBIl7OLJfs/CKNjD6GFZ6RopX9DYVRWmSDD/duWnWtmiAlmliqfa1Ik6qvEPs7Iw6+zYxlwSCiDtSglfxiKKUoLmzPMutXZZktDDTWERGYNMlBrrCkoHwRSIFvhgvxrOcLMmQ=="
+ }
 }
