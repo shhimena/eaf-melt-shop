@@ -61,7 +61,7 @@ The dashboard link shows the new data within a minute or two.
 - **Duplicate heats.** A heat listed twice is counted once. The row with a disposition wins, then the latest date.
 - **Spec toggle.** *Melter criteria* (the Operators page default) applies the furnace melter rules below. *Daily sheet* checks each heat against its own sheet's `SPEC.` row. *Power BI table* uses the fixed Grade 60 / A615 limits from the original Power BI report and matches its numbers.
 - **Readings toggle.** *Exact* compares the lab reading as reported. *Rounded to spec* first rounds it to the spec's decimal places (ASTM E29 style).
-- **Melter criteria.** From the *Instructions for chemistry disposition* and the *Vinton Grades Spec criteria*, applied to each heat's own `SPEC.` row:
+- **Melter criteria.** From the *Instructions for chemistry disposition*, using the SPEC rows of the *Vinton Grades Spec criteria* sheet for 40/A615 and 60/A615 (#4 to #11). Grades and sizes not on that sheet, such as 60(A706/A615) DUAL and 80/A615, use the `SPEC.` row on their daily sheet. The Data & definitions page lists every range.
   - **C, Mn, Si, V** must be inside the OK range: 90% of the low spec up to the max spec. Outside it is *out of spec*.
   - **P, S** over the max are *out of spec*.
   - **Ni, Mo, Cu** over the max are *out-of-spec scrap*.
