@@ -2424,8 +2424,18 @@ a.btn { text-decoration: none; }
       headers: { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + token, 'X-GitHub-Api-Version': '2022-11-28', ...(body ? { 'Content-Type': 'application/json' } : {}) },
       body: body ? JSON.stringify(body) : undefined,
     });
-    if (!r.ok) { const e = new Error('GitHub answered ' + r.status); e.status = r.status; throw e; }
+    if (!r.ok) { const e = new Error('GitHub answered ' + r.status); e.status = r.status; e.method = method; try { e.ghMessage = (await r.json()).message || ''; } catch (x) { e.ghMessage = ''; } throw e; }
     return r.json();
+  }
+  /* A public repository can be read with any key, so check that this key can also write: creating an unused blob
+     needs Contents write access and changes nothing in the repository. */
+  async function ghCanWrite(token) {
+    const r = await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/git/blobs`, {
+      method: 'POST', cache: 'no-store',
+      headers: { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + token, 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: 'ladle editor write check', encoding: 'utf-8' }),
+    });
+    if (!r.ok) { const e = new Error('no write'); e.status = r.status; e.method = 'PUT'; try { e.ghMessage = (await r.json()).message || ''; } catch (x) { e.ghMessage = ''; } throw e; }
   }
   async function ghRead(token) {
     const j = await ghFetch('GET', token);
@@ -2448,10 +2458,11 @@ a.btn { text-decoration: none; }
     const e = new Error('conflict'); e.status = 409; throw e;
   }
   const ghError = (e) => (!e || !e.status ? 'Could not reach GitHub. Check the internet connection and try again.'
-    : e.status === 401 ? 'That edit key is not valid or has expired. Ask the site owner for a new one.'
-    : e.status === 403 || e.status === 404 ? 'That edit key cannot change the dashboard. Ask the site owner for a key with access to it.'
+    : e.status === 401 ? 'That GitHub key is not valid or has expired. Make a new one and unlock again.'
+    : (e.status === 403 || e.status === 404) && e.method !== 'GET' ? 'This GitHub key can read the ladles but cannot save them. On GitHub, open the key (Settings → Developer settings → Fine-grained tokens), set Repository access to eaf-melt-shop and Contents to Read and write, then try again.' + (e.ghMessage ? ' GitHub said: ' + e.ghMessage : '')
+    : e.status === 403 || e.status === 404 ? 'That GitHub key cannot open the dashboard repository. Check that the key is for the shhimena account and includes eaf-melt-shop.'
     : e.status === 409 ? 'Someone else saved at the same moment. Try again.'
-    : 'GitHub refused the change (' + e.status + '). Try again in a moment.');
+    : 'GitHub refused the change (' + e.status + (e.ghMessage ? ': ' + e.ghMessage : '') + '). Try again in a moment.');
 
   // ----- drawing -----
   function drawGauge(svgEl, life, S) {
@@ -2691,6 +2702,7 @@ a.btn { text-decoration: none; }
     } else ladleMsg('Checking the key…');
     try {
       const { obj } = await ghRead(token);
+      await ghCanWrite(token);
       setGhKey({ token, name });
       $('#key-token').value = ''; $('#key-pass').value = '';
       applyLadleFile(obj);
@@ -2707,8 +2719,9 @@ a.btn { text-decoration: none; }
     if (a !== b) { ladleMsg('The two passwords do not match.', true); return; }
     if (!key) { ladleMsg('Unlock editing with the GitHub key first.', true); return; }
     lad.busy = true; ladleMsg('Saving the password…');
+    let lock;
+    try { lock = await sealToken(key.token, a); } catch (e) { lad.busy = false; ladleMsg('This browser could not lock the key. Try the latest Chrome or Edge.', true); return; }
     try {
-      const lock = await sealToken(key.token, a);
       await ghSave((obj, who) => { obj.lock = lock; (obj.log = Array.isArray(obj.log) ? obj.log : []).push({ At: new Date().toISOString(), Ladle: null, Note: 'Editing password set', By: who }); return obj; }, 'Set the ladle editing password');
       $('#pass-new').value = ''; $('#pass-again').value = '';
       ladleMsg('Saved. Others can now unlock editing with this password.');
