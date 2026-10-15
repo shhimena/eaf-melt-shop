@@ -20,6 +20,7 @@ Chemistry dispositions, out-of-spec results, operator spec performance and bille
 | **Out-of-Spec Chemistry** | Which elements missed spec, on which heats, and whether they ran above the maximum or below the minimum. |
 | **Operators** | Each melter's OK % under the furnace melter criteria, how often each furnace and caster operator's heats landed inside the spec, how each pairing performed, and each heat's path from furnace to caster (for example, in spec at the furnace but returned to the furnace at the caster). |
 | **Billet Production** | Daily billet tons against plan, the variance to plan and the estimated production loss. |
+| **Ladle's Life** | The lining life of the 8 ladles against their safety life, and each ladle's status: In Use, On Preheater, Relining or Out of Service. On the live Claude link, people with edit access update the numbers and statuses right on the page, and every change is logged. |
 | **Data & definitions** | Which Excel file each month came from, the days it covers, and how every number is worked out. |
 
 Each page has a month picker and its own filters (crew, grade, disposition, spec source), and the detail tables can be searched and sorted.
@@ -29,6 +30,10 @@ Each page has a month picker and its own filters (crew, grade, disposition, spec
 | ![Out-of-Spec Chemistry page](docs/screenshots/out-of-spec.png) | ![Operators page](docs/screenshots/operators.png) |
 | **Billet Production** | **Import Excel** |
 | ![Billet Production page](docs/screenshots/billet-production.png) | ![Import Excel panel](docs/screenshots/import-excel.png) |
+
+**Ladle's Life**
+
+![Ladle's Life page](docs/screenshots/ladles-life.png)
 
 **Furnace to caster** (Operators page)
 
@@ -69,6 +74,7 @@ The dashboard link shows the new data within a minute or two.
   - **Melter OK %** is the share of a melter's heats with nothing outside these limits. The target is 90%.
   - The instructions call for the FL1 sample. The monthly report only carries the final chemistry (the average of the final samples), so the rules are applied to that.
 - **Furnace to caster.** *At the furnace* is the heat's chemistry result: in spec, out of spec, out-of-spec scrap, no spec to check against, or no chemistry entered. *At the caster* is its disposition category. **In spec, not OK at caster** counts heats with in-spec chemistry that were still reapplied, diverted, returned to the furnace or scrapped.
+- **Ladle's Life.** Each gauge runs from 0 to the safety life (75). It is green below 50, yellow from 50 and red from 60; editors can change those limits on the page. The copy on GitHub shows the ladles as they were when it was saved; the live, editable version is the Claude link.
 - **Targets.** Rates of 90% and up are on target, 80–90% are flagged to watch, and anything lower is below target.
 - **Billet.** Planned and actual tons come from the *EAF Daily Objective* sheet. Estimated production loss is the tons short of plan times the billet price you pick.
 
