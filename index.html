@@ -279,6 +279,9 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
 .ladle-live.off { color: var(--muted); font-weight: 500; }
 .ladle-live.off i { background: var(--faint); box-shadow: none; }
 .ladle-asof { font-size: 13px; color: var(--muted); }
+.ladle-away { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; padding: 22px 24px; }
+.ladle-away h2 { margin: 0; font-size: 17px; }
+a.btn { text-decoration: none; }
 .ladle-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
 @media (max-width: 1100px) { .ladle-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 520px) {
@@ -730,6 +733,11 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
       <div class="pg-head">
         <h1 class="pg-title" id="ladles-title">Ladle's Life</h1>
       </div>
+      <div class="card ladle-away" id="ladle-away" hidden>
+        <h2>Ladle life and status are kept on the public site</h2>
+        <a class="btn primary" id="ladle-away-link" href="https://shhimena.github.io/eaf-melt-shop/#ladles" target="_blank" rel="noopener">Open Ladle's Life</a>
+      </div>
+      <div id="ladle-main">
       <div class="filters ladle-bar">
         <span class="ladle-live off" id="ladle-live"><i></i><span>Saved copy</span></span>
         <span class="ladle-asof" id="ladle-asof"></span>
@@ -773,6 +781,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
             <tbody></tbody>
           </table>
         </div>
+      </div>
       </div>
     </section>
 
@@ -844,7 +853,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
             <li><b>Hit spec</b>: a heat with chemistry results where every checked element is inside its limits. Heats with no chemistry entered are left out.</li>
             <li><b>Melter criteria</b> (Operators page default): from "Instructions for chemistry disposition" and the Vinton Grades Spec criteria, judged against the SPEC rows of the Vinton Grades Spec criteria sheet (40/A615 and 60/A615, #4 to #11, shown below). Grades and sizes not on that sheet, such as 60(A706/A615) DUAL and 80/A615, use the SPEC row on their daily sheet. <b>C, Mn, Si and V</b> must be inside the OK range, from 90% of the low spec up to the max spec; outside it is <i>out of spec</i>. <b>P and S</b> over the max are <i>out of spec</i>. <b>Ni, Mo and Cu</b> over the max are <i>out-of-spec scrap</i>. <b>Cr</b> under 90% of the low spec is <i>out of spec</i>; over the max is <i>out-of-spec scrap</i>. Other elements are not part of the melter criteria. <b>Melter OK %</b> = heats with no element outside the criteria ÷ heats checked; the target is 90%. The instructions call for the FL1 sample, but the monthly report only has the final chemistry (the average of the final samples), so the criteria are applied to that.</li>
             <li><b>Furnace to caster</b>: on the Operators page, <i>at the furnace</i> is the heat's chemistry result (in spec, out of spec, out-of-spec scrap, no spec to check against, or no chemistry recorded) and <i>at the caster</i> is its disposition category. <b>In spec, not OK at caster</b> counts heats whose chemistry was in spec but that were reapplied, diverted, returned to the furnace or scrapped.</li>
-            <li><b>Ladle's Life</b>: each ladle's current lining life against its safety life (75 unless changed on the page) and its service status: In Use, On Preheater, Relining or Out of Service. The gauge is green below the yellow limit (50), yellow from 50 and red from 60; the thin band outside the gauge marks those zones. The ladles are kept in ladles.json in the dashboard's GitHub repository. Anyone can view them; a person with an edit key from the site owner unlocks editing once on their computer, and each save is recorded in the change log with their name and the time. A copy opened without internet shows the ladles as they were when it was saved.</li>
+            <li><b>Ladle's Life</b>: each ladle's current lining life against its safety life (75 unless changed on the page) and its service status: In Use, On Preheater, Relining or Out of Service. The gauge is green below the yellow limit (50), yellow from 50 and red from 60; the thin band outside the gauge marks those zones. The ladles are kept in ladles.json in the dashboard's GitHub repository. Anyone can view them; a person with an edit key from the site owner unlocks editing once on their computer, and each save is recorded in the change log with their name and the time. On the Claude link the tab opens the public site, so there is only one set of ladles. A copy opened without internet shows the ladles as they were when it was saved.</li>
             <li><b>Planned tons to date</b>: planned daily tons through the latest day that has actual tons. <b>Estimated production loss</b>: tons short of plan × billet price per ton; price per billet = price per ton × 0.98 t.</li>
           </ul>
         </div>
@@ -2319,7 +2328,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
   const LADLE_COLOR = { 'In Use': 'var(--total)', 'On Preheater': 'var(--heat)', Relining: 'var(--rtf)', 'Out of Service': 'var(--uncl)' };
   const LADLE_SETTINGS = { max: 75, warn: 50, alarm: 60 };
   const LOG_KEEP = 1000;
-  const lad = { source: 'snapshot', live: false, items: null, settings: null, log: [], editing: false, drafts: new Map(), busy: false, me: undefined, askKey: false, limitsTouched: false, fileAt: null };
+  const lad = { tried: false, source: 'snapshot', live: false, items: null, settings: null, log: [], editing: false, drafts: new Map(), busy: false, me: undefined, askKey: false, limitsTouched: false, fileAt: null };
   const ladleSnap = () => SNAPSHOT.ladles || { asOf: null, settings: LADLE_SETTINGS, items: [] };
   const ladleItems = () => (lad.live && lad.items && lad.items.length ? lad.items : ladleSnap().items || []).slice().sort((a, b) => a.Ladle - b.Ladle);
   const ladleSettings = () => {
@@ -2328,7 +2337,8 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
   };
   const ghKey = () => { try { const v = JSON.parse(localStorage.getItem(GH_KEY) || 'null'); return v && v.token ? v : null; } catch (e) { return null; } };
   const setGhKey = (v) => { try { if (v) localStorage.setItem(GH_KEY, JSON.stringify(v)); else localStorage.removeItem(GH_KEY); return true; } catch (e) { return false; } };
-  const canEditLadles = () => (lad.source === 'github' ? true : !!(db.api && lad.source === 'db' && db.canWrite !== false));
+  const canEditLadles = () => lad.source === 'github';
+  const inClaude = () => !!(window.claude && typeof window.claude.use === 'function');
   function ladleSnapshotForPage() {
     const items = ladleItems().map((r) => ({ Ladle: r.Ladle, Life: r.Life, Status: r.Status, UpdatedAt: r.UpdatedAt || null }));
     const last = d3.max(items, (r) => r.UpdatedAt || '') || ladleSnap().asOf || null;
@@ -2357,9 +2367,10 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
     for (const u of urls) {
       try {
         const r = await fetch(u + '?t=' + Date.now(), { cache: 'no-store' });
-        if (r.ok && applyLadleFile(await r.json())) { redrawLadles(); return true; }
+        if (r.ok && applyLadleFile(await r.json())) { lad.tried = true; redrawLadles(); return true; }
       } catch (e) { /* not reachable from here */ }
     }
+    lad.tried = true; redrawLadles();
     return false;
   }
   let ladlePoll = null;
@@ -2369,18 +2380,7 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
       ladlePoll = setInterval(() => { if (!document.hidden && state.page === 'ladles' && !lad.busy && !lad.drafts.size) loadLadleFile(); }, 60000);
     });
   }
-  function connectLadles(api) {
-    const take = () => lad.source !== 'github';
-    try {
-      api.collection('ladles').onSnapshot((snap) => {
-        if (!take()) return;
-        lad.items = snap.docs.map((d) => d.data()).filter((r) => r && Number.isFinite(+r.Ladle)).map((r) => ({ ...r, Ladle: +r.Ladle, Life: +r.Life || 0 }));
-        lad.source = 'db'; lad.live = true; redrawLadles();
-      }, () => { if (take()) { lad.live = false; lad.source = 'snapshot'; redrawLadles(); } });
-      api.doc('config/ladles').onSnapshot((snap) => { if (take()) { lad.settings = snap.exists ? snap.data() : null; redrawLadles(); } }, () => {});
-      api.collection('ladle_log').orderBy('At', 'desc').limit(500).onSnapshot((snap) => { if (take()) { lad.log = snap.docs.map((d) => d.data()); redrawLadles(); } }, () => {});
-    } catch (e) { /* stays on the saved copy */ }
-  }
+  function connectLadles() { /* the ladles live in the GitHub file only; the Claude database does not hold them */ }
   async function myId() {
     if (lad.me === undefined) { try { lad.me = db.user && db.user.id ? await db.user.id() : null; } catch (e) { lad.me = null; } }
     return lad.me;
@@ -2533,6 +2533,10 @@ body { background: var(--canvas); color: var(--ink); font-family: var(--font-ui)
   }
 
   function drawLadles() {
+    const away = inClaude() && !lad.live;
+    $('#ladle-away').hidden = !(away && lad.tried);
+    $('#ladle-main').hidden = away;
+    if (away) return;
     const S = ladleSettings();
     const items = ladleItems();
     const chip = $('#ladle-live');
