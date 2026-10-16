@@ -102,7 +102,8 @@ The password unlocks the GitHub key, and the key can change files in this reposi
 - **Operators.** The MELTER line reads `Furnace / Caster`. The first name is the furnace operator (also used as the crew), and the second is the caster operator. A ditto mark (`"`) repeats the name above, and spelling variants are merged (for example Nuñez and Nunes become Nunez).
 - **Dispositions.** Each heat is grouped as OK, Reapply, Divert, Return to furnace (RTF), Scrap or Unclassified.
 - **Duplicate heats.** A heat listed twice is counted once. The row with a disposition wins, then the latest date.
-- **Spec toggle.** *Melter criteria* (the Operators page default) applies the furnace melter rules below. *Daily sheet* checks each heat against its own sheet's `SPEC.` row. *Power BI table* uses the fixed Grade 60 / A615 limits from the original Power BI report and matches its numbers.
+- **Where the numbers come from.** Every heat, reading, disposition and ton comes from the two monthly Excel reports. The only things not in the Excel are the melter criteria (from the printed *Instructions for chemistry disposition* and *Vinton Grades Spec criteria*) and the billet price you pick for the estimated production loss.
+- **Spec toggle.** *Melter criteria* (the Operators page default) applies the furnace melter rules below. *Daily sheet* checks each heat against its own sheet's `SPEC.` row.
 - **Readings toggle.** *Exact* compares the lab reading as reported. *Rounded to spec* first rounds it to the spec's decimal places (ASTM E29 style).
 - **Melter criteria.** From the *Instructions for chemistry disposition*, using the SPEC rows of the *Vinton Grades Spec criteria* sheet for 40/A615 and 60/A615 (#4 to #11). Grades and sizes not on that sheet, such as 60(A706/A615) DUAL and 80/A615, use the `SPEC.` row on their daily sheet. The Data & definitions page lists every range.
   - **C, Mn, Si, V** must be inside the OK range: 90% of the low spec up to the max spec. Outside it is *out of spec*.
@@ -115,7 +116,7 @@ The password unlocks the GitHub key, and the key can change files in this reposi
 - **Station pages.** The Furnace Station always uses the melter criteria with exact readings. *Latest heats* lists the newest heats first and shows as many as fit. *To make the month* is the month's planned tons still left, spread over the planned days that remain after the last day with actual tons.
 - **Ladle's Life.** Each gauge runs from 0 to the safety life (75). It is green below 50, yellow from 50 and red from 60; editors can change those limits on the page. The ladles live in `ladles.json` in this repository, and each save on the page is a commit to that file. This site is the only place ladles are kept; on the Claude link, the Ladle's Life tab opens this site.
 - **Targets.** Rates of 90% and up are on target, 80–90% are flagged to watch, and anything lower is below target.
-- **Billet.** Planned and actual tons come from the *EAF Daily Objective* sheet. Estimated production loss is the tons short of plan times the billet price you pick.
+- **Billet.** Planned and actual tons come from the *EAF Daily Objective* sheet. Estimated production loss is the tons short of plan times the billet price per ton you pick (the price is not in the Excel).
 
 The **Data & definitions** page lists every month that is included and flags months with missing or partial reports.
 
