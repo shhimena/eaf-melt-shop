@@ -20,7 +20,7 @@ Chemistry dispositions, out-of-spec results, operator spec performance and bille
 | **Out-of-Spec Chemistry** | Which elements missed spec, on which heats, and whether they ran above the maximum or below the minimum. |
 | **Operators** | Each melter's OK % under the furnace melter criteria. Each station's operators are judged on their own work: furnace operators by the chemistry at the furnace, caster operators by how their heats were dispositioned at the caster. Also how each pairing performed, and each heat's path from furnace to caster (for example, in spec at the furnace but returned to the furnace at the caster). |
 | **Billet Production** | Daily billet tons against plan, the variance to plan and the estimated production loss. |
-| **Ladle's Life** | The lining life of the 8 ladles against their safety life, and each ladle's status: In Use, On Preheater, Relining or Out of Service. Anyone holding an edit key updates the numbers and statuses right on the page, and every change is logged. |
+| **Ladle's Life** | The lining life of the 8 ladles against their safety life, and each ladle's status: In Use (green), On Preheater (orange), Relining (purple) or Out of Service (gray). Anyone holding an edit key updates the numbers and statuses right on the page, and every change is logged. |
 | **Furnace Station** | A one-screen view for the TV at the furnace: heats, melter OK %, out of spec and out-of-spec scrap, melter OK % by day, the furnace operators, the latest heats with what was outside the criteria, the elements and grades, and melter OK % month by month. |
 | **Caster Station** | A one-screen view for the TV at the caster: billet tons against plan, the tons a day still needed to make the month, the last day, OK at the caster, billet tons by day with the latest shift comments, the caster operators, the latest heats and their dispositions, the sizes cast, and % of plan and OK at the caster month by month. |
 | **Data & definitions** | Which Excel file each month came from, the days it covers, and how every number is worked out. |
@@ -64,7 +64,7 @@ For a TV computer that opens the browser on its own, use these links. They open 
 
 ## Adding a new month
 
-1. Open the [dashboard](https://shhimena.github.io/eaf-melt-shop/) and click **Import Excel** in the top right.
+1. Open the [dashboard](https://shhimena.github.io/eaf-melt-shop/) and click **Import Excel** in the top right. Importing needs the editing password (the same one as for the ladles): the first time on a computer, type it and your name and click **Unlock importing**. The computer remembers it until **Lock importing** is clicked.
 2. Pick the month's workbooks, or drag the whole Vinton KPIs folder onto the page:
    - `Melt Shop Chemistry Results Report <Month> <Year>.xlsx`
    - `VT_STEEL_Production and Shipments_Template <Month> <Year>.xlsx`
@@ -75,13 +75,13 @@ The files are read on your own computer. Nothing is shared until you publish it.
 
 ### Publishing it for everyone
 
-Click **Publish for everyone** in the yellow bar, type the editing password (the same one as for the ladles) and your name, and click **Unlock and publish**. The site updates for everyone within a few minutes. The computer remembers the password after the first time.
+Click **Publish for everyone** in the yellow bar. The site updates for everyone within a few minutes.
 
-Without the password, click **Download updated site** and send the file to the site owner, who can upload it here as `index.html`.
+**Download updated site** saves a copy of the whole site with the new month built in, for sending to the site owner instead.
 
 ## Editing the ladles
 
-Anyone can view **Ladle's Life**. To change a ladle, click **Edit ladles**, type the editing password and your name, and click **Unlock**. The page remembers it on that computer until **Remove edit key** is clicked. Each save updates `ladles.json` in this repository and shows for everyone within a minute or two.
+Anyone can view **Ladle's Life**. To change a ladle, click **Edit ladles**, type the editing password and your name, and click **Unlock**. The page remembers it on that computer until **Lock this computer** is clicked. The same unlock also opens importing. Each save updates `ladles.json` in this repository and shows for everyone within a minute or two.
 
 ### Setting up editing (site owner)
 
@@ -92,9 +92,9 @@ Anyone can view **Ladle's Life**. To change a ladle, click **Edit ladles**, type
 5. Click **Generate token** and copy it (it starts with `github_pat_`).
 6. On the dashboard, open **Ladle's Life**, click **Edit ladles**, paste the key and your name, and click **Unlock**.
 7. In **Editing password**, type a password of at least 12 characters twice and click **Save password**. A few words with spaces work well.
-8. Give that password to the people who update the ladles. They never need the GitHub key.
+8. Give that password to the people who update the ladles or import the monthly reports. They never need the GitHub key.
 
-The password unlocks the GitHub key, and the key can change files in this repository, so share the password only with people who should edit the ladles. Only the locked form of the key is saved in `ladles.json`. To change the password, unlock editing and save a new one. To take access away from everyone, delete the token on GitHub. When it expires, make a new one and repeat steps 6 and 7.
+The password unlocks the GitHub key, and the key can change files in this repository, so share the password only with people who should edit the ladles and import reports. Only the locked form of the key is saved in `ladles.json`. To change the password, unlock editing and save a new one. To take access away from everyone, delete the token on GitHub. When it expires, make a new one and repeat steps 6 and 7.
 
 ## How the numbers are worked out
 
