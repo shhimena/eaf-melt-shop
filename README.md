@@ -18,9 +18,11 @@ Chemistry dispositions, out-of-spec results, operator spec performance and bille
 | --- | --- |
 | **Chemistry Disposition** | How many heats were OK, reapplied, diverted, returned to the furnace or scrapped, by crew. |
 | **Out-of-Spec Chemistry** | Which elements missed spec, on which heats, and whether they ran above the maximum or below the minimum. |
-| **Operators** | Each melter's OK % under the furnace melter criteria, how often each furnace and caster operator's heats landed inside the spec, how each pairing performed, and each heat's path from furnace to caster (for example, in spec at the furnace but returned to the furnace at the caster). |
+| **Operators** | Each melter's OK % under the furnace melter criteria. Each station's operators are judged on their own work: furnace operators by the chemistry at the furnace, caster operators by how their heats were dispositioned at the caster. Also how each pairing performed, and each heat's path from furnace to caster (for example, in spec at the furnace but returned to the furnace at the caster). |
 | **Billet Production** | Daily billet tons against plan, the variance to plan and the estimated production loss. |
 | **Ladle's Life** | The lining life of the 8 ladles against their safety life, and each ladle's status: In Use, On Preheater, Relining or Out of Service. Anyone holding an edit key updates the numbers and statuses right on the page, and every change is logged. |
+| **Furnace Station** | A one-screen view for the TV at the furnace: heats, melter OK %, out of spec and out-of-spec scrap, melter OK % by day, the furnace operators, the latest heats with what was outside the criteria, the elements and grades, and the ladles. |
+| **Caster Station** | A one-screen view for the TV at the caster: billet tons against plan, the tons a day still needed to make the month, the last day, OK at the caster, billet tons by day with the latest shift comments, the caster operators, the latest heats and their dispositions, the sizes cast, and the ladles. |
 | **Data & definitions** | Which Excel file each month came from, the days it covers, and how every number is worked out. |
 
 Each page has a month picker and its own filters (crew, grade, disposition, spec source), and the detail tables can be searched and sorted.
@@ -35,9 +37,30 @@ Each page has a month picker and its own filters (crew, grade, disposition, spec
 
 ![Ladle's Life page](docs/screenshots/ladles-life.png)
 
-**Furnace to caster** (Operators page)
+**Operators page:** each station's operators, and each heat from furnace to caster
 
-![Furnace to caster: each heat's chemistry at the furnace next to its disposition at the caster](docs/screenshots/furnace-to-caster.png)
+![Furnace operators by chemistry at the furnace, caster operators by disposition at the caster, and each heat's chemistry at the furnace next to its disposition at the caster](docs/screenshots/furnace-to-caster.png)
+
+**Furnace Station**
+
+![Furnace Station on a 1920 × 1080 TV](docs/screenshots/furnace-station.png)
+
+**Caster Station**
+
+![Caster Station on a 1920 × 1080 TV](docs/screenshots/caster-station.png)
+
+## Station TVs
+
+1. On the computer connected to the TV, open **Furnace Station** or **Caster Station**.
+2. Click **Full screen**. The page fills the screen and sizes itself to it, so everything fits with no scrolling on any TV, from 720p to 4K.
+3. To leave, press **Esc** or move the mouse and click **Exit full screen**.
+
+While it is full screen, the page keeps the screen from going to sleep where the browser allows it, and hides the mouse pointer after a few seconds. It checks for newly published data every 10 minutes and for ladle changes every minute, and updates itself without leaving full screen.
+
+For a TV computer that opens the browser on its own, use these links. They open the station already filling the window; start the browser in full-screen or kiosk mode:
+
+- Furnace: `https://shhimena.github.io/eaf-melt-shop/#furnace-station/tv`
+- Caster: `https://shhimena.github.io/eaf-melt-shop/#caster-station/tv`
 
 ## Adding a new month
 
@@ -89,6 +112,7 @@ The password unlocks the GitHub key, and the key can change files in this reposi
   - **Melter OK %** is the share of a melter's heats with nothing outside these limits. The target is 90%.
   - The instructions call for the FL1 sample. The monthly report only carries the final chemistry (the average of the final samples), so the rules are applied to that.
 - **Furnace to caster.** *At the furnace* is the heat's chemistry result: in spec, out of spec, out-of-spec scrap, no spec to check against, or no chemistry entered. *At the caster* is its disposition category. **In spec, not OK at caster** counts heats with in-spec chemistry that were still reapplied, diverted, returned to the furnace or scrapped.
+- **Station pages.** The Furnace Station always uses the melter criteria with exact readings. *Latest heats* lists the newest heats first and shows as many as fit. *To make the month* is the month's planned tons still left, spread over the planned days that remain after the last day with actual tons.
 - **Ladle's Life.** Each gauge runs from 0 to the safety life (75). It is green below 50, yellow from 50 and red from 60; editors can change those limits on the page. The ladles live in `ladles.json` in this repository, and each save on the page is a commit to that file. This site is the only place ladles are kept; on the Claude link, the Ladle's Life tab opens this site.
 - **Targets.** Rates of 90% and up are on target, 80–90% are flagged to watch, and anything lower is below target.
 - **Billet.** Planned and actual tons come from the *EAF Daily Objective* sheet. Estimated production loss is the tons short of plan times the billet price you pick.
