@@ -389,7 +389,7 @@ a.btn { text-decoration: none; }
 .st-card h2 { display: flex; align-items: baseline; justify-content: space-between; gap: 1em; font-size: 1.12em; font-weight: 600; margin: 0 0 .4em; min-width: 0; }
 .st-card h2 > span { white-space: nowrap; }
 .st-card h2 small { font-size: .8em; font-weight: 500; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
-.st .c7 { grid-column: span 7; } .st .c5 { grid-column: span 5; } .st .c4 { grid-column: span 4; } .st .c3 { grid-column: span 3; }
+.st .c7 { grid-column: span 7; } .st .c6 { grid-column: span 6; } .st .c5 { grid-column: span 5; } .st .c3 { grid-column: span 3; }
 .st-legend { display: flex; flex-wrap: wrap; gap: .15em 1em; font-size: .84em; color: var(--muted); margin: 0 0 .45em; }
 .st-legend:empty { display: none; }
 .st-legend .lg { display: inline-flex; align-items: center; gap: .4em; color: var(--ink); white-space: nowrap; }
@@ -398,7 +398,7 @@ a.btn { text-decoration: none; }
 .st-chart > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
 .st-chart text { font-family: var(--font-ui); }
 .st-chart .tl { font-size: .85em; fill: var(--muted); }
-.st-chart .vl { font-family: var(--font-num); font-size: .9em; font-weight: 600; fill: var(--ink); }
+.st-chart .vl { font-family: var(--font-num); font-size: .9em; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; stroke-linejoin: round; }
 .st-chart .vl.good { fill: var(--good-ink); } .st-chart .vl.warn { fill: var(--warn-ink); } .st-chart .vl.bad { fill: var(--bad-ink); }
 .st-chart .grid line { stroke: var(--line-2); }
 .st-chart .hover-band { fill: var(--ink); opacity: 0; }
@@ -447,24 +447,15 @@ a.btn { text-decoration: none; }
 .st-notes:empty { display: none; }
 .st-notes li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--muted); }
 .st-notes b { color: var(--ink); font-weight: 600; margin-right: .5em; }
-.st-ladles { flex: 1 1 0; min-height: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: .5em; }
-.st-ladle { display: flex; flex-direction: column; min-height: 0; min-width: 0; border-radius: .5em; background: var(--panel-2); overflow: hidden; }
-.st-ladle .nm { font-family: var(--font-num); font-weight: 700; font-size: 1.05em; padding: .3em .55em 0; }
-.st-ladle .gw { position: relative; flex: 1 1 0; min-height: 0; margin: 0 .3em; }
-.st-ladle svg.gauge { position: absolute; inset: 0; width: 100%; height: 100%; }
-.st-ladle svg.gauge text { font-family: var(--font-ui); }
-.st-ladle svg.gauge .num { font-family: var(--font-num); font-size: 50px; font-weight: 600; fill: var(--ink); font-variant-numeric: tabular-nums; }
-.st-ladle svg.gauge .num.over { fill: var(--bad-ink); }
-.st-ladle svg.gauge .end { font-size: 15px; fill: var(--muted); }
-.st-ladle .stt { display: flex; align-items: center; justify-content: center; gap: .4em; font-size: .86em; font-weight: 600; padding: .32em .3em; white-space: nowrap; overflow: hidden; }
-.st-ladle .stt i { width: .65em; height: .65em; border-radius: 50%; flex: none; }
+.st-tbl th.num, .st-tbl td.num { text-align: right; }
+.st-legend .sw.tgt { height: 0; width: 1.3em; border-radius: 0; border-top: 2px dashed var(--ink); opacity: .55; }
+.st-chart .target { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 5 4; opacity: .55; }
+.st-chart .tl.cur { fill: var(--ink); font-weight: 600; }
 @media (max-width: 1100px) {
   html:not(.vk-tv) .st { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
   html:not(.vk-tv) .st > .st-card { grid-column: 1 / -1; }
   html:not(.vk-tv) .st > .st-card.fx { height: 340px; }
   html:not(.vk-tv) .st-card:not(.fx) > * { flex: none !important; }
-  html:not(.vk-tv) .st-ladles { grid-template-rows: none; }
-  html:not(.vk-tv) .st-ladle .gw { flex: none; aspect-ratio: 200 / 118; }
   html:not(.vk-tv) .st-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 620px) {
@@ -939,7 +930,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
         <div class="st-legend" data-st="ops-legend"></div>
         <ol class="st-rank" data-st="ops"></ol>
       </div>
-      <div class="st-card c5 fx">
+      <div class="st-card c6 fx">
         <h2><span>Latest heats</span><small data-st="heats-note"></small></h2>
         <div class="st-tbl-wrap">
           <table class="st-tbl" data-st="heats">
@@ -955,9 +946,10 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
         <h3 class="st-sub"><span>Grades</span><small>Heats · OK</small></h3>
         <div class="st-bars wide fill" data-st="els2"></div>
       </div>
-      <div class="st-card c4">
-        <h2><span>Ladles</span><small data-st="ladles-note"></small></h2>
-        <div class="st-ladles" data-st="ladles"></div>
+      <div class="st-card c3 fx">
+        <h2><span>Melter OK % by month</span></h2>
+        <div class="st-legend" data-st="months-legend"></div>
+        <div class="st-chart" data-st="months"></div>
       </div>
     </section>
 
@@ -984,7 +976,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
         <div class="st-legend" data-st="ops-legend"></div>
         <ol class="st-rank" data-st="ops"></ol>
       </div>
-      <div class="st-card c5 fx">
+      <div class="st-card c6 fx">
         <h2><span>Latest heats</span><small data-st="heats-note"></small></h2>
         <div class="st-tbl-wrap">
           <table class="st-tbl" data-st="heats">
@@ -999,9 +991,10 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
         <h3 class="st-sub"><span>Sizes</span><small>Heats · share</small></h3>
         <div class="st-bars wide fill" data-st="els2"></div>
       </div>
-      <div class="st-card c4">
-        <h2><span>Ladles</span><small data-st="ladles-note"></small></h2>
-        <div class="st-ladles" data-st="ladles"></div>
+      <div class="st-card c3 fx">
+        <h2><span>Month by month</span></h2>
+        <div class="st-legend" data-st="months-legend"></div>
+        <div class="st-chart" data-st="months"></div>
       </div>
     </section>
 
@@ -2498,6 +2491,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
   function stLegend(box, items) {
     box.replaceChildren(...items.map(([label, color, soft]) => { const s = mk('span', 'lg'); const w = mk('i', 'sw'); w.style.background = color; if (soft) w.style.opacity = '.5'; s.append(w, label); return s; }));
   }
+  function stTarget(box) { const s = mk('span', 'lg'); const w = mk('i', 'sw tgt'); s.append(w, 'Target 90%'); box.appendChild(s); }
   function stRank(ol, rows, total) {
     ol.replaceChildren();
     if (!rows.length) { ol.appendChild(mk('li', 'chart-empty', 'No heats for this month')); return; }
@@ -2555,29 +2549,44 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
     const lim = box.getBoundingClientRect().bottom;
     if (box.classList.contains('fill') && box.clientHeight > 0) for (const k of [...box.children].reverse()) { if (k.getBoundingClientRect().bottom <= lim + 1) break; k.remove(); }
   }
-  const gradeShort = (g) => String(g || '—').replace(/\s*\(A706\/A615\)\s*DUAL/i, ' DUAL');
-  function stLadles(sec) {
-    const S = ladleSettings();
-    const items = ladleItems();
-    const grid = stq(sec, 'ladles');
-    grid.replaceChildren();
-    for (const it of items) {
-      const life = Math.max(0, Math.round(+it.Life || 0));
-      const c = mk('div', 'st-ladle');
-      const gw = mk('div', 'gw');
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'gauge'); svg.setAttribute('role', 'img');
-      gw.appendChild(svg);
-      const stt = mk('div', 'stt');
-      c.append(mk('div', 'nm', 'Ladle ' + it.Ladle), gw, stt);
-      grid.appendChild(c);
-      drawGauge(svg, life, S);
-      paintStatus(stt, it.Status);
-      c.title = `Ladle ${it.Ladle}: life ${life} of ${S.max}, ${it.Status || 'no status'}`;
-    }
-    if (!items.length) grid.appendChild(mk('div', 'chart-empty', 'No ladle data yet'));
-    const last = lad.live ? lad.fileAt || d3.max(items, (r) => r.UpdatedAt || '') : d3.max(items, (r) => r.UpdatedAt || '') || ladleSnap().asOf;
-    stq(sec, 'ladles-note').textContent = last ? (lad.live ? 'Live · ' : 'As of ') + whenShort(last) : '';
+  // percent by month (oldest to newest) against the 90% target; one or two bars a month
+  function stMonths(box, rows, cur, series) {
+    clear(box);
+    if (!rows.length) return emptyNote(box, 'No months yet');
+    const W = box.clientWidth, H = box.clientHeight;
+    if (W < 40 || H < 60) return;
+    const em = emOf(box);
+    const svg = d3.select(box).append('svg').attr('viewBox', `0 0 ${W} ${H}`);
+    const tip = makeTip(box);
+    const top = Math.max(1, d3.max(rows, (r) => d3.max(series, (s) => r[s.key] || 0)) || 1);
+    const y = d3.scaleLinear([0, top], [H - 1.9 * em, 1.6 * em]);
+    const yt = [0, 0.5, 1].filter((t) => t <= top);
+    const fmtT = loc.format('.0%');
+    const m = { l: (d3.max(yt, (t) => textWidth(svg, fmtT(t), 'tl')) || 10) + 0.9 * em, r: 2 };
+    const x = d3.scaleBand(rows.map((r) => r.Month), [m.l, W - m.r]).paddingInner(0.28).paddingOuter(0.1);
+    const x1 = d3.scaleBand(series.map((s) => s.key), [0, x.bandwidth()]).padding(series.length > 1 ? 0.08 : 0);
+    svg.append('g').attr('class', 'grid').selectAll('line').data(yt).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', (d) => y(d)).attr('y2', (d) => y(d));
+    svg.append('g').selectAll('text').data(yt).join('text').attr('class', 'tl').attr('x', m.l - 0.5 * em).attr('y', (d) => y(d)).attr('dy', '0.35em').attr('text-anchor', 'end').text(fmtT);
+    const bars = rows.flatMap((r) => series.filter((s) => r[s.key] != null).map((s) => ({ r, s, v: r[s.key] })));
+    const bw = x1.bandwidth();
+    svg.append('g').selectAll('rect').data(bars).join('rect')
+      .attr('x', (b) => x(b.r.Month) + x1(b.s.key)).attr('width', bw).attr('y', (b) => y(b.v)).attr('height', (b) => y(0) - y(b.v))
+      .attr('rx', Math.min(3, bw / 4)).style('fill', (b) => b.s.color(b.v));
+    svg.append('line').attr('class', 'target').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(0.9)).attr('y2', y(0.9));
+    const wl = d3.max(bars, (b) => textWidth(svg, fP0(b.v), 'vl')) || 0;
+    if (wl <= bw + x1.step() * x1.paddingInner() + 2) svg.append('g').selectAll('text').data(bars).join('text').attr('class', (b) => 'vl ' + (series.length > 1 ? '' : status(b.v)))
+      .attr('x', (b) => x(b.r.Month) + x1(b.s.key) + bw / 2).attr('y', (b) => y(b.v) - 0.45 * em).attr('text-anchor', 'middle').text((b) => fP0(b.v));
+    const lab = (k) => MONTHS[+k.slice(5, 7) - 1].slice(0, 3);
+    svg.append('g').selectAll('text').data(rows).join('text').attr('class', (r) => 'tl' + (r.Month === cur ? ' cur' : ''))
+      .attr('x', (r) => x(r.Month) + x.bandwidth() / 2).attr('y', H - 0.45 * em).attr('text-anchor', 'middle').text((r) => lab(r.Month));
+    const hover = svg.append('g').selectAll('rect').data(rows).join('rect').attr('class', 'hover-band')
+      .attr('x', (r) => x(r.Month) - (x.step() - x.bandwidth()) / 2).attr('width', x.step()).attr('y', 0).attr('height', H - 1.9 * em);
+    hover.on('mousemove', (ev, r) => {
+      hover.classed('on', (e) => e === r);
+      tip.show(ev, monthLong(r.Month), [...series.map((s) => [r[s.key] == null ? null : s.color(r[s.key]), s.label, r[s.key] == null ? '—' : fP1(r[s.key])]), ...(r.extra || [])]);
+    }).on('mouseleave', () => { hover.classed('on', false); tip.hide(); });
   }
+  const gradeShort = (g) => String(g || '—').replace(/\s*\(A706\/A615\)\s*DUAL/i, ' DUAL');
   const colLabel = (key, single, n) => (single ? d3.utcFormat(n <= 16 ? '%b %-d' : '%-d')(utc(key)) : MONTHS[+key.slice(5, 7) - 1].slice(0, 3));
   function stAxis(svg, y, yt, m, W, em) {
     svg.append('g').attr('class', 'grid').selectAll('line').data(yt).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', (d) => y(d)).attr('y2', (d) => y(d));
@@ -2700,6 +2709,15 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
       { cls: 'cut miss', render: (td, h) => { const f = oset.byHeat.get(heatKey(h)); if (f) { td.textContent = f.map(shortMiss).join(' · '); td.title = td.textContent; } } },
     ]);
     stq(sec, 'heats-note').textContent = all.length ? `Latest ${fInt(shown)} of ${fInt(all.length)}` : '';
+    // every month side by side, so this month can be read against the ones before it
+    const mRows = d3.groups(DATA.heats, (h) => h.Month).sort((a, b) => cmp(a[0], b[0])).map(([k, hs]) => {
+      const r = { Month: k, in: 0, out: 0 };
+      for (const h of hs) { const f = furnaceState(h, oset, ST_SPEC); if (f === 'in') r.in += 1; else if (f === 'miss' || f === 'scrap') r.out += 1; }
+      r.pct = r.in + r.out ? r.in / (r.in + r.out) : null;
+      r.extra = [[null, 'Heats', fInt(hs.length)], [null, 'OK of heats checked', `${fInt(r.in)} of ${fInt(r.in + r.out)}`]];
+      return r;
+    });
+    stq(sec, 'months-legend').replaceChildren();
     const rowsM = oset.rows.filter((r) => inMonth(r, m));
     const hk = (r) => r.Month + '|' + r.HeatNo;
     const els = d3.rollups(rowsM, (v) => ({ up: new Set(v.filter((r) => r.Direction === 'Above Maximum').map(hk)).size, down: new Set(v.filter((r) => r.Direction !== 'Above Maximum').map(hk)).size, n: new Set(v.map(hk)).size }), (r) => r.Element)
@@ -2713,8 +2731,9 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
     stBars(stq(sec, 'els2'), grades, gMax, 'No heats for this month');
     const fAll = flowStat('All heats', all, oset, ST_SPEC);
     stRank(stq(sec, 'ops'), opRanks(all, 'Crew', oset, ST_SPEC), { s: fAll, ...rankInfo(fAll, 'F', true) });
-    stLadles(sec);
     const groups = d3.groups(all, (h) => (single ? h.Date : h.Month)).sort((a, b) => cmp(a[0], b[0]));
+    stTarget(stq(sec, 'months-legend'));
+    stMonths(stq(sec, 'months'), mRows, m, [{ key: 'pct', label: 'Melter OK', color: (v) => `var(--${status(v)})` }]);
     stFurnaceDays(stq(sec, 'days'), groups.map(([key, hs]) => ({ key, label: colLabel(key, single, groups.length), long: single ? d3.utcFormat('%a, %b %-d')(utc(key)) : monthLong(key), ...cnt(hs) })));
   }
 
@@ -2765,6 +2784,12 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
       { cls: 'cut', render: (td, h) => { catCell(td, casterCat(h)); const d = dispDetail(h); if (d) td.appendChild(mk('span', 'dd', d)); td.title = String(h.Disposition || ''); } },
     ]);
     stq(sec, 'heats-note').textContent = all.length ? `Latest ${fInt(shown)} of ${fInt(all.length)}` : '';
+    const okBy = d3.rollup(DATA.heats, (v) => v.filter((h) => h.DispositionCategory === 'OK').length / v.length, (h) => h.Month);
+    const mRows = BILLET_SUM.filter((r) => r.Month !== 'All').slice().sort((a, b) => cmp(a.Month, b.Month))
+      .map((r) => ({ Month: r.Month, plan: r.HasBillet ? r.PctOfPlan : null, ok: okBy.has(r.Month) ? okBy.get(r.Month) : null,
+        extra: r.HasBillet ? [[null, 'Billet tons', f0(r.ActualTons)], [null, 'Planned to date', f0(r.PlannedToDate)]] : [] }));
+    stLegend(stq(sec, 'months-legend'), [['% of plan', 'var(--actual)'], ['OK at the caster', 'var(--ok)']]);
+    stTarget(stq(sec, 'months-legend'));
     stBars(stq(sec, 'els'), CASTER_CATS.filter((k) => cc[k] || k !== 'Unclassified').map((k) => ({ label: CASTER_LABEL[k], dot: C_COLOR[k], n: cc[k], p: all.length ? cc[k] / all.length : null, parts: [{ n: cc[k], color: C_COLOR[k], label: CASTER_LABEL[k] }] })),
       all.length, 'No heats for this month');
     stq(sec, 'els-note').textContent = all.length ? `${fInt(all.length)} heats` : '';
@@ -2775,12 +2800,12 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
     stBars(stq(sec, 'els2'), sizes, d3.max(sizes, (r) => r.n) || 1, 'No heats for this month');
     const cAll = flowStat('All heats', all, oset, ST_SPEC);
     stRank(stq(sec, 'ops'), opRanks(all, 'CasterOp', oset, ST_SPEC), { s: cAll, ...rankInfo(cAll, 'C', true) });
-    stLadles(sec);
     const pts = single
       ? bdays.map((d) => ({ key: d.Date, P: d.PlannedDaily || 0, A: d.ActualDaily, note: String(d.Comments || '').trim(), long: d3.utcFormat('%a, %b %-d')(utc(d.Date)) }))
       : BILLET_SUM.filter((r) => r.Month !== 'All' && r.HasBillet).map((r) => ({ key: r.Month, P: r.PlannedToDate, A: r.ActualTons, note: '', long: monthLong(r.Month) }));
     pts.forEach((d) => { d.label = colLabel(d.key, single, pts.length); });
     stBilletDays(stq(sec, 'days'), pts);
+    stMonths(stq(sec, 'months'), mRows, m, [{ key: 'plan', label: '% of plan', color: () => 'var(--actual)' }, { key: 'ok', label: 'OK at the caster', color: () => 'var(--ok)' }]);
   }
 
   // ---------- Data & definitions ----------
@@ -2859,7 +2884,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
   const whenShort = (iso) => (!iso ? '' : iso.length <= 10 ? d3.utcFormat('%b %-d')(utc(iso)) : d3.timeFormat('%b %-d, %-I:%M %p')(new Date(iso)));
   const lifeColor = (life, S) => (life >= S.alarm ? 'var(--bad)' : life >= S.warn ? 'var(--gauge-warn)' : 'var(--good)');
   const ladleMsg = (t, err) => { const m = $('#ladle-msg'); m.textContent = t || ''; m.classList.toggle('err', !!err); };
-  const redrawLadles = () => { if (state.page === 'ladles') drawLadles(); else if (STATIONS.has(state.page)) PAGES[state.page](); };
+  const redrawLadles = () => { if (state.page === 'ladles') drawLadles(); };
 
   // ----- reading -----
   function applyLadleFile(obj) {
@@ -2889,7 +2914,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
   function startLadleFile() {
     loadLadleFile().then((ok) => {
       if (!ok || ladlePoll) return;
-      ladlePoll = setInterval(() => { if (!document.hidden && (state.page === 'ladles' || STATIONS.has(state.page)) && !lad.busy && !lad.drafts.size) loadLadleFile(); }, 60000);
+      ladlePoll = setInterval(() => { if (!document.hidden && state.page === 'ladles' && !lad.busy && !lad.drafts.size) loadLadleFile(); }, 60000);
     });
   }
   function connectLadles() { /* the ladles live in the GitHub file only; the Claude database does not hold them */ }
@@ -3476,7 +3501,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
   setInterval(tickClock, 15000);
   $$('.st-logo').forEach((img) => { img.src = $('.vk-logo img').src; });
   /* A station TV stays open for days: every 10 minutes it checks the published site for new data and redraws in place
-     (staying full screen). The ladles check every minute. */
+     (staying full screen). */
   const onGithubSite = () => /^https?:$/.test(location.protocol) && location.hostname.endsWith('github.io');
   async function refreshPublished() {
     if (!onGithubSite() || preview || document.hidden) return;

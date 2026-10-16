@@ -21,8 +21,8 @@ Chemistry dispositions, out-of-spec results, operator spec performance and bille
 | **Operators** | Each melter's OK % under the furnace melter criteria. Each station's operators are judged on their own work: furnace operators by the chemistry at the furnace, caster operators by how their heats were dispositioned at the caster. Also how each pairing performed, and each heat's path from furnace to caster (for example, in spec at the furnace but returned to the furnace at the caster). |
 | **Billet Production** | Daily billet tons against plan, the variance to plan and the estimated production loss. |
 | **Ladle's Life** | The lining life of the 8 ladles against their safety life, and each ladle's status: In Use, On Preheater, Relining or Out of Service. Anyone holding an edit key updates the numbers and statuses right on the page, and every change is logged. |
-| **Furnace Station** | A one-screen view for the TV at the furnace: heats, melter OK %, out of spec and out-of-spec scrap, melter OK % by day, the furnace operators, the latest heats with what was outside the criteria, the elements and grades, and the ladles. |
-| **Caster Station** | A one-screen view for the TV at the caster: billet tons against plan, the tons a day still needed to make the month, the last day, OK at the caster, billet tons by day with the latest shift comments, the caster operators, the latest heats and their dispositions, the sizes cast, and the ladles. |
+| **Furnace Station** | A one-screen view for the TV at the furnace: heats, melter OK %, out of spec and out-of-spec scrap, melter OK % by day, the furnace operators, the latest heats with what was outside the criteria, the elements and grades, and melter OK % month by month. |
+| **Caster Station** | A one-screen view for the TV at the caster: billet tons against plan, the tons a day still needed to make the month, the last day, OK at the caster, billet tons by day with the latest shift comments, the caster operators, the latest heats and their dispositions, the sizes cast, and % of plan and OK at the caster month by month. |
 | **Data & definitions** | Which Excel file each month came from, the days it covers, and how every number is worked out. |
 
 Each page has a month picker and its own filters (crew, grade, disposition, spec source), and the detail tables can be searched and sorted.
@@ -55,7 +55,7 @@ Each page has a month picker and its own filters (crew, grade, disposition, spec
 2. Click **Full screen**. The page fills the screen and sizes itself to it, so everything fits with no scrolling on any TV, from 720p to 4K.
 3. To leave, press **Esc** or move the mouse and click **Exit full screen**.
 
-While it is full screen, the page keeps the screen from going to sleep where the browser allows it, and hides the mouse pointer after a few seconds. It checks for newly published data every 10 minutes and for ladle changes every minute, and updates itself without leaving full screen.
+While it is full screen, the page keeps the screen from going to sleep where the browser allows it, and hides the mouse pointer after a few seconds. It checks for newly published data every 10 minutes and updates itself without leaving full screen.
 
 For a TV computer that opens the browser on its own, use these links. They open the station already filling the window; start the browser in full-screen or kiosk mode:
 
