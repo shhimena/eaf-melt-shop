@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-10-16T14:49:21.718Z",
+ "updatedAt": "2026-10-16T14:49:24.556Z",
  "settings": {
   "max": 75,
   "warn": 50,
@@ -15,10 +15,10 @@
   },
   {
    "Ladle": 2,
-   "Life": 18,
-   "Status": "In Use",
-   "UpdatedAt": "2026-10-15T14:49:30.914Z",
-   "UpdatedBy": null
+   "Life": 0,
+   "Status": "Out of Service",
+   "UpdatedAt": "2026-10-16T14:49:24.556Z",
+   "UpdatedBy": "Javier Lares"
   },
   {
    "Ladle": 3,
@@ -77,6 +77,15 @@
    "LifeTo": 0,
    "StatusFrom": "In Use",
    "StatusTo": "Relining",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-16T14:49:24.556Z",
+   "Ladle": 2,
+   "LifeFrom": 18,
+   "LifeTo": 0,
+   "StatusFrom": "In Use",
+   "StatusTo": "Out of Service",
    "By": "Javier Lares"
   }
  ],
