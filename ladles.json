@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-10-16T14:49:24.556Z",
+ "updatedAt": "2026-10-16T14:49:29.656Z",
  "settings": {
   "max": 75,
   "warn": 50,
@@ -22,45 +22,45 @@
   },
   {
    "Ladle": 3,
-   "Life": 65,
-   "Status": "Relining",
-   "UpdatedAt": "2026-10-15T14:49:30.914Z",
-   "UpdatedBy": null
+   "Life": 20,
+   "Status": "In Use",
+   "UpdatedAt": "2026-10-16T14:49:29.655Z",
+   "UpdatedBy": "Javier Lares"
   },
   {
    "Ladle": 4,
-   "Life": 7,
-   "Status": "On Preheater",
-   "UpdatedAt": "2026-10-15T14:49:30.914Z",
-   "UpdatedBy": null
+   "Life": 49,
+   "Status": "In Use",
+   "UpdatedAt": "2026-10-16T14:49:29.655Z",
+   "UpdatedBy": "Javier Lares"
   },
   {
    "Ladle": 5,
-   "Life": 51,
-   "Status": "In Use",
-   "UpdatedAt": "2026-10-15T14:49:30.914Z",
-   "UpdatedBy": null
+   "Life": 0,
+   "Status": "Out of Service",
+   "UpdatedAt": "2026-10-16T14:49:29.655Z",
+   "UpdatedBy": "Javier Lares"
   },
   {
    "Ladle": 6,
-   "Life": 30,
+   "Life": 0,
    "Status": "Out of Service",
-   "UpdatedAt": "2026-10-15T14:49:30.914Z",
-   "UpdatedBy": null
+   "UpdatedAt": "2026-10-16T14:49:29.655Z",
+   "UpdatedBy": "Javier Lares"
   },
   {
    "Ladle": 7,
-   "Life": 12,
+   "Life": 16,
    "Status": "In Use",
-   "UpdatedAt": "2026-10-15T14:49:30.914Z",
-   "UpdatedBy": null
+   "UpdatedAt": "2026-10-16T14:49:29.655Z",
+   "UpdatedBy": "Javier Lares"
   },
   {
    "Ladle": 8,
-   "Life": 70,
-   "Status": "Relining",
-   "UpdatedAt": "2026-10-15T14:49:30.914Z",
-   "UpdatedBy": null
+   "Life": 0,
+   "Status": "Out of Service",
+   "UpdatedAt": "2026-10-16T14:49:29.656Z",
+   "UpdatedBy": "Javier Lares"
   }
  ],
  "log": [
@@ -85,6 +85,60 @@
    "LifeFrom": 18,
    "LifeTo": 0,
    "StatusFrom": "In Use",
+   "StatusTo": "Out of Service",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-16T14:49:29.655Z",
+   "Ladle": 3,
+   "LifeFrom": 65,
+   "LifeTo": 20,
+   "StatusFrom": "Relining",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-16T14:49:29.655Z",
+   "Ladle": 4,
+   "LifeFrom": 7,
+   "LifeTo": 49,
+   "StatusFrom": "On Preheater",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-16T14:49:29.655Z",
+   "Ladle": 5,
+   "LifeFrom": 51,
+   "LifeTo": 0,
+   "StatusFrom": "In Use",
+   "StatusTo": "Out of Service",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-16T14:49:29.655Z",
+   "Ladle": 6,
+   "LifeFrom": 30,
+   "LifeTo": 0,
+   "StatusFrom": "Out of Service",
+   "StatusTo": "Out of Service",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-16T14:49:29.655Z",
+   "Ladle": 7,
+   "LifeFrom": 12,
+   "LifeTo": 16,
+   "StatusFrom": "In Use",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-16T14:49:29.656Z",
+   "Ladle": 8,
+   "LifeFrom": 70,
+   "LifeTo": 0,
+   "StatusFrom": "Relining",
    "StatusTo": "Out of Service",
    "By": "Javier Lares"
   }
