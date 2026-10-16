@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-10-15T15:52:34.658Z",
+ "updatedAt": "2026-10-16T14:49:21.718Z",
  "settings": {
   "max": 75,
   "warn": 50,
@@ -8,10 +8,10 @@
  "items": [
   {
    "Ladle": 1,
-   "Life": 42,
-   "Status": "In Use",
-   "UpdatedAt": "2026-10-15T14:49:30.914Z",
-   "UpdatedBy": null
+   "Life": 0,
+   "Status": "Relining",
+   "UpdatedAt": "2026-10-16T14:49:21.718Z",
+   "UpdatedBy": "Javier Lares"
   },
   {
    "Ladle": 2,
@@ -69,6 +69,15 @@
    "Ladle": null,
    "Note": "Editing password set",
    "By": "Jimena"
+  },
+  {
+   "At": "2026-10-16T14:49:21.718Z",
+   "Ladle": 1,
+   "LifeFrom": 42,
+   "LifeTo": 0,
+   "StatusFrom": "In Use",
+   "StatusTo": "Relining",
+   "By": "Javier Lares"
   }
  ],
  "lock": {
