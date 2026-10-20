@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-10-20T14:47:24.344Z",
+ "updatedAt": "2026-10-20T14:49:43.889Z",
  "settings": {
   "max": 75,
   "warn": 50,
@@ -10,21 +10,21 @@
    "Ladle": 1,
    "Life": 1,
    "Status": "In Use",
-   "UpdatedAt": "2026-10-20T14:47:24.344Z",
+   "UpdatedAt": "2026-10-20T14:49:43.889Z",
    "UpdatedBy": "Javier Lares"
   },
   {
    "Ladle": 2,
    "Life": 16,
    "Status": "In Use",
-   "UpdatedAt": "2026-10-20T14:47:24.344Z",
+   "UpdatedAt": "2026-10-20T14:49:43.889Z",
    "UpdatedBy": "Javier Lares"
   },
   {
    "Ladle": 3,
    "Life": 18,
    "Status": "In Use",
-   "UpdatedAt": "2026-10-20T14:47:24.344Z",
+   "UpdatedAt": "2026-10-20T14:49:43.889Z",
    "UpdatedBy": "Javier Lares"
   },
   {
@@ -52,7 +52,7 @@
    "Ladle": 7,
    "Life": 31,
    "Status": "In Use",
-   "UpdatedAt": "2026-10-20T14:47:24.344Z",
+   "UpdatedAt": "2026-10-20T14:49:43.889Z",
    "UpdatedBy": "Javier Lares"
   },
   {
@@ -209,6 +209,42 @@
    "At": "2026-10-20T14:47:24.344Z",
    "Ladle": 7,
    "LifeFrom": 28,
+   "LifeTo": 31,
+   "StatusFrom": "In Use",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-20T14:49:43.889Z",
+   "Ladle": 1,
+   "LifeFrom": 1,
+   "LifeTo": 1,
+   "StatusFrom": "In Use",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-20T14:49:43.889Z",
+   "Ladle": 2,
+   "LifeFrom": 16,
+   "LifeTo": 16,
+   "StatusFrom": "In Use",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-20T14:49:43.889Z",
+   "Ladle": 3,
+   "LifeFrom": 18,
+   "LifeTo": 18,
+   "StatusFrom": "In Use",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-20T14:49:43.889Z",
+   "Ladle": 7,
+   "LifeFrom": 31,
    "LifeTo": 31,
    "StatusFrom": "In Use",
    "StatusTo": "In Use",
