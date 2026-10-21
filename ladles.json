@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-10-20T14:49:43.889Z",
+ "updatedAt": "2026-10-21T14:27:35.386Z",
  "settings": {
   "max": 75,
   "warn": 50,
@@ -8,9 +8,9 @@
  "items": [
   {
    "Ladle": 1,
-   "Life": 1,
+   "Life": 8,
    "Status": "In Use",
-   "UpdatedAt": "2026-10-20T14:49:43.889Z",
+   "UpdatedAt": "2026-10-21T14:27:35.386Z",
    "UpdatedBy": "Javier Lares"
   },
   {
@@ -246,6 +246,15 @@
    "Ladle": 7,
    "LifeFrom": 31,
    "LifeTo": 31,
+   "StatusFrom": "In Use",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-21T14:27:35.386Z",
+   "Ladle": 1,
+   "LifeFrom": 1,
+   "LifeTo": 8,
    "StatusFrom": "In Use",
    "StatusTo": "In Use",
    "By": "Javier Lares"
