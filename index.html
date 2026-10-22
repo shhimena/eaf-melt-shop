@@ -467,6 +467,13 @@ a.btn { text-decoration: none; }
 .st-bars .p { text-align: right; font-size: .88em; color: var(--muted); font-variant-numeric: tabular-nums; }
 .st-bars .p.c-good { color: var(--good-ink); font-weight: 600; } .st-bars .p.c-warn { color: var(--warn-ink); font-weight: 600; } .st-bars .p.c-bad { color: var(--bad-ink); font-weight: 600; }
 .st-bars .chart-empty { padding: 2em 0; }
+.st-bars .r.few { opacity: .55; }
+.st-bars.overall { gap: .7em; align-content: space-evenly; }
+.st-bars.overall .r { grid-template-columns: minmax(5.5em, auto) minmax(0, 1fr) 3.2em 2.8em; }
+.st-bars.overall .l { font-size: 1.05em; overflow: visible; }
+.st-bars.overall .n { font-size: 1.25em; }
+.st-bars.overall .t { height: 1.1em; }
+.st-legend .cols { margin-left: auto; color: var(--muted); }
 .st-notes { list-style: none; margin: .45em 0 0; padding: .45em 0 0; border-top: 1px solid var(--line-2); display: grid; gap: .2em; font-size: .9em; }
 .st-notes:empty { display: none; }
 .st-notes li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--muted); }
@@ -1045,7 +1052,7 @@ html.vk-tv #ladles .ladle-edit { display: none; }
       <div class="st-card c3 fx">
         <h2><span>Melters' overall performance</span><small data-st="overall-note"></small></h2>
         <div class="st-legend" data-st="overall-legend"></div>
-        <div class="st-chart" data-st="overall"></div>
+        <div class="st-bars wide overall fill" data-st="overall"></div>
       </div>
     </section>
 
@@ -2625,8 +2632,10 @@ html.vk-tv #ladles .ladle-edit { display: none; }
         t.appendChild(i);
       }
       if (r.title) l.title = r.title;
-      row.append(l, t, mk('span', 'n', fInt(r.n)), mk('span', 'p' + (r.pst && r.pst !== 'neutral' ? ' c-' + r.pst : ''), r.p == null ? '' : fP0(r.p)));
-      row.setAttribute('aria-label', `${r.label}: ${r.n} heats` + r.parts.filter((p) => p.n).map((p) => `, ${p.n} ${p.label.toLowerCase()}`).join(''));
+      row.append(l, t, mk('span', 'n', r.nText != null ? r.nText : fInt(r.n)), mk('span', 'p' + (r.pst && r.pst !== 'neutral' ? ' c-' + r.pst : ''), r.pText != null ? r.pText : r.p == null ? '' : fP0(r.p)));
+      if (r.few) row.classList.add('few');
+      row.setAttribute('aria-label', r.aria || `${r.label}: ${r.n} heats` + r.parts.filter((p) => p.n).map((p) => `, ${p.n} ${p.label.toLowerCase()}`).join(''));
+      if (r.tip) row.title = r.tip;
       box.appendChild(row);
     }
     // a list that fills the rest of its card shows only the rows that fit
@@ -2846,12 +2855,18 @@ html.vk-tv #ladles .ladle-edit { display: none; }
       const r = { in: 0, miss: 0, scrap: 0 };
       for (const h of hs) { const f = furnaceState(h, oset, ST_SPEC); if (f in r) r[f] += 1; }
       const n = r.in + r.miss + r.scrap;
-      return { key: name, label: name, long: name, pct: n ? r.in / n : null, n,
-        extra: [[null, 'Heats checked', fInt(n)], ['var(--good)', 'OK', fInt(r.in)], ['var(--bad)', 'Out of spec', fInt(r.miss)], ['var(--bad)', 'Out-of-spec scrap', fInt(r.scrap)], [null, 'Months', fInt(new Set(hs.map((h) => h.Month)).size)]] };
+      const pct = n ? r.in / n : null, months = new Set(hs.map((h) => h.Month)).size;
+      return { key: name, label: name, pct, n, nText: pct == null ? '—' : fP0(pct), pText: fInt(n),
+        parts: [{ n: pct == null ? 0 : pct * 100, color: 'var(--total)', label: 'OK' }],
+        aria: `${name}: ${pct == null ? '—' : fP1(pct)} OK over ${n} heats checked in ${months} month${months === 1 ? '' : 's'}`,
+        tip: `${name}: ${fInt(r.in)} OK, ${fInt(r.miss)} out of spec, ${fInt(r.scrap)} out-of-spec scrap · ${fInt(n)} heats checked · ${months} month${months === 1 ? '' : 's'}` };
     }).filter((r) => r.pct != null && r.key !== '(Blank)').map((r) => ({ ...r, few: r.n < 20 }))
       .sort((a, b) => a.few - b.few || b.pct - a.pct || b.n - a.n);
     stLegend(stq(sec, 'overall-legend'), [['OK %', 'var(--total)'], ...(overall.some((r) => r.few) ? [['Under 20 heats', 'var(--total)', true]] : [])]);
-    stq(sec, 'overall-note').textContent = allMonths.length ? (allMonths.length > 1 ? `${monthShort(allMonths[0])} – ${monthShort(allMonths[allMonths.length - 1])}` : monthShort(allMonths[0])) : '';
+    const hdr = mk('span', 'lg cols', 'OK % · heats'); stq(sec, 'overall-legend').appendChild(hdr);
+    const mFirst = allMonths[0], mLast = allMonths[allMonths.length - 1];
+    stq(sec, 'overall-note').textContent = !mFirst ? '' : mFirst === mLast ? monthShort(mFirst)
+      : mFirst.slice(0, 4) === mLast.slice(0, 4) ? `${MONTHS[+mFirst.slice(5, 7) - 1].slice(0, 3)} – ${monthShort(mLast)}` : `${monthShort(mFirst)} – ${monthShort(mLast)}`;
     const rowsM = oset.rows.filter((r) => inMonth(r, m));
     const hk = (r) => r.Month + '|' + r.HeatNo;
     const els = d3.rollups(rowsM, (v) => ({ up: new Set(v.filter((r) => r.Direction === 'Above Maximum').map(hk)).size, down: new Set(v.filter((r) => r.Direction !== 'Above Maximum').map(hk)).size, n: new Set(v.map(hk)).size }), (r) => r.Element)
@@ -2867,7 +2882,7 @@ html.vk-tv #ladles .ladle-edit { display: none; }
     stRank(stq(sec, 'ops'), opRanks(all, 'Crew', oset, ST_SPEC), { s: fAll, ...rankInfo(fAll, 'F', true) });
     const groups = d3.groups(all, (h) => (single ? h.Date : h.Month)).sort((a, b) => cmp(a[0], b[0]));
     stProduction(sec, m, single);
-    stMonths(stq(sec, 'overall'), overall, null, [{ key: 'pct', label: 'Melter OK', color: () => 'var(--total)' }], { target: false });
+    stBars(stq(sec, 'overall'), overall, 100, 'No melters yet');
     stFurnaceDays(stq(sec, 'days'), groups.map(([key, hs]) => ({ key, label: colLabel(key, single, groups.length), long: single ? d3.utcFormat('%a, %b %-d')(utc(key)) : monthLong(key), ...cnt(hs) })));
   }
 
