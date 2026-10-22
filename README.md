@@ -51,7 +51,7 @@ Each page has a month picker and its own filters (crew, grade, disposition, spec
 
 ## Station TVs
 
-1. On the computer connected to the TV, open **Furnace Station** or **Caster Station**.
+1. On the computer connected to the TV, open **Furnace Station**, **Caster Station** or **Ladle's Life**.
 2. Click **Full screen**. The page fills the screen and sizes itself to it, so everything fits with no scrolling on any TV, from 720p to 4K.
 3. To leave, press **Esc** or move the mouse and click **Exit full screen**.
 
@@ -61,6 +61,7 @@ For a TV computer that opens the browser on its own, use these links. They open 
 
 - Furnace: `https://shhimena.github.io/eaf-melt-shop/#furnace-station/tv`
 - Caster: `https://shhimena.github.io/eaf-melt-shop/#caster-station/tv`
+- Ladle's Life: `https://shhimena.github.io/eaf-melt-shop/#ladles/tv` (the 8 ladles fill the screen, with a count of each status; it picks up ladle changes every minute)
 
 ## Adding a new month
 

@@ -495,6 +495,29 @@ html.vk-tv .st-logo, html.vk-tv .st-clock { display: block; }
 html.vk-tv .st-fs { align-self: center; transition: opacity .3s; }
 html.vk-tv.vk-idle, html.vk-tv.vk-idle * { cursor: none !important; }
 html.vk-tv.vk-idle .st-fs { opacity: 0; }
+/* Ladle's Life full screen: the 8 ladles fill the screen, 4 by 2; editing controls stay out of view */
+.ladle-tvhead { display: none; }
+html.vk-tv #ladles { position: fixed; inset: 0; z-index: 40; background: var(--canvas); overflow: hidden;
+  font-size: max(10px, calc(min(100vh, 56.25vw) * 13 / 1080)); padding: 1em 1.25em 1.1em; }
+html.vk-tv #ladles > .pg-head, html.vk-tv #ladle-main > :not(.ladle-tvhead):not(.ladle-grid) { display: none !important; }
+html.vk-tv #ladle-main:not([hidden]) { display: flex; flex-direction: column; height: 100%; gap: .9em; }
+html.vk-tv .ladle-tvhead { display: flex; flex-wrap: wrap; align-items: center; gap: .5em 1.2em; }
+.ladle-tvhead .spacer { flex: 1 1 0; }
+.ladle-tvcounts { display: flex; flex-wrap: wrap; gap: .45em; }
+.ladle-tvcounts .st-pill { font-size: 1.15em; padding: .3em .9em; }
+html.vk-tv #ladles .ladle-grid { flex: 1 1 0; min-height: 0; margin: 0; gap: 1em; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); }
+html.vk-tv #ladles .ladle { min-height: 0; border-top-width: .4em; }
+html.vk-tv #ladles .ladle-head { padding: .75em 1.1em 0; }
+html.vk-tv #ladles .ladle-head b { font-size: 1.8em; }
+html.vk-tv #ladles .ladle-head span { font-size: .95em; }
+html.vk-tv #ladles .ladle svg.gauge { flex: 1 1 0; min-height: 0; height: auto; padding: .2em 1em 0; }
+html.vk-tv #ladles .ladle .left { font-size: 1.05em; margin: 0 1em .6em; }
+html.vk-tv #ladles .ladle-ref { font-size: 1.05em; margin: 0 1.1em .75em; padding: .45em .7em; flex-direction: row; }
+html.vk-tv #ladles .ladle-ref span { font-size: .8em; }
+html.vk-tv #ladles .ladle-status { font-size: 1.45em; padding: .55em .8em; margin-top: 0; }
+html.vk-tv #ladles .ladle-status i { width: .6em; height: .6em; }
+html.vk-tv #ladles .ladle-edit, html.vk-tv #ladles .ladle.dirty { box-shadow: none; }
+html.vk-tv #ladles .ladle-edit { display: none; }
 .tbl .opname { all: unset; cursor: pointer; font-weight: 600; border-radius: 4px; }
 .tbl .opname:hover { text-decoration: underline; }
 .tbl .opname:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
@@ -883,6 +906,15 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
         <a class="btn primary" id="ladle-away-link" href="https://shhimena.github.io/eaf-melt-shop/#ladles" target="_blank" rel="noopener">Open Ladle's Life</a>
       </div>
       <div id="ladle-main">
+      <div class="ladle-tvhead">
+        <img class="st-logo" alt="Vinton Steel">
+        <h1 class="st-title">Ladle's Life</h1>
+        <span class="st-asof" id="ladle-tv-asof"></span>
+        <span class="ladle-tvcounts" id="ladle-tv-counts"></span>
+        <span class="spacer"></span>
+        <span class="st-clock" aria-hidden="true"></span>
+        <button class="btn st-fs" type="button" data-tv aria-pressed="false"><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>Full screen</span></button>
+      </div>
       <div class="filters ladle-bar">
         <span class="ladle-live off" id="ladle-live"><i></i><span>Saved copy</span></span>
         <span class="ladle-asof" id="ladle-asof"></span>
@@ -890,6 +922,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
         <span class="vk-status" id="ladle-msg" role="status"></span>
         <button class="btn primary" type="button" id="ladle-saveall" hidden>Save all changes</button>
         <button class="btn" type="button" id="ladle-forget" hidden>Lock this computer</button>
+        <button class="btn" type="button" data-tv aria-pressed="false"><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>Full screen</span></button>
         <button class="btn" type="button" id="ladle-edit" aria-pressed="false" hidden>Edit ladles</button>
       </div>
       <div class="card mb" id="ladle-key" hidden>
@@ -3146,6 +3179,13 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
     chip.querySelector('span').textContent = lad.live ? 'Live' : 'Saved copy';
     const last = lad.source === 'github' ? lad.fileAt || d3.max(items, (r) => r.UpdatedAt || '') : d3.max(items, (r) => r.UpdatedAt || '') || ladleSnap().asOf;
     $('#ladle-asof').textContent = last ? (lad.live ? 'Last change ' : 'As of ') + whenText(last) : '';
+    const tvAsof = $('#ladle-tv-asof'); tvAsof.replaceChildren();
+    if (last) { tvAsof.append(lad.live ? 'Last change ' : 'As of '); const b = document.createElement('b'); b.textContent = whenShort(last); tvAsof.append(b, ' · '); }
+    tvAsof.append(`Safety life ${S.max} · yellow from ${S.warn} · red from ${S.alarm}`);
+    const counts = d3.rollup(items, (v) => v.length, (r) => r.Status || 'No status');
+    $('#ladle-tv-counts').replaceChildren(...[...LADLE_STATUSES, ...[...counts.keys()].filter((k) => !LADLE_STATUSES.includes(k))].filter((k) => counts.get(k)).map((k) => {
+      const pill = document.createElement('span'); pill.className = 'st-pill'; pill.style.background = LADLE_COLOR[k] || 'var(--ladle-oos)'; pill.textContent = `${counts.get(k)} ${k}`; return pill;
+    }));
     const editable = canEditLadles();
     if (!editable) { lad.editing = false; lad.askKey = false; lad.drafts.clear(); }
     const eb = $('#ladle-edit');
@@ -3485,7 +3525,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
     if (!PAGES[id]) id = 'chemistry';
     if (id === 'database') dbTabOpened = true;
     state.page = id;
-    if (tv.on && !STATIONS.has(id)) setTV(false, true);
+    if (tv.on && !TV_PAGES.has(id)) setTV(false, true);
     $$('.vk-nav a').forEach((a) => (a.dataset.page === id ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
     $$('.pg').forEach((s) => { s.hidden = s.id !== id; });
     if (push) { try { history.replaceState(null, '', '#' + id); } catch (e) { /* the frame may refuse */ } }
@@ -3501,6 +3541,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
   window.addEventListener('hashchange', route);
 
   // ---------- full screen, for the station TVs ----------
+  const TV_PAGES = new Set([...STATIONS, 'ladles']);
   const tv = { on: false, fs: false, lock: null, idle: null };
   async function keepAwake(on) {
     try {
@@ -3515,7 +3556,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
     if (tv.on) tv.idle = setTimeout(() => root.classList.add('vk-idle'), 4000);
   }
   function setTV(on, quiet) {
-    on = !!on && STATIONS.has(state.page);
+    on = !!on && TV_PAGES.has(state.page);
     if (on === tv.on) return;
     tv.on = on;
     const root = document.documentElement;
@@ -3536,7 +3577,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
   for (const t of ['pointermove', 'pointerdown', 'touchstart']) document.addEventListener(t, () => { if (tv.on) poke(); }, { passive: true });
   document.addEventListener('visibilitychange', () => { if (!document.hidden && tv.on) keepAwake(true); });
   function tickClock() {
-    if (!STATIONS.has(state.page)) return;
+    if (!TV_PAGES.has(state.page)) return;
     const t = d3.timeFormat('%a, %b %-d · %-I:%M %p')(new Date());
     $$('.st-clock').forEach((c) => { c.textContent = t; });
   }
