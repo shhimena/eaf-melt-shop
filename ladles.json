@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-10-21T14:29:25.569Z",
+ "updatedAt": "2026-10-22T14:00:26.554Z",
  "settings": {
   "max": 75,
   "warn": 50,
@@ -8,23 +8,23 @@
  "items": [
   {
    "Ladle": 1,
-   "Life": 8,
+   "Life": 12,
    "Status": "In Use",
-   "UpdatedAt": "2026-10-21T14:29:25.568Z",
+   "UpdatedAt": "2026-10-22T14:00:26.554Z",
    "UpdatedBy": "Javier Lares"
   },
   {
    "Ladle": 2,
-   "Life": 22,
+   "Life": 28,
    "Status": "In Use",
-   "UpdatedAt": "2026-10-21T14:29:25.569Z",
+   "UpdatedAt": "2026-10-22T14:00:26.554Z",
    "UpdatedBy": "Javier Lares"
   },
   {
    "Ladle": 3,
-   "Life": 20,
+   "Life": 21,
    "Status": "In Use",
-   "UpdatedAt": "2026-10-21T14:29:25.569Z",
+   "UpdatedAt": "2026-10-22T14:00:26.554Z",
    "UpdatedBy": "Javier Lares"
   },
   {
@@ -50,9 +50,9 @@
   },
   {
    "Ladle": 7,
-   "Life": 37,
+   "Life": 40,
    "Status": "In Use",
-   "UpdatedAt": "2026-10-21T14:29:25.569Z",
+   "UpdatedAt": "2026-10-22T14:00:26.554Z",
    "UpdatedBy": "Javier Lares"
   },
   {
@@ -336,6 +336,42 @@
    "Ladle": 7,
    "LifeFrom": 37,
    "LifeTo": 37,
+   "StatusFrom": "In Use",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-22T14:00:26.554Z",
+   "Ladle": 1,
+   "LifeFrom": 8,
+   "LifeTo": 12,
+   "StatusFrom": "In Use",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-22T14:00:26.554Z",
+   "Ladle": 2,
+   "LifeFrom": 22,
+   "LifeTo": 28,
+   "StatusFrom": "In Use",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-22T14:00:26.554Z",
+   "Ladle": 3,
+   "LifeFrom": 20,
+   "LifeTo": 21,
+   "StatusFrom": "In Use",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-22T14:00:26.554Z",
+   "Ladle": 7,
+   "LifeFrom": 37,
+   "LifeTo": 40,
    "StatusFrom": "In Use",
    "StatusTo": "In Use",
    "By": "Javier Lares"
