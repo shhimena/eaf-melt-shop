@@ -100,7 +100,7 @@ The password unlocks the GitHub key, and the key can change files in this reposi
 
 - **One sheet per day.** Each daily sheet in the chemistry workbook (named `MM.DD.YY`) is one production day. The `SPEC.` row on a sheet sets the grade, product and limits for the heats below it.
 - **Operators.** The MELTER line reads `Furnace / Caster`. The first name is the furnace operator (also used as the crew), and the second is the caster operator. A ditto mark (`"`) repeats the name above, and spelling variants are merged (for example Nuñez and Nunes become Nunez).
-- **Dispositions.** Each heat is grouped as OK, Reapply, Divert, Return to furnace (RTF), Scrap or Unclassified.
+- **Dispositions.** Each heat is grouped as OK, Reapply, Divert, Return to furnace (RTF), Scrap or On hold. On hold is a heat with no disposition yet, or one whose disposition is none of the others (such as QC Hold).
 - **Duplicate heats.** A heat listed twice is counted once. The row with a disposition wins, then the latest date.
 - **Where the numbers come from.** Every heat, reading, disposition and ton comes from the two monthly Excel reports. The only things not in the Excel are the melter criteria (from the printed *Instructions for chemistry disposition* and *Vinton Grades Spec criteria*) and the billet price you pick for the estimated production loss.
 - **Spec toggle.** *Melter criteria* (the Operators page default) applies the furnace melter rules below. *Daily sheet* checks each heat against its own sheet's `SPEC.` row. CE is not checked, since there is no CE spec.
