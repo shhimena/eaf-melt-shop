@@ -621,7 +621,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
         <div class="card kpi"><div class="lbl"><span class="dot" style="background:var(--divert)"></span>Divert</div><div class="val c-divert" id="k-divert">—</div><div class="sub" id="k-divert-sub"></div></div>
         <div class="card kpi"><div class="lbl"><span class="dot" style="background:var(--rtf)"></span>RTF</div><div class="val c-rtf" id="k-rtf">—</div><div class="sub" id="k-rtf-sub"></div></div>
         <div class="card kpi"><div class="lbl"><span class="dot" style="background:var(--scrap)"></span>Scrap</div><div class="val c-scrap" id="k-scrap">—</div><div class="sub" id="k-scrap-sub"></div></div>
-        <div class="card kpi"><div class="lbl"><span class="dot" style="background:var(--uncl)"></span>On hold</div><div class="val c-uncl" id="k-uncl">—</div><div class="sub" id="k-uncl-sub"></div></div>
+        <div class="card kpi"><div class="lbl"><span class="dot" style="background:var(--uncl)"></span>Hold</div><div class="val c-uncl" id="k-uncl">—</div><div class="sub" id="k-uncl-sub"></div></div>
       </div>
       <div class="grid-2">
         <div class="card" id="card-crew-bars">
@@ -642,7 +642,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
                   <th data-field="RTF" class="num"><button class="th-btn" type="button">RTF</button></th>
                   <th data-field="Divert" class="num"><button class="th-btn" type="button">Divert</button></th>
                   <th data-field="Scrap" class="num"><button class="th-btn" type="button">Scrap</button></th>
-                  <th data-field="Unclassified" class="num"><button class="th-btn" type="button">On hold</button></th>
+                  <th data-field="Unclassified" class="num"><button class="th-btn" type="button">Hold</button></th>
                   <th data-field="OKPct" class="num"><button class="th-btn" type="button">OK %</button></th>
                 </tr></thead>
                 <tbody></tbody>
@@ -1082,7 +1082,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
           <ul class="defs">
             <li><b>Heat</b>: a heat number on one of the daily sheets (named MM.DD.YY) in the month's "Melt Shop Chemistry Results Report". A heat listed more than once keeps the row that has a disposition, then the latest date.</li>
             <li><b>Furnace operator (crew)</b> and <b>caster operator</b>: the names before and after "/" on the MELTER line, for example Holguin / Hoffman. Ditto marks (") carry the names above down. Spellings such as Nuñez, Nunes, Hoguin, Hoffmnan and Azarga are corrected.</li>
-            <li><b>Disposition category</b>: from the DISPOSITION text. Contains "reapply" → Reapply; "divert" → Divert; "RTF" or "return to furnace" → Return to Furnace; "scrap" → Scrap; "ok" → OK. Empty or anything else, such as QC Hold, counts as On hold.</li>
+            <li><b>Disposition category</b>: from the DISPOSITION text. Contains "reapply" → Reapply; "divert" → Divert; "RTF" or "return to furnace" → Return to Furnace; "scrap" → Scrap; "ok" → OK. Empty or anything else, such as QC Hold, counts as Hold.</li>
             <li><b>Spec: daily sheet</b> (default): each heat is judged against the SPEC row printed above it on its own sheet, which changes with grade and bar size. A lone number is a maximum; "min" marks a minimum. CE is not checked: there is no CE spec, so a number under CE on a SPEC row (the DUAL sheets show 0.54) is ignored.</li>
             <li><b>Readings: rounded to spec</b>: a reading is rounded to the decimals the limit is written in before comparing, the way ASTM E29 rounding works (0.7416 against .74 counts as in spec). Exact compares the full reading.</li>
             <li><b>Hit spec</b>: a heat with chemistry results where every checked element is inside its limits. Heats with no chemistry entered are left out.</li>
@@ -1604,7 +1604,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
     { field: 'Divert', label: 'Divert', color: 'var(--divert)' },
     { field: 'RTF', label: 'Return to furnace', color: 'var(--rtf)' },
     { field: 'Scrap', label: 'Scrap', color: 'var(--scrap)' },
-    { field: 'Unclassified', label: 'On hold', color: 'var(--uncl)' },
+    { field: 'Unclassified', label: 'Hold', color: 'var(--uncl)' },
   ];
   const CAT_COLOR = { OK: 'var(--ok)', Reapply: 'var(--reapply)', Divert: 'var(--divert)', RTF: 'var(--rtf)', Scrap: 'var(--scrap)', Hold: 'var(--uncl)', Blank: 'var(--uncl)', Other: 'var(--uncl)' };
   const EL_COLORS = { Mn: '#2F80ED', CECrEq: 'var(--el-cecreq)', C: '#E2683C', Cr: 'var(--el-cr)', Si: '#D94C93', S: '#6E57D2', V: '#1F9E9A',
@@ -1707,7 +1707,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
     $$('.js-month').forEach((s) => setOptions(s, [['All', 'All months'], ...months().slice().reverse().map((k) => [k, monthLong(k)])], m));
     $$('.js-crew').forEach((s) => setOptions(s, [['All', 'All crews'], ...a.crews.map((c) => [c, c])], state.crew));
     $$('.js-grade').forEach((s) => setOptions(s, [['All', 'All grades'], ...a.grades.map((g) => [g, g])], state.grade));
-    $$('.js-cat').forEach((s) => setOptions(s, [['All', 'All'], ...a.cats.map((c) => [c, c === 'Hold' ? 'On hold' : c])], state.cat));
+    $$('.js-cat').forEach((s) => setOptions(s, [['All', 'All'], ...a.cats.map((c) => [c, c])], state.cat));
     $$('.js-price').forEach((s) => setOptions(s, PRICES.map((p) => [String(p), '$' + p]), String(state.price)));
     const seg = (cls, val) => $$(cls).forEach((g) => g.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.val === val))));
     seg('.js-dbtable', state.dbTable); seg('.js-spec', state.spec); seg('.js-round', state.round ? 'round' : 'exact'); seg('.js-bview', state.bview); seg('.js-oosby', state.oosBy); seg('.js-opsspec', state.opsSpec);
@@ -1850,7 +1850,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
   function catCell(td, v) {
     const s = document.createElement('span'); s.className = 'cat';
     const i = document.createElement('i'); i.style.background = CAT_COLOR[v] || 'var(--uncl)';
-    const t = document.createElement('span'); t.textContent = v === 'RTF' ? 'Return to furnace' : v === 'Hold' ? 'On hold' : v;
+    const t = document.createElement('span'); t.textContent = v === 'RTF' ? 'Return to furnace' : v;
     s.append(i, t); td.appendChild(s);
   }
   $$('.pg .tbl').forEach((table) => {
@@ -2181,7 +2181,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
   ];
   const F_LABEL = Object.fromEntries(F_STATES.map((s) => [s.key, s.label]));
   const CASTER_CATS = ['OK', 'Reapply', 'Divert', 'RTF', 'Scrap', 'Hold'];
-  const CASTER_LABEL = { OK: 'OK', Reapply: 'Reapply', Divert: 'Divert', RTF: 'Return to furnace', Scrap: 'Scrap', Hold: 'On hold' };
+  const CASTER_LABEL = { OK: 'OK', Reapply: 'Reapply', Divert: 'Divert', RTF: 'Return to furnace', Scrap: 'Scrap', Hold: 'Hold' };
   const CASTER_VERB = { OK: 'OK', Reapply: 'reapplied', Divert: 'diverted', RTF: 'returned to the furnace', Scrap: 'scrapped', Hold: 'on hold' };
   const F_HAD = { in: 'were in spec', miss: 'were out of spec', scrap: 'were out-of-spec scrap', nospec: 'had no spec to check against', nochem: 'had no chemistry entered' };
   const NOT_OK = new Set(['Reapply', 'Divert', 'RTF', 'Scrap']);
