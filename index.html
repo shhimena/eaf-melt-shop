@@ -1010,24 +1010,25 @@ html.vk-tv #ladles .ladle-edit { display: none; }
         <button class="btn st-fs" type="button" data-tv aria-pressed="false"><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>Full screen</span></button>
       </div>
       <div class="st-kpis" data-st="kpis"></div>
-      <div class="st-card c7 fx">
+      <div class="st-card c4 fx">
         <h2><span data-st="days-title">Melter OK % by day</span><small data-st="days-note"></small></h2>
         <div class="st-legend" data-st="days-legend"></div>
         <div class="st-chart" data-st="days"></div>
       </div>
-      <div class="st-card c5">
+      <div class="st-card c4">
         <h2><span>Furnace operators</span><small data-st="ops-note"></small></h2>
         <div class="st-legend" data-st="ops-legend"></div>
         <ol class="st-rank" data-st="ops"></ol>
       </div>
-      <div class="st-card c6 fx">
-        <h2><span>Latest heats</span><small data-st="heats-note"></small></h2>
-        <div class="st-tbl-wrap">
-          <table class="st-tbl" data-st="heats">
-            <thead><tr><th>Date</th><th>Heat</th><th>Melter</th><th>Grade</th><th>Size</th><th>Result</th><th>Outside the criteria</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
+      <div class="st-card c4 fx">
+        <h2><span data-st="billet-title">Billet tons by day</span><small data-st="billet-note"></small></h2>
+        <div class="st-legend" data-st="billet-legend"></div>
+        <div class="st-chart" data-st="billet"></div>
+        <ul class="st-notes" data-st="billet-notes"></ul>
+      </div>
+      <div class="st-card c3 fx">
+        <h2><span>Ladle's Life</span><small data-st="ladles-note"></small></h2>
+        <div class="st-lads" data-st="ladles"></div>
       </div>
       <div class="st-card c3">
         <h2><span>Outside the criteria</span><small data-st="els-note"></small></h2>
@@ -1037,9 +1038,14 @@ html.vk-tv #ladles .ladle-edit { display: none; }
         <div class="st-bars wide fill" data-st="els2"></div>
       </div>
       <div class="st-card c3 fx">
-        <h2><span>Melter OK % by month</span></h2>
-        <div class="st-legend" data-st="months-legend"></div>
-        <div class="st-chart" data-st="months"></div>
+        <h2><span>Money lost</span><small data-st="loss-note"></small></h2>
+        <div class="st-big" data-st="loss-big"></div>
+        <div class="st-chart" data-st="loss"></div>
+      </div>
+      <div class="st-card c3 fx">
+        <h2><span>Melters' overall performance</span><small data-st="overall-note"></small></h2>
+        <div class="st-legend" data-st="overall-legend"></div>
+        <div class="st-chart" data-st="overall"></div>
       </div>
     </section>
 
@@ -1056,10 +1062,10 @@ html.vk-tv #ladles .ladle-edit { display: none; }
       </div>
       <div class="st-kpis" data-st="kpis"></div>
       <div class="st-card c5 fx">
-        <h2><span data-st="days-title">Billet tons by day</span><small data-st="days-note"></small></h2>
-        <div class="st-legend" data-st="days-legend"></div>
-        <div class="st-chart" data-st="days"></div>
-        <ul class="st-notes" data-st="notes"></ul>
+        <h2><span data-st="billet-title">Billet tons by day</span><small data-st="billet-note"></small></h2>
+        <div class="st-legend" data-st="billet-legend"></div>
+        <div class="st-chart" data-st="billet"></div>
+        <ul class="st-notes" data-st="billet-notes"></ul>
       </div>
       <div class="st-card c3 fx">
         <h2><span>Money lost</span><small data-st="loss-note"></small></h2>
@@ -1904,9 +1910,9 @@ html.vk-tv #ladles .ladle-edit { display: none; }
     if (opts.total) addRow(opts.total, 'total');
     table.tBodies[0].replaceChildren(frag);
   }
-  function pctCell(td, v) {
+  function pctCell(td, v, neutral) {
     if (v == null) { td.textContent = ''; return; }
-    const s = status(v);
+    const s = neutral ? 'total' : status(v);
     const wrap = document.createElement('span'); wrap.className = 'pct';
     const track = document.createElement('span'); track.className = 'track';
     const fill = document.createElement('span'); fill.className = 'fill'; fill.style.width = Math.max(0, Math.min(1, v)) * 100 + '%'; fill.style.background = `var(--${s === 'neutral' ? 'faint' : s})`;
@@ -2177,7 +2183,7 @@ html.vk-tv #ladles .ladle-edit { display: none; }
       } },
       { field: 'Checked', num: true, fmt: fInt }, { field: 'OK', num: true, fmt: fInt }, { field: 'OOS', num: true, fmt: fInt },
       { field: 'Scrap', num: true, fmt: (v) => (v == null ? '–' : fInt(v)) },
-      { field: 'OKPct', num: true, render: pctCell },
+      { field: 'OKPct', num: true, render: (td, v) => pctCell(td, v, true) },
       { field: 'Top', cls: 'muted' },
     ], { defaultSort: { field: 'OKPct', dir: 'desc' }, total: stat('All melters', heats) });
   }
@@ -2191,12 +2197,12 @@ html.vk-tv #ladles .ladle-edit { display: none; }
     setText('k-ops-checked', heats.length || null, fInt);
     const allH = DATA.heats.filter((h) => inMonth(h, m) && (state.grade === 'All' || h.Grade === state.grade)).length;
     $('#k-ops-checked-sub').textContent = allH ? (allH - heats.length ? `${fInt(allH - heats.length)} more without chemistry or spec` : 'Every heat had chemistry and a spec') : '';
-    setText('k-ops-hit', pct, fP1, { status: pct });
+    setText('k-ops-hit', pct, fP1);
     $('#k-ops-hit-lbl').textContent = melter ? 'Melter OK' : 'Hit spec';
     $('#k-ops-miss-lbl').textContent = melter ? 'Not OK' : 'Missed spec';
     $('#k-ops-hit-sub').textContent = heats.length ? `${fInt(heats.length - missed.length)} heats ${melter ? 'inside the melter criteria' : 'inside every limit'}` : '';
     const byDay = d3.rollups(heats, (v) => v.filter((h) => !oset.byHeat.has(heatKey(h))).length / v.length, (h) => (m === 'All' ? h.Month : h.Date)).sort((a, b) => cmp(a[0], b[0])).map((d) => d[1]);
-    sparkLine($('#k-ops-spark'), byDay, 'var(--' + (status(pct) === 'neutral' ? 'faint' : status(pct)) + ')');
+    sparkLine($('#k-ops-spark'), byDay, 'var(--total)');
     setText('k-ops-miss', heats.length ? missed.length : null, fInt);
     const scrapN = missed.filter((h) => oset.byHeat.get(heatKey(h)).some((r) => r.Kind === SCRAP)).length;
     $('#k-ops-miss-sub').textContent = !heats.length ? '' : melter ? `${fInt(missed.length - scrapN)} out of spec · ${fInt(scrapN)} out-of-spec scrap` : `${fP1(missed.length / heats.length)} of heats checked`;
@@ -2398,7 +2404,7 @@ html.vk-tv #ladles .ladle-edit { display: none; }
       const meta = `${fInt(s.in)} of ${fInt(s.Checked)} heats ${melter ? 'OK' : 'in spec'}`
         + (s.Elements.length ? ` · most missed ${s.Elements.slice(0, 2).map(([e, n]) => `${e} ${fInt(n)}`).join(', ')}` : '')
         + (s.none ? ` · ${fInt(s.none)} without chemistry or spec` : '');
-      return { pct, n: s.Checked, parts: F_SEG.filter((f) => f.key !== 'none').map((f) => ({ ...f, n: s[f.key] })), meta,
+      return { pct, n: s.Checked, noTarget: true, parts: F_SEG.filter((f) => f.key !== 'none').map((f) => ({ ...f, n: s[f.key] })), meta,
         aria: `${s.Name}: ${pct == null ? 'no heats checked' : fP1(pct) + (melter ? ' OK under the melter criteria' : ' in spec')}, ${s.in} of ${s.Checked} heats. ${s.miss} out of spec, ${s.scrap} out-of-spec scrap.` };
     }
     // a caster operator is judged on OK against reapplied only; diverts, returns to the furnace, scrap and holds are left out
@@ -2429,10 +2435,11 @@ html.vk-tv #ladles .ladle-edit { display: none; }
       const who = document.createElement('span'); who.className = 'who'; who.textContent = name;
       const meta = document.createElement('span'); meta.className = 'meta'; meta.textContent = r.meta;
       const res = document.createElement('span'); res.className = 'res';
-      const st = status(r.pct);
+      const st = r.noTarget ? 'neutral' : status(r.pct);
       const v = document.createElement('b'); v.textContent = r.pct == null ? '—' : fP1(r.pct);
       const pill = document.createElement('span'); pill.className = 'pill ' + st; pill.textContent = r.n < 10 ? 'Few heats' : STATUS_WORD[st];
-      res.append(v, pill);
+      res.append(v);
+      if (!r.noTarget || r.n < 10) res.append(pill);
       b.append(who, stackBar(r.parts, r.n || 1), res, meta);
       b.setAttribute('aria-label', r.aria);
       b.addEventListener('click', () => { if (role === 'F') state.opF = state.opF === name ? null : name; else state.opC = state.opC === name ? null : name; drawOps(); });
@@ -2569,9 +2576,10 @@ html.vk-tv #ladles .ladle-edit { display: none; }
     if (!rows.length) { ol.appendChild(mk('li', 'chart-empty', 'No heats for this month')); return; }
     for (const r of rows.concat(rows.length > 1 && total ? [{ ...total, tot: true }] : [])) {
       const li = mk('li', r.tot ? 'tot' : r.n < 10 ? 'few' : '');
-      const st = status(r.pct);
+      const st = r.noTarget ? 'neutral' : status(r.pct);
       const res = mk('span', 'res');
-      res.append(mk('b', st === 'neutral' ? '' : 'c-' + st, r.pct == null ? '—' : fP1(r.pct)), mk('span', 'pill ' + st, r.n < 10 ? 'Few heats' : STATUS_WORD[st]));
+      res.append(mk('b', st === 'neutral' ? '' : 'c-' + st, r.pct == null ? '—' : fP1(r.pct)));
+      if (!r.noTarget || r.n < 10) res.append(mk('span', 'pill ' + st, r.n < 10 ? 'Few heats' : STATUS_WORD[st]));
       li.append(mk('span', 'who', r.s.Name), stackBar(r.parts, r.n || 1), res, mk('span', 'meta', r.meta));
       li.setAttribute('aria-label', r.aria);
       ol.appendChild(li);
@@ -2626,7 +2634,8 @@ html.vk-tv #ladles .ladle-edit { display: none; }
     if (box.classList.contains('fill') && box.clientHeight > 0) for (const k of [...box.children].reverse()) { if (k.getBoundingClientRect().bottom <= lim + 1) break; k.remove(); }
   }
   // percent by month (oldest to newest) against the 90% target; one or two bars a month
-  function stMonths(box, rows, cur, series) {
+  function stMonths(box, rows, cur, series, opts = {}) {
+    const withTarget = opts.target !== false;
     clear(box);
     if (!rows.length) return emptyNote(box, 'No months yet');
     const W = box.clientWidth, H = box.clientHeight;
@@ -2648,10 +2657,10 @@ html.vk-tv #ladles .ladle-edit { display: none; }
     const bw = x1.bandwidth();
     svg.append('g').selectAll('rect').data(bars).join('rect')
       .attr('x', (b) => x(K(b.r)) + x1(b.s.key)).attr('width', bw).attr('y', (b) => y(b.v)).attr('height', (b) => y(0) - y(b.v))
-      .attr('rx', Math.min(3, bw / 4)).style('fill', (b) => b.s.color(b.v));
-    svg.append('line').attr('class', 'target').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(0.9)).attr('y2', y(0.9));
+      .attr('rx', Math.min(3, bw / 4)).style('fill', (b) => b.s.color(b.v)).style('opacity', (b) => (b.r.few ? 0.45 : 1));
+    if (withTarget) svg.append('line').attr('class', 'target').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(0.9)).attr('y2', y(0.9));
     const wl = d3.max(bars, (b) => textWidth(svg, fP0(b.v), 'vl')) || 0;
-    if (wl <= bw + x1.step() * x1.paddingInner() + 2) svg.append('g').selectAll('text').data(bars).join('text').attr('class', (b) => 'vl ' + (series.length > 1 ? '' : status(b.v)))
+    if (wl <= bw + x1.step() * x1.paddingInner() + 2) svg.append('g').selectAll('text').data(bars).join('text').attr('class', (b) => 'vl ' + (series.length > 1 || !withTarget ? '' : status(b.v)))
       .attr('x', (b) => x(K(b.r)) + x1(b.s.key) + bw / 2).attr('y', (b) => y(b.v) - 0.45 * em).attr('text-anchor', 'middle').text((b) => fP0(b.v));
     const lab = (k) => MONTHS[+k.slice(5, 7) - 1].slice(0, 3);
     if (rows[0] && rows[0].label) stXLabels(svg, x, rows.map((r) => ({ key: K(r), label: r.label })), H, em);
@@ -2750,7 +2759,7 @@ html.vk-tv #ladles .ladle-edit { display: none; }
       .attr('rx', Math.min(3, x.bandwidth() / 4)).style('fill', (s) => s.f.color).style('opacity', (s) => (s.f.soft ? 0.5 : 1));
     const lab = days.filter((d) => d.pct != null);
     const wl = d3.max(lab, (d) => textWidth(svg, fP0(d.pct), 'vl')) || 0;
-    if (wl <= x.step() - 2) svg.append('g').selectAll('text').data(lab).join('text').attr('class', (d) => 'vl ' + status(d.pct))
+    if (wl <= x.step() - 2) svg.append('g').selectAll('text').data(lab).join('text').attr('class', 'vl')
       .attr('x', (d) => x(d.key) + x.bandwidth() / 2).attr('y', (d) => y(d.total) - 0.45 * em).attr('text-anchor', 'middle').text((d) => fP0(d.pct));
     stXLabels(svg, x, days, H, em);
     const hover = svg.append('g').selectAll('rect').data(days).join('rect').attr('class', 'hover-band')
@@ -2817,37 +2826,32 @@ html.vk-tv #ladles .ladle-edit { display: none; }
     stAsOf(stq(sec, 'asof'), [['Heats through', fullDate(lastDay)]]);
     stKpis(stq(sec, 'kpis'), [
       { lbl: 'Heats', val: all.length ? fInt(all.length) : null, sub: dates.length ? `${fInt(dates.length)} days · ${f1(all.length / dates.length)} per day` : '' },
-      { lbl: 'Melter OK', val: c.pct == null ? null : fP1(c.pct), st: status(c.pct), sub: c.checked ? `${fInt(c.in)} of ${fInt(c.checked)} heats · target 90%` : '' },
+      { lbl: 'Melter OK', val: c.pct == null ? null : fP1(c.pct), sub: c.checked ? `${fInt(c.in)} of ${fInt(c.checked)} heats` : '' },
       { lbl: 'Out of spec', val: c.checked ? fInt(c.miss) : null, sub: c.checked ? `${fP1(c.miss / c.checked)} of heats checked` : '' },
       { lbl: 'Out-of-spec scrap', val: c.checked ? fInt(c.scrap) : null, sub: c.checked ? `${fP1(c.scrap / c.checked)} of heats checked` : '' },
       { lbl: 'Returned to furnace', val: all.length ? fInt(rtf) : null, sub: all.length ? `${fP1(rtf / all.length)} of heats` : '' },
-      { lbl: lastDay ? 'Latest day · ' + fDate(lastDay) : 'Latest day', val: lc.pct == null ? null : fP1(lc.pct), st: status(lc.pct), sub: lc.total ? `${fInt(lc.in)} of ${fInt(lc.checked)} heats OK · ${fInt(lc.total)} heats` : '' },
+      { lbl: lastDay ? 'Latest day · ' + fDate(lastDay) : 'Latest day', val: lc.pct == null ? null : fP1(lc.pct), sub: lc.total ? `${fInt(lc.in)} of ${fInt(lc.checked)} heats OK · ${fInt(lc.total)} heats` : '' },
     ]);
     const fLegend = F_SEG.map((f) => [f.label, f.color, f.soft]);
     stLegend(stq(sec, 'days-legend'), fLegend);
     stLegend(stq(sec, 'ops-legend'), fLegend.slice(0, 3));
     stLegend(stq(sec, 'els-legend'), [['Above max', 'var(--above)'], ['Below 90% of min', 'var(--below)']]);
     stq(sec, 'days-title').textContent = single ? 'Melter OK % by day' : 'Melter OK % by month';
-    stq(sec, 'days-note').textContent = 'Target 90%';
+    stq(sec, 'days-note').textContent = c.checked ? `${fInt(c.checked)} heats checked` : '';
     stq(sec, 'ops-note').textContent = c.checked ? `${fInt(c.checked)} heats checked` : '';
-    // the table and the bars first: what is left of the card goes to the chart
-    const order = new Map(DATA.heats.map((h, i) => [h, i]));
-    const recent = all.slice().sort((a, b) => cmp(b.Date, a.Date) || order.get(b) - order.get(a)).slice(0, 80);
-    const shown = stTable(stq(sec, 'heats'), recent, [
-      { field: 'Date', fmt: fDate, cls: 'muted' }, { field: 'HeatNo', cls: 'strong' }, { field: 'Crew' }, { field: 'Grade', cls: 'muted' }, { field: 'Product', cls: 'muted' },
-      { render: (td, h) => { const f = fsOf.get(h); td.appendChild(mk('span', 'pill ' + ({ in: 'good', miss: 'bad', scrap: 'bad' }[f] || 'neutral'), f === 'in' ? 'OK' : F_LABEL[f])); } },
-      { cls: 'cut miss', render: (td, h) => { const f = oset.byHeat.get(heatKey(h)); if (f) { td.textContent = f.map(shortMiss).join(' · '); td.title = td.textContent; } } },
-    ]);
-    stq(sec, 'heats-note').textContent = all.length ? `Latest ${fInt(shown)} of ${fInt(all.length)}` : '';
-    // every month side by side, so this month can be read against the ones before it
-    const mRows = d3.groups(DATA.heats, (h) => h.Month).sort((a, b) => cmp(a[0], b[0])).map(([k, hs]) => {
-      const r = { Month: k, in: 0, out: 0 };
-      for (const h of hs) { const f = furnaceState(h, oset, ST_SPEC); if (f === 'in') r.in += 1; else if (f === 'miss' || f === 'scrap') r.out += 1; }
-      r.pct = r.in + r.out ? r.in / (r.in + r.out) : null;
-      r.extra = [[null, 'Heats', fInt(hs.length)], [null, 'OK of heats checked', `${fInt(r.in)} of ${fInt(r.in + r.out)}`]];
-      return r;
-    });
-    stq(sec, 'months-legend').replaceChildren();
+    stLadleTiles(sec);
+    // each melter over every month in the data
+    const allMonths = [...new Set(DATA.heats.map((h) => h.Month))].sort();
+    const overall = d3.groups(DATA.heats, (h) => h.Crew).map(([name, hs]) => {
+      const r = { in: 0, miss: 0, scrap: 0 };
+      for (const h of hs) { const f = furnaceState(h, oset, ST_SPEC); if (f in r) r[f] += 1; }
+      const n = r.in + r.miss + r.scrap;
+      return { key: name, label: name, long: name, pct: n ? r.in / n : null, n,
+        extra: [[null, 'Heats checked', fInt(n)], ['var(--good)', 'OK', fInt(r.in)], ['var(--bad)', 'Out of spec', fInt(r.miss)], ['var(--bad)', 'Out-of-spec scrap', fInt(r.scrap)], [null, 'Months', fInt(new Set(hs.map((h) => h.Month)).size)]] };
+    }).filter((r) => r.pct != null && r.key !== '(Blank)').map((r) => ({ ...r, few: r.n < 20 }))
+      .sort((a, b) => a.few - b.few || b.pct - a.pct || b.n - a.n);
+    stLegend(stq(sec, 'overall-legend'), [['OK %', 'var(--total)'], ...(overall.some((r) => r.few) ? [['Under 20 heats', 'var(--total)', true]] : [])]);
+    stq(sec, 'overall-note').textContent = allMonths.length ? (allMonths.length > 1 ? `${monthShort(allMonths[0])} – ${monthShort(allMonths[allMonths.length - 1])}` : monthShort(allMonths[0])) : '';
     const rowsM = oset.rows.filter((r) => inMonth(r, m));
     const hk = (r) => r.Month + '|' + r.HeatNo;
     const els = d3.rollups(rowsM, (v) => ({ up: new Set(v.filter((r) => r.Direction === 'Above Maximum').map(hk)).size, down: new Set(v.filter((r) => r.Direction !== 'Above Maximum').map(hk)).size, n: new Set(v.map(hk)).size }), (r) => r.Element)
@@ -2855,16 +2859,51 @@ html.vk-tv #ladles .ladle-edit { display: none; }
       .sort((a, b) => b.n - a.n || cmp(a.label, b.label));
     stBars(stq(sec, 'els'), els, d3.max(els, (r) => r.n), 'Every heat inside the criteria');
     stq(sec, 'els-note').textContent = els.length ? 'Heats' : '';
-    const grades = d3.groups(all, (h) => h.Grade).map(([g, hs]) => { const k = cnt(hs); return { label: gradeShort(g), title: g, n: hs.length, k, p: k.pct, pst: status(k.pct), parts: F_SEG.slice(0, 3).map((f) => ({ ...f, n: k[f.key] })) }; })
+    const grades = d3.groups(all, (h) => h.Grade).map(([g, hs]) => { const k = cnt(hs); return { label: gradeShort(g), title: g, n: hs.length, k, p: k.pct, parts: F_SEG.slice(0, 3).map((f) => ({ ...f, n: k[f.key] })) }; })
       .sort((a, b) => b.n - a.n || cmp(a.label, b.label));
     const gMax = d3.max(grades, (r) => r.k.checked) || 1;
     stBars(stq(sec, 'els2'), grades, gMax, 'No heats for this month');
     const fAll = flowStat('All heats', all, oset, ST_SPEC);
     stRank(stq(sec, 'ops'), opRanks(all, 'Crew', oset, ST_SPEC), { s: fAll, ...rankInfo(fAll, 'F', true) });
     const groups = d3.groups(all, (h) => (single ? h.Date : h.Month)).sort((a, b) => cmp(a[0], b[0]));
-    stTarget(stq(sec, 'months-legend'));
-    stMonths(stq(sec, 'months'), mRows, m, [{ key: 'pct', label: 'Melter OK', color: (v) => `var(--${status(v)})` }]);
+    stProduction(sec, m, single);
+    stMonths(stq(sec, 'overall'), overall, null, [{ key: 'pct', label: 'Melter OK', color: () => 'var(--total)' }], { target: false });
     stFurnaceDays(stq(sec, 'days'), groups.map(([key, hs]) => ({ key, label: colLabel(key, single, groups.length), long: single ? d3.utcFormat('%a, %b %-d')(utc(key)) : monthLong(key), ...cnt(hs) })));
+  }
+
+  // billet tons by day and money lost, shared by both stations
+  function stProduction(sec, m, single) {
+    const row = BILLET_SUM.find((r) => r.Month === m) || {};
+    const hasB = !!row.HasBillet;
+    const bdays = DATA.billet_daily.filter((d) => inMonth(d, m)).sort((a, b) => cmp(a.Date, b.Date));
+    const withTons = bdays.filter((d) => d.ActualDaily !== null);
+    const plan = d3.sum(bdays, (d) => d.PlannedDaily || 0);
+    stLegend(stq(sec, 'billet-legend'), [['Plan', 'var(--plan)'], ['Actual, 90% of plan or more', 'var(--good)'], ['80–90%', 'var(--warn)'], ['Under 80%', 'var(--bad)']]);
+    stq(sec, 'billet-title').textContent = single ? 'Billet tons by day' : 'Billet tons by month';
+    stq(sec, 'billet-note').textContent = single && hasB ? `Month plan ${f0(plan)} t` : '';
+    const notes = bdays.filter((d) => String(d.Comments || '').trim()).slice(-2).reverse();
+    stq(sec, 'billet-notes').replaceChildren(...notes.map((d) => { const li = mk('li'); li.append(mk('b', '', fDate(d.Date)), String(d.Comments).trim()); li.title = String(d.Comments).trim(); return li; }));
+    // money lost: tons short of plan × the billet price picked on the Billet page, as a running total
+    const price = state.price;
+    let run = 0;
+    const lossPts = (single
+      ? withTons.map((d) => ({ key: d.Date, A: d.ActualDaily, P: d.PlannedDaily || 0, long: d3.utcFormat('%a, %b %-d')(utc(d.Date)) }))
+      : BILLET_SUM.filter((r) => r.Month !== 'All' && r.HasBillet).sort((a, b) => cmp(a.Month, b.Month)).map((r) => ({ key: r.Month, A: r.ActualTons, P: r.PlannedToDate, long: monthLong(r.Month) })))
+      .map((d) => { const v = (d.A - d.P) * price; run += v; return { ...d, day: v, run }; });
+    lossPts.forEach((d) => { d.label = colLabel(d.key, single, lossPts.length); });
+    const net = hasB ? row.VarianceTons * price : null;
+    const big = stq(sec, 'loss-big'); big.replaceChildren();
+    if (net != null) {
+      big.append(mk('b', net < 0 ? 'c-bad' : 'c-good', net < 0 ? '−' + moneyShort(-net) : '$0'),
+        mk('span', '', net < 0 ? `${f0(-row.VarianceTons)} t short of plan` : `${f0(row.VarianceTons)} t ahead of plan`));
+    }
+    stq(sec, 'loss-note').textContent = `At $${fInt(price)}/t`;
+    const pts = single
+      ? bdays.map((d) => ({ key: d.Date, P: d.PlannedDaily || 0, A: d.ActualDaily, note: String(d.Comments || '').trim(), long: d3.utcFormat('%a, %b %-d')(utc(d.Date)) }))
+      : BILLET_SUM.filter((r) => r.Month !== 'All' && r.HasBillet).map((r) => ({ key: r.Month, P: r.PlannedToDate, A: r.ActualTons, note: '', long: monthLong(r.Month) }));
+    pts.forEach((d) => { d.label = colLabel(d.key, single, pts.length); });
+    stBilletDays(stq(sec, 'billet'), pts);
+    stLossChart(stq(sec, 'loss'), lossPts);
   }
 
   function drawCasterStation() {
@@ -2901,29 +2940,9 @@ html.vk-tv #ladles .ladle-edit { display: none; }
       { lbl: 'Heats', val: all.length ? fInt(all.length) : null, sub: dates.length ? `${fInt(dates.length)} days · ${f1(all.length / dates.length)} per day` : '' },
       { lbl: 'OK at the caster', val: okPct == null ? null : fP1(okPct), st: status(okPct), sub: counted ? `${fInt(cc.OK)} OK · ${fInt(cc.Reapply)} reapplied` : '' },
     ]);
-    stLegend(stq(sec, 'days-legend'), [['Plan', 'var(--plan)'], ['Actual, 90% of plan or more', 'var(--good)'], ['80–90%', 'var(--warn)'], ['Under 80%', 'var(--bad)']]);
     stLegend(stq(sec, 'ops-legend'), CASTER_OKRE.map((k) => [CASTER_LABEL[k], C_COLOR[k]]));
-    stq(sec, 'days-title').textContent = single ? 'Billet tons by day' : 'Billet tons by month';
-    stq(sec, 'days-note').textContent = single && hasB ? `Month plan ${f0(plan)} t` : '';
     stq(sec, 'ops-note').textContent = counted ? `OK ÷ (OK + reapplied)` : '';
-    const notes = bdays.filter((d) => String(d.Comments || '').trim()).slice(-2).reverse();
-    stq(sec, 'notes').replaceChildren(...notes.map((d) => { const li = mk('li'); li.append(mk('b', '', fDate(d.Date)), String(d.Comments).trim()); li.title = String(d.Comments).trim(); return li; }));
     stLadleTiles(sec);
-    // money lost: tons short of plan × the billet price picked on the Billet page, as a running total
-    const price = state.price;
-    let run = 0;
-    const lossPts = (single
-      ? withTons.map((d) => ({ key: d.Date, A: d.ActualDaily, P: d.PlannedDaily || 0, long: d3.utcFormat('%a, %b %-d')(utc(d.Date)) }))
-      : BILLET_SUM.filter((r) => r.Month !== 'All' && r.HasBillet).sort((a, b) => cmp(a.Month, b.Month)).map((r) => ({ key: r.Month, A: r.ActualTons, P: r.PlannedToDate, long: monthLong(r.Month) })))
-      .map((d) => { const v = (d.A - d.P) * price; run += v; return { ...d, day: v, run }; });
-    lossPts.forEach((d) => { d.label = colLabel(d.key, single, lossPts.length); });
-    const net = hasB ? row.VarianceTons * price : null;
-    const big = stq(sec, 'loss-big'); big.replaceChildren();
-    if (net != null) {
-      big.append(mk('b', net < 0 ? 'c-bad' : 'c-good', net < 0 ? '−' + moneyShort(-net) : '$0'),
-        mk('span', '', net < 0 ? `${f0(-row.VarianceTons)} t short of plan` : `${f0(row.VarianceTons)} t ahead of plan`));
-    }
-    stq(sec, 'loss-note').textContent = `At $${fInt(price)}/t`;
     // caster performance: OK against reapplied, by day
     const pg = d3.groups(all, (h) => (single ? h.Date : h.Month)).sort((a, b) => cmp(a[0], b[0]));
     const perfRows = pg.map(([key, hs]) => {
@@ -2944,12 +2963,7 @@ html.vk-tv #ladles .ladle-edit { display: none; }
     stBars(stq(sec, 'els2'), sizes, d3.max(sizes, (r) => r.n) || 1, 'No heats for this month');
     const cAll = flowStat('All heats', all, oset, ST_SPEC);
     stRank(stq(sec, 'ops'), opRanks(all, 'CasterOp', oset, ST_SPEC), { s: cAll, ...rankInfo(cAll, 'C', true) });
-    const pts = single
-      ? bdays.map((d) => ({ key: d.Date, P: d.PlannedDaily || 0, A: d.ActualDaily, note: String(d.Comments || '').trim(), long: d3.utcFormat('%a, %b %-d')(utc(d.Date)) }))
-      : BILLET_SUM.filter((r) => r.Month !== 'All' && r.HasBillet).map((r) => ({ key: r.Month, P: r.PlannedToDate, A: r.ActualTons, note: '', long: monthLong(r.Month) }));
-    pts.forEach((d) => { d.label = colLabel(d.key, single, pts.length); });
-    stBilletDays(stq(sec, 'days'), pts);
-    stLossChart(stq(sec, 'loss'), lossPts);
+    stProduction(sec, m, single);
     stMonths(stq(sec, 'perf'), perfRows, null, [{ key: 'pct', label: 'OK of OK + reapplied', color: (v) => `var(--${status(v)})` }]);
   }
 
@@ -3028,7 +3042,7 @@ html.vk-tv #ladles .ladle-edit { display: none; }
   const whenShort = (iso) => (!iso ? '' : iso.length <= 10 ? d3.utcFormat('%b %-d')(utc(iso)) : d3.timeFormat('%b %-d, %-I:%M %p')(new Date(iso)));
   const lifeColor = (life, S) => (life >= S.alarm ? 'var(--bad)' : life >= S.warn ? 'var(--gauge-warn)' : 'var(--good)');
   const ladleMsg = (t, err) => { const m = $('#ladle-msg'); m.textContent = t || ''; m.classList.toggle('err', !!err); };
-  const redrawLadles = () => { if (state.page === 'ladles') drawLadles(); else if (state.page === 'caster-station') drawCasterStation(); };
+  const redrawLadles = () => { if (state.page === 'ladles') drawLadles(); else if (STATIONS.has(state.page)) PAGES[state.page](); };
 
   // ----- reading -----
   function applyLadleFile(obj) {
@@ -3058,7 +3072,7 @@ html.vk-tv #ladles .ladle-edit { display: none; }
   function startLadleFile() {
     loadLadleFile().then((ok) => {
       if (!ok || ladlePoll) return;
-      ladlePoll = setInterval(() => { if (!document.hidden && (state.page === 'ladles' || state.page === 'caster-station') && !lad.busy && !lad.drafts.size) loadLadleFile(); }, 60000);
+      ladlePoll = setInterval(() => { if (!document.hidden && (state.page === 'ladles' || STATIONS.has(state.page)) && !lad.busy && !lad.drafts.size) loadLadleFile(); }, 60000);
     });
   }
   function connectLadles() { /* the ladles live in the GitHub file only; the Claude database does not hold them */ }

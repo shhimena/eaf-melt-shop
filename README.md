@@ -21,7 +21,7 @@ Chemistry dispositions, out-of-spec results, operator spec performance and bille
 | **Operators** | Each melter's OK % under the furnace melter criteria. Each station's operators are judged on their own work: furnace operators by the chemistry at the furnace, caster operators by OK out of OK + reapplied at the caster (diverts, returns to the furnace, scrap and holds are left out). Also how each pairing performed, and each heat's path from furnace to caster (for example, in spec at the furnace but returned to the furnace at the caster). |
 | **Billet Production** | Daily billet tons against plan, the variance to plan and the estimated production loss. |
 | **Ladle's Life** | The lining life of the 8 ladles against their safety life, and each ladle's status: In Use (green), On Preheater (orange), Relining (purple) or Out of Service (gray). Anyone holding an edit key updates the numbers and statuses right on the page, and every change is logged. |
-| **Furnace Station** | A one-screen view for the TV at the furnace: heats, melter OK %, out of spec and out-of-spec scrap, melter OK % by day, the furnace operators, the latest heats with what was outside the criteria, the elements and grades, and melter OK % month by month. |
+| **Furnace Station** | A one-screen view for the TV at the furnace: heats, melter OK %, out of spec and out-of-spec scrap, melter OK % by day, the furnace operators, billet tons by day, money lost against plan, a Ladle's Life preview, the elements and grades outside the criteria, and each melter's overall performance across all months. |
 | **Caster Station** | A one-screen view for the TV at the caster: billet tons against plan, the tons a day still needed to make the month, the last day, OK at the caster, billet tons by day with the latest shift comments, money lost against plan as a running total, the caster operators, a Ladle's Life preview, the dispositions and sizes cast, and caster performance by day. |
 | **Data & definitions** | Which Excel file each month came from, the days it covers, and how every number is worked out. |
 
@@ -111,12 +111,12 @@ The password unlocks the GitHub key, and the key can change files in this reposi
   - **P, S** over the max are *out of spec*.
   - **Ni, Mo, Cu** over the max are *out-of-spec scrap*.
   - **Cr** under 90% of the low spec is *out of spec*; over the max is *out-of-spec scrap*.
-  - **Melter OK %** is the share of a melter's heats with nothing outside these limits. The target is 90%.
+  - **Melter OK %** is the share of a melter's heats with nothing outside these limits. It is shown without a target: the 90% target in the instructions applies to the FL1 sample, which the monthly reports don't include yet.
   - The instructions call for the FL1 sample. The monthly report only carries the final chemistry (the average of the final samples), so the rules are applied to that.
 - **Furnace to caster.** *At the furnace* is the heat's chemistry result: in spec, out of spec, out-of-spec scrap, no spec to check against, or no chemistry entered. *At the caster* is its disposition category. **In spec, not OK at caster** counts heats with in-spec chemistry that were still reapplied, diverted, returned to the furnace or scrapped.
 - **Station pages.** The Furnace Station always uses the melter criteria with exact readings. *Latest heats* lists the newest heats first and shows as many as fit. *To make the month* is the month's planned tons still left, spread over the planned days that remain after the last day with actual tons.
 - **Ladle's Life.** Each gauge runs from 0 to the safety life (75). It is green below 50, yellow from 50 and red from 60; editors can change those limits on the page. The ladles live in `ladles.json` in this repository, and each save on the page is a commit to that file. This site is the only place ladles are kept; on the Claude link, the Ladle's Life tab opens this site.
-- **Targets.** Rates of 90% and up are on target, 80–90% are flagged to watch, and anything lower is below target.
+- **Targets.** For the caster, billet and disposition rates, 90% and up is on target, 80–90% is flagged to watch, and anything lower is below target. Melter OK % has no target (see above).
 - **Billet.** Planned and actual tons come from the *EAF Daily Objective* sheet. Estimated production loss is the tons short of plan times the billet price per ton you pick (the price is not in the Excel).
 
 The **Data & definitions** page lists every month that is included and flags months with missing or partial reports.
