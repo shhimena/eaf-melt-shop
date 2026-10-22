@@ -408,7 +408,7 @@ a.btn { text-decoration: none; }
 .st-card h2 { display: flex; align-items: baseline; justify-content: space-between; gap: 1em; font-size: 1.12em; font-weight: 600; margin: 0 0 .4em; min-width: 0; }
 .st-card h2 > span { white-space: nowrap; }
 .st-card h2 small { font-size: .8em; font-weight: 500; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
-.st .c7 { grid-column: span 7; } .st .c6 { grid-column: span 6; } .st .c5 { grid-column: span 5; } .st .c3 { grid-column: span 3; }
+.st .c7 { grid-column: span 7; } .st .c6 { grid-column: span 6; } .st .c5 { grid-column: span 5; } .st .c4 { grid-column: span 4; } .st .c3 { grid-column: span 3; }
 .st-legend { display: flex; flex-wrap: wrap; gap: .15em 1em; font-size: .84em; color: var(--muted); margin: 0 0 .45em; }
 .st-legend:empty { display: none; }
 .st-legend .lg { display: inline-flex; align-items: center; gap: .4em; color: var(--ink); white-space: nowrap; }
@@ -435,6 +435,11 @@ a.btn { text-decoration: none; }
 .st-rank .res b { font-family: var(--font-num); font-size: 1.75em; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
 .st-rank .pill, .st-tbl .pill { font-size: .84em; padding: .12em .6em; }
 .st-rank .few { opacity: .62; }
+.st-rank.tight li { padding: .3em .15em; gap: .1em 1em; }
+.st-rank.tight .res b { font-size: 1.45em; }
+.st-rank.tight .pill { display: none; }
+.st-rank.tighter .meta { display: none; }
+.st-rank.tighter li { grid-template-rows: auto; }
 .st-rank .chart-empty { padding: 2em 0; }
 .st-tbl-wrap { flex: 1 1 0; min-height: 0; overflow: hidden; }
 .st-tbl { width: 100%; border-collapse: collapse; font-size: .95em; font-variant-numeric: tabular-nums; }
@@ -467,6 +472,22 @@ a.btn { text-decoration: none; }
 .st-notes li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--muted); }
 .st-notes b { color: var(--ink); font-weight: 600; margin-right: .5em; }
 .st-tbl th.num, .st-tbl td.num { text-align: right; }
+.st-lads { flex: 1 1 0; min-height: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: .55em; }
+.st-lad { display: flex; flex-direction: column; min-width: 0; min-height: 0; border-radius: .55em; overflow: hidden; border-top: .3em solid var(--lc); background: color-mix(in srgb, var(--lc) 8%, var(--panel-2)); }
+.st-lad .top { display: flex; justify-content: space-between; align-items: baseline; gap: .4em; padding: .4em .6em 0; }
+.st-lad .top b { font-family: var(--font-num); font-size: 1.15em; font-weight: 700; white-space: nowrap; }
+.st-lad .top span { font-size: .82em; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.st-lad .big { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-num); font-weight: 700; font-size: 4.4em; line-height: 1; font-variant-numeric: tabular-nums; }
+.st-lad .big.near { color: var(--warn-ink); }
+.st-lad .big.over { color: var(--bad-ink); }
+.st-lad .lbar { position: relative; height: .6em; margin: 0 .6em .5em; border-radius: .3em; background: var(--line-2); }
+.st-lad .lbar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: .3em; }
+.st-lad .lbar u { position: absolute; top: -.15em; bottom: -.15em; width: 2px; background: var(--faint); opacity: .7; }
+.st-lad .stt { padding: .3em .4em; font-size: 1.02em; font-weight: 700; color: #FFFFFF; background: var(--lc); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.st-big { display: flex; flex-wrap: wrap; align-items: baseline; gap: .1em .6em; margin: -.1em 0 .35em; }
+.st-big b { font-family: var(--font-num); font-size: 2.1em; font-weight: 600; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.st-big span { font-size: .88em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.st-chart .zero { stroke: var(--faint); stroke-width: 1; }
 .st-legend .sw.tgt { height: 0; width: 1.3em; border-radius: 0; border-top: 2px dashed var(--ink); opacity: .55; }
 .st-chart .target { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 5 4; opacity: .55; }
 .st-chart .tl.cur { fill: var(--ink); font-weight: 600; }
@@ -478,6 +499,8 @@ a.btn { text-decoration: none; }
   html:not(.vk-tv) .st-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 620px) {
+  html:not(.vk-tv) .st-lad .big { font-size: 2.4em; }
+  html:not(.vk-tv) .st-lad .top span { display: none; }
   html:not(.vk-tv) .st-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   html:not(.vk-tv) .st > .st-card.fx { height: 320px; }
   html:not(.vk-tv) .st-tbl th:nth-child(4), html:not(.vk-tv) .st-tbl td:nth-child(4) { display: none; }
@@ -1032,25 +1055,25 @@ html.vk-tv #ladles .ladle-edit { display: none; }
         <button class="btn st-fs" type="button" data-tv aria-pressed="false"><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>Full screen</span></button>
       </div>
       <div class="st-kpis" data-st="kpis"></div>
-      <div class="st-card c7 fx">
+      <div class="st-card c5 fx">
         <h2><span data-st="days-title">Billet tons by day</span><small data-st="days-note"></small></h2>
         <div class="st-legend" data-st="days-legend"></div>
         <div class="st-chart" data-st="days"></div>
         <ul class="st-notes" data-st="notes"></ul>
       </div>
-      <div class="st-card c5">
+      <div class="st-card c3 fx">
+        <h2><span>Money lost</span><small data-st="loss-note"></small></h2>
+        <div class="st-big" data-st="loss-big"></div>
+        <div class="st-chart" data-st="loss"></div>
+      </div>
+      <div class="st-card c4">
         <h2><span>Caster operators</span><small data-st="ops-note"></small></h2>
         <div class="st-legend" data-st="ops-legend"></div>
         <ol class="st-rank" data-st="ops"></ol>
       </div>
-      <div class="st-card c6 fx">
-        <h2><span>Latest heats</span><small data-st="heats-note"></small></h2>
-        <div class="st-tbl-wrap">
-          <table class="st-tbl" data-st="heats">
-            <thead><tr><th>Date</th><th>Heat</th><th>Caster</th><th>Grade</th><th>Size</th><th>Disposition</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
+      <div class="st-card c5 fx">
+        <h2><span>Ladle's Life</span><small data-st="ladles-note"></small></h2>
+        <div class="st-lads" data-st="ladles"></div>
       </div>
       <div class="st-card c3">
         <h2><span>Dispositions</span><small data-st="els-note"></small></h2>
@@ -1058,10 +1081,10 @@ html.vk-tv #ladles .ladle-edit { display: none; }
         <h3 class="st-sub"><span>Sizes</span><small>Heats · share</small></h3>
         <div class="st-bars wide fill" data-st="els2"></div>
       </div>
-      <div class="st-card c3 fx">
-        <h2><span>Month by month</span></h2>
-        <div class="st-legend" data-st="months-legend"></div>
-        <div class="st-chart" data-st="months"></div>
+      <div class="st-card c4 fx">
+        <h2><span data-st="perf-title">Caster performance by day</span></h2>
+        <div class="st-legend" data-st="perf-legend"></div>
+        <div class="st-chart" data-st="perf"></div>
       </div>
     </section>
 
@@ -1130,6 +1153,7 @@ html.vk-tv #ladles .ladle-edit { display: none; }
             <li><b>Readings: rounded to spec</b>: a reading is rounded to the decimals the limit is written in before comparing, the way ASTM E29 rounding works (0.7416 against .74 counts as in spec). Exact compares the full reading.</li>
             <li><b>Hit spec</b>: a heat with chemistry results where every checked element is inside its limits. Heats with no chemistry entered are left out.</li>
             <li><b>Melter criteria</b> (Operators page default): from "Instructions for chemistry disposition" and the Vinton Grades Spec criteria, judged against the SPEC rows of the Vinton Grades Spec criteria sheet (40/A615 and 60/A615, #4 to #11, shown below). Grades and sizes not on that sheet, such as 60(A706/A615) DUAL and 80/A615, use the SPEC row on their daily sheet. <b>C, Mn, Si and V</b> must be inside the OK range, from 90% of the low spec up to the max spec; outside it is <i>out of spec</i>. <b>P and S</b> over the max are <i>out of spec</i>. <b>Ni, Mo and Cu</b> over the max are <i>out-of-spec scrap</i>. <b>Cr</b> under 90% of the low spec is <i>out of spec</i>; over the max is <i>out-of-spec scrap</i>. Other elements are not part of the melter criteria. <b>Melter OK %</b> = heats with no element outside the criteria ÷ heats checked; the target is 90%. The instructions call for the FL1 sample, but the monthly report only has the final chemistry (the average of the final samples), so the criteria are applied to that.</li>
+            <li><b>Caster operators</b> and <b>caster performance</b>: OK ÷ (OK + reapplied). Diverts, returns to the furnace, scrap and holds are left out, since they come from the chemistry rather than the caster.</li>
             <li><b>Furnace to caster</b>: on the Operators page, <i>at the furnace</i> is the heat's chemistry result (in spec, out of spec, out-of-spec scrap, no spec to check against, or no chemistry recorded) and <i>at the caster</i> is its disposition category. <b>In spec, not OK at caster</b> counts heats whose chemistry was in spec but that were reapplied, diverted, returned to the furnace or scrapped.</li>
             <li><b>Ladle's Life</b>: each ladle's current lining life against its safety life (75 unless changed on the page) and its service status: In Use, On Preheater, Relining or Out of Service. The gauge is green below the yellow limit (50), yellow from 50 and red from 60; the thin band outside the gauge marks those zones. The ladles are kept in ladles.json in the dashboard's GitHub repository. Anyone can view them; a person with the editing password (or the GitHub edit key) unlocks editing once on their computer, and each save is recorded in the change log with their name and the time. On the Claude link the tab opens the public site, so there is only one set of ladles. A copy opened without internet shows the ladles as they were when it was saved.</li>
             <li><b>Planned tons to date</b>: planned daily tons through the latest day that has actual tons. <b>Estimated production loss</b>: tons short of plan × the billet price per ton picked on the page (the price is not in the Excel reports).</li>
@@ -2331,12 +2355,13 @@ html.vk-tv #ladles .ladle-edit { display: none; }
     { key: 'scrap', label: 'Out-of-spec scrap', color: 'var(--bad)' },
     { key: 'none', label: 'No chemistry or spec', color: 'var(--faint)', soft: true },
   ];
+  const CASTER_OKRE = ['OK', 'Reapply'];
   const C_COLOR = { OK: 'var(--ok)', Reapply: 'var(--reapply)', Divert: 'var(--divert)', RTF: 'var(--rtf)', Scrap: 'var(--scrap)', Hold: 'var(--uncl)' };
   function opLegend(box, role) {
     box.replaceChildren();
     const add = (label, color, soft) => { const s = document.createElement('span'); s.className = 'lg'; const w = document.createElement('i'); w.className = 'sw'; w.style.background = color; if (soft) w.style.opacity = '.5'; s.append(w, label); box.appendChild(s); };
     if (role === 'F') F_SEG.filter((f) => f.key !== 'none').forEach((f) => add(f.label, f.color, f.soft));
-    else CASTER_CATS.forEach((c) => add(CASTER_LABEL[c], C_COLOR[c]));
+    else CASTER_OKRE.forEach((c) => add(CASTER_LABEL[c], C_COLOR[c]));
   }
   function flowStat(Name, hs, oset, spec = state.opsSpec) {
     const r = { Name, Heats: hs.length, in: 0, miss: 0, scrap: 0, none: 0, OK: 0, Reapply: 0, Divert: 0, RTF: 0, Scrap: 0, Hold: 0, Slipped: 0 };
@@ -2376,10 +2401,14 @@ html.vk-tv #ladles .ladle-edit { display: none; }
       return { pct, n: s.Checked, parts: F_SEG.filter((f) => f.key !== 'none').map((f) => ({ ...f, n: s[f.key] })), meta,
         aria: `${s.Name}: ${pct == null ? 'no heats checked' : fP1(pct) + (melter ? ' OK under the melter criteria' : ' in spec')}, ${s.in} of ${s.Checked} heats. ${s.miss} out of spec, ${s.scrap} out-of-spec scrap.` };
     }
-    const notes = ['Reapply', 'Divert', 'RTF', 'Scrap'].filter((c) => s[c]).map((c) => `${fInt(s[c])} ${CASTER_VERB[c].replace('returned to the furnace', 'returned to furnace')}`);
-    return { pct: s.OKPct, n: s.Heats, parts: CASTER_CATS.map((c) => ({ label: CASTER_LABEL[c], color: C_COLOR[c], n: s[c] })),
-      meta: `${fInt(s.OK)} of ${fInt(s.Heats)} heats OK` + (notes.length ? ' · ' + notes.join(' · ') : ''),
-      aria: `${s.Name}: ${fP1(s.OKPct || 0)} OK at the caster, ${s.OK} of ${s.Heats} heats. ${CASTER_CATS.map((c) => `${s[c]} ${CASTER_LABEL[c]}`).join(', ')}.` };
+    // a caster operator is judged on OK against reapplied only; diverts, returns to the furnace, scrap and holds are left out
+    const counted = s.OK + s.Reapply;
+    const pct = counted ? s.OK / counted : null;
+    const LEFT_WORD = { Divert: 'diverted', RTF: 'RTF', Scrap: 'scrapped', Hold: 'hold' };
+    const left = ['Divert', 'RTF', 'Scrap', 'Hold'].filter((c) => s[c]).map((c) => `${fInt(s[c])} ${LEFT_WORD[c]}`);
+    return { pct, n: counted, parts: CASTER_OKRE.map((c) => ({ label: CASTER_LABEL[c], color: C_COLOR[c], n: s[c] })),
+      meta: `${fInt(s.OK)} OK · ${fInt(s.Reapply)} reapplied` + (left.length ? ' · not counted: ' + left.join(', ') : ''),
+      aria: `${s.Name}: ${pct == null ? 'no OK or reapplied heats' : fP1(pct) + ' OK'}, ${s.OK} OK and ${s.Reapply} reapplied.` + (left.length ? ` Not counted: ${left.join(', ')}.` : '') };
   }
   function opRanks(heats, field, oset, spec) {
     const role = field === 'Crew' ? 'F' : 'C';
@@ -2547,6 +2576,10 @@ html.vk-tv #ladles .ladle-edit { display: none; }
       li.setAttribute('aria-label', r.aria);
       ol.appendChild(li);
     }
+    // more operators than the card holds: tighten the rows, then drop the detail line, so every row (and the total) shows
+    ol.classList.remove('tight', 'tighter');
+    if (ol.clientHeight && ol.scrollHeight > ol.clientHeight + 1) ol.classList.add('tight');
+    if (ol.clientHeight && ol.scrollHeight > ol.clientHeight + 1) ol.classList.add('tighter');
   }
   // newest heats first; rows that don't fit the card are dropped, so no half rows
   function stTable(table, rows, cols) {
@@ -2606,27 +2639,81 @@ html.vk-tv #ladles .ladle-edit { display: none; }
     const yt = [0, 0.5, 1].filter((t) => t <= top);
     const fmtT = loc.format('.0%');
     const m = { l: (d3.max(yt, (t) => textWidth(svg, fmtT(t), 'tl')) || 10) + 0.9 * em, r: 2 };
-    const x = d3.scaleBand(rows.map((r) => r.Month), [m.l, W - m.r]).paddingInner(0.28).paddingOuter(0.1);
+    const K = (r) => r.key || r.Month;
+    const x = d3.scaleBand(rows.map(K), [m.l, W - m.r]).paddingInner(rows.length > 14 ? 0.2 : 0.28).paddingOuter(0.1);
     const x1 = d3.scaleBand(series.map((s) => s.key), [0, x.bandwidth()]).padding(series.length > 1 ? 0.08 : 0);
     svg.append('g').attr('class', 'grid').selectAll('line').data(yt).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', (d) => y(d)).attr('y2', (d) => y(d));
     svg.append('g').selectAll('text').data(yt).join('text').attr('class', 'tl').attr('x', m.l - 0.5 * em).attr('y', (d) => y(d)).attr('dy', '0.35em').attr('text-anchor', 'end').text(fmtT);
     const bars = rows.flatMap((r) => series.filter((s) => r[s.key] != null).map((s) => ({ r, s, v: r[s.key] })));
     const bw = x1.bandwidth();
     svg.append('g').selectAll('rect').data(bars).join('rect')
-      .attr('x', (b) => x(b.r.Month) + x1(b.s.key)).attr('width', bw).attr('y', (b) => y(b.v)).attr('height', (b) => y(0) - y(b.v))
+      .attr('x', (b) => x(K(b.r)) + x1(b.s.key)).attr('width', bw).attr('y', (b) => y(b.v)).attr('height', (b) => y(0) - y(b.v))
       .attr('rx', Math.min(3, bw / 4)).style('fill', (b) => b.s.color(b.v));
     svg.append('line').attr('class', 'target').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(0.9)).attr('y2', y(0.9));
     const wl = d3.max(bars, (b) => textWidth(svg, fP0(b.v), 'vl')) || 0;
     if (wl <= bw + x1.step() * x1.paddingInner() + 2) svg.append('g').selectAll('text').data(bars).join('text').attr('class', (b) => 'vl ' + (series.length > 1 ? '' : status(b.v)))
-      .attr('x', (b) => x(b.r.Month) + x1(b.s.key) + bw / 2).attr('y', (b) => y(b.v) - 0.45 * em).attr('text-anchor', 'middle').text((b) => fP0(b.v));
+      .attr('x', (b) => x(K(b.r)) + x1(b.s.key) + bw / 2).attr('y', (b) => y(b.v) - 0.45 * em).attr('text-anchor', 'middle').text((b) => fP0(b.v));
     const lab = (k) => MONTHS[+k.slice(5, 7) - 1].slice(0, 3);
-    svg.append('g').selectAll('text').data(rows).join('text').attr('class', (r) => 'tl' + (r.Month === cur ? ' cur' : ''))
+    if (rows[0] && rows[0].label) stXLabels(svg, x, rows.map((r) => ({ key: K(r), label: r.label })), H, em);
+    else svg.append('g').selectAll('text').data(rows).join('text').attr('class', (r) => 'tl' + (r.Month === cur ? ' cur' : ''))
       .attr('x', (r) => x(r.Month) + x.bandwidth() / 2).attr('y', H - 0.45 * em).attr('text-anchor', 'middle').text((r) => lab(r.Month));
     const hover = svg.append('g').selectAll('rect').data(rows).join('rect').attr('class', 'hover-band')
-      .attr('x', (r) => x(r.Month) - (x.step() - x.bandwidth()) / 2).attr('width', x.step()).attr('y', 0).attr('height', H - 1.9 * em);
+      .attr('x', (r) => x(K(r)) - (x.step() - x.bandwidth()) / 2).attr('width', x.step()).attr('y', 0).attr('height', H - 1.9 * em);
     hover.on('mousemove', (ev, r) => {
       hover.classed('on', (e) => e === r);
-      tip.show(ev, monthLong(r.Month), [...series.map((s) => [r[s.key] == null ? null : s.color(r[s.key]), s.label, r[s.key] == null ? '—' : fP1(r[s.key])]), ...(r.extra || [])]);
+      tip.show(ev, r.long || monthLong(r.Month), [...series.map((s) => [r[s.key] == null ? null : s.color(r[s.key]), s.label, r[s.key] == null ? '—' : fP1(r[s.key])]), ...(r.extra || [])]);
+    }).on('mouseleave', () => { hover.classed('on', false); tip.hide(); });
+  }
+  const moneyShort = (v) => (v >= 1e6 ? '$' + (v / 1e6).toFixed(2) + 'M' : v >= 1e3 ? '$' + fInt(Math.round(v / 1e3)) + 'K' : '$' + fInt(Math.round(v)));
+  // Ladle's Life at a glance: big life numbers, a bar against the safety life, the status color
+  function stLadleTiles(sec) {
+    const S = ladleSettings();
+    const items = ladleItems();
+    const box = stq(sec, 'ladles');
+    box.replaceChildren(...items.map((it) => {
+      const life = Math.max(0, Math.round(+it.Life || 0));
+      const t = mk('div', 'st-lad'); t.style.setProperty('--lc', LADLE_COLOR[it.Status] || 'var(--ladle-oos)');
+      const top = mk('div', 'top'); top.append(mk('b', '', 'Ladle ' + it.Ladle), mk('span', '', life > S.max ? `${fInt(life - S.max)} over` : `${fInt(S.max - life)} left`));
+      const bar = mk('div', 'lbar');
+      const fill = mk('i'); fill.style.width = Math.min(100, (life / S.max) * 100) + '%'; fill.style.background = lifeColor(life, S); bar.appendChild(fill);
+      for (const z of [S.warn, S.alarm]) if (z > 0 && z < S.max) { const u = mk('u'); u.style.left = (z / S.max) * 100 + '%'; bar.appendChild(u); }
+      t.append(top, mk('div', 'big' + (life >= S.alarm ? ' over' : life >= S.warn ? ' near' : ''), fInt(life)), bar, mk('div', 'stt', it.Status || 'No status'));
+      t.title = `Ladle ${it.Ladle}: life ${life} of ${S.max}, ${it.Status || 'no status'}` + (it.Refractory ? `, refractory ${it.Refractory}` : '');
+      return t;
+    }));
+    if (!items.length) box.appendChild(mk('div', 'chart-empty', 'No ladle data yet'));
+    const last = lad.live ? lad.fileAt || d3.max(items, (r) => r.UpdatedAt || '') : d3.max(items, (r) => r.UpdatedAt || '') || ladleSnap().asOf;
+    stq(sec, 'ladles-note').textContent = last ? (lad.live ? 'Live · ' : 'As of ') + whenShort(last) : '';
+  }
+  // money against plan, as a running total through the month (below zero = lost)
+  function stLossChart(box, pts) {
+    clear(box);
+    if (!pts.length) return emptyNote(box, 'No billet tons for this month yet');
+    const W = box.clientWidth, H = box.clientHeight;
+    if (W < 40 || H < 60) return;
+    const em = emOf(box);
+    const svg = d3.select(box).append('svg').attr('viewBox', `0 0 ${W} ${H}`);
+    const tip = makeTip(box);
+    const money = (v) => (v < 0 ? '−' : '') + moneyShort(Math.abs(v));
+    const y = d3.scaleLinear([Math.min(0, d3.min(pts, (d) => d.run)), Math.max(0, d3.max(pts, (d) => d.run))], [H - 1.9 * em, 1.6 * em]).nice();
+    if (y.domain()[0] === y.domain()[1]) y.domain([-1, 1]);
+    const yt = y.ticks(Math.max(2, Math.min(5, Math.floor(H / (3.4 * em)))));
+    const m = { l: (d3.max(yt, (t) => textWidth(svg, money(t), 'tl')) || 10) + 0.9 * em, r: 0.6 * em };
+    const x = d3.scalePoint(pts.map((d) => d.key), [m.l + 0.6 * em, W - m.r - 0.6 * em]);
+    svg.append('g').attr('class', 'grid').selectAll('line').data(yt).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', (d) => y(d)).attr('y2', (d) => y(d));
+    svg.append('g').selectAll('text').data(yt).join('text').attr('class', 'tl').attr('x', m.l - 0.5 * em).attr('y', (d) => y(d)).attr('dy', '0.35em').attr('text-anchor', 'end').text(money);
+    svg.append('line').attr('class', 'zero').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(0)).attr('y2', y(0));
+    const last = pts[pts.length - 1];
+    const col = last.run < 0 ? 'var(--bad)' : 'var(--good)';
+    svg.append('path').datum(pts).attr('d', d3.area().x((d) => x(d.key)).y0(y(0)).y1((d) => y(d.run))).style('fill', col).style('opacity', 0.14);
+    svg.append('path').datum(pts).attr('d', d3.line().x((d) => x(d.key)).y((d) => y(d.run))).style('fill', 'none').style('stroke', col).style('stroke-width', 2.5).style('stroke-linejoin', 'round');
+    svg.append('g').selectAll('circle').data(pts).join('circle').attr('cx', (d) => x(d.key)).attr('cy', (d) => y(d.run)).attr('r', Math.max(2.5, 0.25 * em)).style('fill', col).style('stroke', 'var(--panel)').style('stroke-width', 1.5);
+    stXLabels(svg, x, pts, H, em);   // a point scale: step() is the spacing, bandwidth() is 0
+    const hover = svg.append('g').selectAll('rect').data(pts).join('rect').attr('class', 'hover-band')
+      .attr('x', (d) => x(d.key) - x.step() / 2).attr('width', x.step()).attr('y', 0).attr('height', H - 1.9 * em);
+    hover.on('mousemove', (ev, d) => {
+      hover.classed('on', (e) => e === d);
+      tip.show(ev, d.long, [[null, 'Tons vs plan', signed(d.A - d.P, f0) + ' t'], [d.day < 0 ? 'var(--bad)' : 'var(--good)', 'That day', money(d.day)], [col, 'Running total', money(d.run)]]);
     }).on('mouseleave', () => { hover.classed('on', false); tip.hide(); });
   }
   const gradeShort = (g) => String(g || '—').replace(/\s*\(A706\/A615\)\s*DUAL/i, ' DUAL');
@@ -2787,7 +2874,8 @@ html.vk-tv #ladles .ladle-edit { display: none; }
     const all = DATA.heats.filter((h) => inMonth(h, m));
     const cc = Object.fromEntries(CASTER_CATS.map((k) => [k, 0]));
     for (const h of all) cc[casterCat(h)] += 1;
-    const okPct = all.length ? cc.OK / all.length : null;
+    const counted = cc.OK + cc.Reapply;
+    const okPct = counted ? cc.OK / counted : null;   // OK against reapplied; diverts, RTF, scrap and holds are not counted
     const row = BILLET_SUM.find((r) => r.Month === m) || {};
     const hasB = !!row.HasBillet;
     const bdays = DATA.billet_daily.filter((d) => inMonth(d, m)).sort((a, b) => cmp(a.Date, b.Date));
@@ -2811,28 +2899,41 @@ html.vk-tv #ladles .ladle-edit { display: none; }
         sub: lastB ? (lastB.PlannedDaily ? `${fP0(lastB.ActualDaily / lastB.PlannedDaily)} of the ${f0(lastB.PlannedDaily)} t plan` : 'No plan that day') : '' },
       toGo,
       { lbl: 'Heats', val: all.length ? fInt(all.length) : null, sub: dates.length ? `${fInt(dates.length)} days · ${f1(all.length / dates.length)} per day` : '' },
-      { lbl: 'OK at the caster', val: okPct == null ? null : fP1(okPct), st: status(okPct), sub: all.length ? `${fInt(cc.OK)} of ${fInt(all.length)} heats` : '' },
+      { lbl: 'OK at the caster', val: okPct == null ? null : fP1(okPct), st: status(okPct), sub: counted ? `${fInt(cc.OK)} OK · ${fInt(cc.Reapply)} reapplied` : '' },
     ]);
     stLegend(stq(sec, 'days-legend'), [['Plan', 'var(--plan)'], ['Actual, 90% of plan or more', 'var(--good)'], ['80–90%', 'var(--warn)'], ['Under 80%', 'var(--bad)']]);
-    stLegend(stq(sec, 'ops-legend'), CASTER_CATS.map((k) => [CASTER_LABEL[k], C_COLOR[k]]));
+    stLegend(stq(sec, 'ops-legend'), CASTER_OKRE.map((k) => [CASTER_LABEL[k], C_COLOR[k]]));
     stq(sec, 'days-title').textContent = single ? 'Billet tons by day' : 'Billet tons by month';
     stq(sec, 'days-note').textContent = single && hasB ? `Month plan ${f0(plan)} t` : '';
-    stq(sec, 'ops-note').textContent = all.length ? `${fInt(all.length)} heats` : '';
+    stq(sec, 'ops-note').textContent = counted ? `OK ÷ (OK + reapplied)` : '';
     const notes = bdays.filter((d) => String(d.Comments || '').trim()).slice(-2).reverse();
     stq(sec, 'notes').replaceChildren(...notes.map((d) => { const li = mk('li'); li.append(mk('b', '', fDate(d.Date)), String(d.Comments).trim()); li.title = String(d.Comments).trim(); return li; }));
-    const order = new Map(DATA.heats.map((h, i) => [h, i]));
-    const recent = all.slice().sort((a, b) => cmp(b.Date, a.Date) || order.get(b) - order.get(a)).slice(0, 80);
-    const shown = stTable(stq(sec, 'heats'), recent, [
-      { field: 'Date', fmt: fDate, cls: 'muted' }, { field: 'HeatNo', cls: 'strong' }, { field: 'CasterOp' }, { field: 'Grade', cls: 'muted' }, { field: 'Product', cls: 'muted' },
-      { cls: 'cut', render: (td, h) => { catCell(td, casterCat(h)); const d = dispDetail(h); if (d) td.appendChild(mk('span', 'dd', d)); td.title = String(h.Disposition || ''); } },
-    ]);
-    stq(sec, 'heats-note').textContent = all.length ? `Latest ${fInt(shown)} of ${fInt(all.length)}` : '';
-    const okBy = d3.rollup(DATA.heats, (v) => v.filter((h) => h.DispositionCategory === 'OK').length / v.length, (h) => h.Month);
-    const mRows = BILLET_SUM.filter((r) => r.Month !== 'All').slice().sort((a, b) => cmp(a.Month, b.Month))
-      .map((r) => ({ Month: r.Month, plan: r.HasBillet ? r.PctOfPlan : null, ok: okBy.has(r.Month) ? okBy.get(r.Month) : null,
-        extra: r.HasBillet ? [[null, 'Billet tons', f0(r.ActualTons)], [null, 'Planned to date', f0(r.PlannedToDate)]] : [] }));
-    stLegend(stq(sec, 'months-legend'), [['% of plan', 'var(--actual)'], ['OK at the caster', 'var(--ok)']]);
-    stTarget(stq(sec, 'months-legend'));
+    stLadleTiles(sec);
+    // money lost: tons short of plan × the billet price picked on the Billet page, as a running total
+    const price = state.price;
+    let run = 0;
+    const lossPts = (single
+      ? withTons.map((d) => ({ key: d.Date, A: d.ActualDaily, P: d.PlannedDaily || 0, long: d3.utcFormat('%a, %b %-d')(utc(d.Date)) }))
+      : BILLET_SUM.filter((r) => r.Month !== 'All' && r.HasBillet).sort((a, b) => cmp(a.Month, b.Month)).map((r) => ({ key: r.Month, A: r.ActualTons, P: r.PlannedToDate, long: monthLong(r.Month) })))
+      .map((d) => { const v = (d.A - d.P) * price; run += v; return { ...d, day: v, run }; });
+    lossPts.forEach((d) => { d.label = colLabel(d.key, single, lossPts.length); });
+    const net = hasB ? row.VarianceTons * price : null;
+    const big = stq(sec, 'loss-big'); big.replaceChildren();
+    if (net != null) {
+      big.append(mk('b', net < 0 ? 'c-bad' : 'c-good', net < 0 ? '−' + moneyShort(-net) : '$0'),
+        mk('span', '', net < 0 ? `${f0(-row.VarianceTons)} t short of plan` : `${f0(row.VarianceTons)} t ahead of plan`));
+    }
+    stq(sec, 'loss-note').textContent = `At $${fInt(price)}/t`;
+    // caster performance: OK against reapplied, by day
+    const pg = d3.groups(all, (h) => (single ? h.Date : h.Month)).sort((a, b) => cmp(a[0], b[0]));
+    const perfRows = pg.map(([key, hs]) => {
+      const ok = hs.filter((h) => h.DispositionCategory === 'OK').length, re = hs.filter((h) => h.DispositionCategory === 'Reapply').length;
+      return { key, label: colLabel(key, single, pg.length), long: single ? d3.utcFormat('%a, %b %-d')(utc(key)) : monthLong(key), pct: ok + re ? ok / (ok + re) : null,
+        extra: [[null, 'OK', fInt(ok)], [null, 'Reapplied', fInt(re)], [null, 'Not counted', fInt(hs.length - ok - re)]] };
+    }).filter((r) => r.pct != null);
+    stq(sec, 'perf-title').textContent = single ? 'Caster performance by day' : 'Caster performance by month';
+    stLegend(stq(sec, 'perf-legend'), [['90% OK or more', 'var(--good)'], ['80–90%', 'var(--warn)'], ['Under 80%', 'var(--bad)']]);
+    stTarget(stq(sec, 'perf-legend'));
     stBars(stq(sec, 'els'), CASTER_CATS.filter((k) => cc[k] || k !== 'Hold').map((k) => ({ label: CASTER_LABEL[k], dot: C_COLOR[k], n: cc[k], p: all.length ? cc[k] / all.length : null, parts: [{ n: cc[k], color: C_COLOR[k], label: CASTER_LABEL[k] }] })),
       all.length, 'No heats for this month');
     stq(sec, 'els-note').textContent = all.length ? `${fInt(all.length)} heats` : '';
@@ -2848,7 +2949,8 @@ html.vk-tv #ladles .ladle-edit { display: none; }
       : BILLET_SUM.filter((r) => r.Month !== 'All' && r.HasBillet).map((r) => ({ key: r.Month, P: r.PlannedToDate, A: r.ActualTons, note: '', long: monthLong(r.Month) }));
     pts.forEach((d) => { d.label = colLabel(d.key, single, pts.length); });
     stBilletDays(stq(sec, 'days'), pts);
-    stMonths(stq(sec, 'months'), mRows, m, [{ key: 'plan', label: '% of plan', color: () => 'var(--actual)' }, { key: 'ok', label: 'OK at the caster', color: () => 'var(--ok)' }]);
+    stLossChart(stq(sec, 'loss'), lossPts);
+    stMonths(stq(sec, 'perf'), perfRows, null, [{ key: 'pct', label: 'OK of OK + reapplied', color: (v) => `var(--${status(v)})` }]);
   }
 
   // ---------- Data & definitions ----------
@@ -2926,7 +3028,7 @@ html.vk-tv #ladles .ladle-edit { display: none; }
   const whenShort = (iso) => (!iso ? '' : iso.length <= 10 ? d3.utcFormat('%b %-d')(utc(iso)) : d3.timeFormat('%b %-d, %-I:%M %p')(new Date(iso)));
   const lifeColor = (life, S) => (life >= S.alarm ? 'var(--bad)' : life >= S.warn ? 'var(--gauge-warn)' : 'var(--good)');
   const ladleMsg = (t, err) => { const m = $('#ladle-msg'); m.textContent = t || ''; m.classList.toggle('err', !!err); };
-  const redrawLadles = () => { if (state.page === 'ladles') drawLadles(); };
+  const redrawLadles = () => { if (state.page === 'ladles') drawLadles(); else if (state.page === 'caster-station') drawCasterStation(); };
 
   // ----- reading -----
   function applyLadleFile(obj) {
@@ -2956,7 +3058,7 @@ html.vk-tv #ladles .ladle-edit { display: none; }
   function startLadleFile() {
     loadLadleFile().then((ok) => {
       if (!ok || ladlePoll) return;
-      ladlePoll = setInterval(() => { if (!document.hidden && state.page === 'ladles' && !lad.busy && !lad.drafts.size) loadLadleFile(); }, 60000);
+      ladlePoll = setInterval(() => { if (!document.hidden && (state.page === 'ladles' || state.page === 'caster-station') && !lad.busy && !lad.drafts.size) loadLadleFile(); }, 60000);
     });
   }
   function connectLadles() { /* the ladles live in the GitHub file only; the Claude database does not hold them */ }
