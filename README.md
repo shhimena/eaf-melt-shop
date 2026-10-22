@@ -81,7 +81,7 @@ Click **Publish for everyone** in the yellow bar. The site updates for everyone 
 
 ## Editing the ladles
 
-Anyone can view **Ladle's Life**. To change a ladle, click **Edit ladles**, type the editing password and your name, and click **Unlock**. The page remembers it on that computer until **Lock this computer** is clicked. The same unlock also opens importing. Each save updates `ladles.json` in this repository and shows for everyone within a minute or two.
+Anyone can view **Ladle's Life**. Each ladle shows its life, its status and its refractory brand. To change a ladle, click **Edit ladles**, type the editing password and your name, and click **Unlock**. The page remembers it on that computer until **Lock this computer** is clicked. The same unlock also opens importing. Each card has the life, the status and a **Refractory brand** box (it suggests brands already used). Each save updates `ladles.json` in this repository, adds the change to the log, and shows for everyone within a minute or two.
 
 ### Setting up editing (site owner)
 

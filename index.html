@@ -303,6 +303,8 @@ a.btn { text-decoration: none; }
   .ladle-head span { display: none; }
   .ladle svg.gauge { padding: 2px 6px 0; }
   .ladle .left { font-size: 11.5px; margin: 0 6px 10px; }
+  .ladle-ref { margin: 0 6px 10px; padding: 6px 8px; font-size: 12px; flex-direction: column; gap: 1px; }
+  .ladle-ref span { font-size: 10.5px; }
   .ladle-status { font-size: 13.5px; padding: 9px 6px; }
   .ladle-edit { padding: 8px 8px 10px; }
   .ladle-edit .stepper button { width: 30px; }
@@ -321,6 +323,13 @@ a.btn { text-decoration: none; }
 .ladle .left { text-align: center; font-size: 12.5px; color: var(--muted); margin: 0 12px 12px; font-variant-numeric: tabular-nums; }
 .ladle .left.near { color: var(--warn-ink); font-weight: 600; }
 .ladle .left.over { color: var(--bad-ink); font-weight: 600; }
+.ladle-ref { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 0 16px 12px; padding: 7px 10px; border-radius: 7px; background: var(--panel-2); font-size: 13px; min-width: 0; }
+.ladle-ref span { color: var(--muted); font-size: 11.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; flex: none; }
+.ladle-ref b { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.ladle-ref b.none { color: var(--faint); font-weight: 500; }
+.ladle-edit .refin { display: grid; gap: 4px; }
+.ladle-edit .refin span { font-size: 11.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.ladle-edit .refin input { font: inherit; font-size: 14px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); color: var(--ink); width: 100%; min-width: 0; }
 .ladle-status { margin-top: auto; padding: 11px 14px; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; color: #FFFFFF; letter-spacing: .01em; }
 .ladle-status i { width: 9px; height: 9px; border-radius: 50%; flex: none; background: rgba(255, 255, 255, .9) !important; }
 .ladle { border-top: 4px solid var(--ladle-c, transparent); }
@@ -923,6 +932,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
               <th data-field="Ladle" class="num"><button class="th-btn" type="button">Ladle</button></th>
               <th data-field="LifeTxt" class="num"><button class="th-btn" type="button">Life</button></th>
               <th data-field="StatusTxt"><button class="th-btn" type="button">Status</button></th>
+              <th data-field="RefTxt"><button class="th-btn" type="button">Refractory</button></th>
               <th data-field="ByName"><button class="th-btn" type="button">By</button></th>
             </tr></thead>
             <tbody></tbody>
@@ -2875,7 +2885,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
   const canEditLadles = () => lad.source === 'github';
   const inClaude = () => !!(window.claude && typeof window.claude.use === 'function');
   function ladleSnapshotForPage() {
-    const items = ladleItems().map((r) => ({ Ladle: r.Ladle, Life: r.Life, Status: r.Status, UpdatedAt: r.UpdatedAt || null }));
+    const items = ladleItems().map((r) => ({ Ladle: r.Ladle, Life: r.Life, Status: r.Status, Refractory: r.Refractory || null, UpdatedAt: r.UpdatedAt || null }));
     const last = d3.max(items, (r) => r.UpdatedAt || '') || ladleSnap().asOf || null;
     return { asOf: last, settings: ladleSettings(), items, lock: lad.lock || ladleSnap().lock || null };
   }
@@ -3022,8 +3032,17 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
     const card = el.closest('.ladle');
     if (card) { card.style.setProperty('--ladle-c', c); card.style.background = `color-mix(in srgb, ${c} 7%, var(--panel))`; }
   }
-  const draftOf = (it) => lad.drafts.get(it.Ladle) || { Life: it.Life, Status: it.Status };
-  const isDirty = (it) => { const d = lad.drafts.get(it.Ladle); return !!d && (+d.Life !== +it.Life || d.Status !== it.Status); };
+  const refOf = (v) => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, 60);
+  const draftOf = (it) => lad.drafts.get(it.Ladle) || { Life: it.Life, Status: it.Status, Refractory: it.Refractory || '' };
+  const sameAs = (d, it) => +d.Life === +it.Life && d.Status === it.Status && refOf(d.Refractory) === refOf(it.Refractory);
+  const isDirty = (it) => { const d = lad.drafts.get(it.Ladle); return !!d && !sameAs(d, it); };
+  // brands already used on any ladle or in the change log, offered as suggestions while typing
+  function refractoryBrands() {
+    const set = new Set();
+    for (const it of ladleItems()) if (refOf(it.Refractory)) set.add(refOf(it.Refractory));
+    for (const r of lad.log || []) for (const v of [r.RefractoryFrom, r.RefractoryTo]) if (refOf(v)) set.add(refOf(v));
+    return [...set].sort((a, b) => a.localeCompare(b));
+  }
 
   function ladleCard(it, S) {
     const card = document.createElement('div');
@@ -3035,12 +3054,19 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
     head.append(name, upd);
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'gauge'); svg.setAttribute('role', 'img');
     const left = document.createElement('div');
+    const ref = document.createElement('div'); ref.className = 'ladle-ref';
+    const refL = document.createElement('span'); refL.textContent = 'Refractory';
+    const refV = document.createElement('b');
+    ref.append(refL, refV);
     const status = document.createElement('div'); status.className = 'ladle-status';
-    card.append(head, svg, left, status);
+    card.append(head, svg, left, ref, status);
     const paint = () => {
       const d = draftOf(it);
       drawGauge(svg, Math.max(0, Math.round(+d.Life || 0)), S);
       leftText(left, Math.max(0, Math.round(+d.Life || 0)), S);
+      const brand = refOf(d.Refractory);
+      refV.textContent = brand || 'Not recorded';
+      refV.classList.toggle('none', !brand);
       paintStatus(status, d.Status);
       card.classList.toggle('dirty', isDirty(it));
     };
@@ -3060,23 +3086,29 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
       const opts = LADLE_STATUSES.includes(it.Status) || !it.Status ? LADLE_STATUSES : [...LADLE_STATUSES, it.Status];
       sel.replaceChildren(...opts.map((o) => new Option(o, o)));
       r2.append(sel);
+      const r4 = document.createElement('label'); r4.className = 'row refin';
+      const refT = document.createElement('span'); refT.textContent = 'Refractory brand';
+      const refIn = document.createElement('input'); refIn.type = 'text'; refIn.maxLength = 60; refIn.autocomplete = 'off'; refIn.spellcheck = false;
+      refIn.setAttribute('list', 'ladle-ref-list'); refIn.placeholder = 'Brand';
+      r4.append(refT, refIn);
       const r3 = document.createElement('div'); r3.className = 'row act';
       const cancel = document.createElement('button'); cancel.type = 'button'; cancel.className = 'btn'; cancel.textContent = 'Cancel';
       const save = document.createElement('button'); save.type = 'button'; save.className = 'btn primary'; save.textContent = 'Save';
       r3.append(cancel, save);
-      ed.append(r1, r2, r3);
+      ed.append(r1, r2, r4, r3);
       card.insertBefore(ed, status.nextSibling);
       const sync = () => {
         const d = draftOf(it);
         if (document.activeElement !== input) input.value = d.Life;
         sel.value = d.Status || LADLE_STATUSES[0];
+        if (document.activeElement !== refIn) refIn.value = d.Refractory || '';
         const dirty = isDirty(it);
         save.disabled = !dirty || lad.busy; cancel.disabled = !dirty || lad.busy;
         paint(); syncSaveAll();
       };
       const setDraft = (patch) => {
         const d = { ...draftOf(it), ...patch };
-        if (+d.Life === +it.Life && d.Status === it.Status) lad.drafts.delete(it.Ladle); else lad.drafts.set(it.Ladle, d);
+        if (sameAs(d, it)) lad.drafts.delete(it.Ladle); else lad.drafts.set(it.Ladle, d);
         sync();
       };
       minus.addEventListener('click', () => setDraft({ Life: Math.max(0, Math.round(+draftOf(it).Life || 0) - 1) }));
@@ -3085,6 +3117,9 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
       input.addEventListener('input', () => { const v = input.value === '' ? 0 : Math.round(+input.value); if (Number.isFinite(v)) setDraft({ Life: Math.max(0, Math.min(999, v)) }); });
       input.addEventListener('blur', () => { input.value = draftOf(it).Life; });
       sel.addEventListener('change', () => setDraft({ Status: sel.value }));
+      refIn.addEventListener('input', () => setDraft({ Refractory: refIn.value }));
+      refIn.addEventListener('blur', () => { refIn.value = refOf(draftOf(it).Refractory); });
+      refIn.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && isDirty(it)) saveLadles([it.Ladle]); });
       cancel.addEventListener('click', () => { lad.drafts.delete(it.Ladle); drawLadles(); });
       save.addEventListener('click', () => saveLadles([it.Ladle]));
       sync();
@@ -3131,6 +3166,9 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
     const grid = $('#ladle-grid');
     if (!items.length) { grid.replaceChildren(); const p = document.createElement('p'); p.className = 'chart-empty'; p.textContent = 'No ladles recorded yet'; grid.appendChild(p); }
     else grid.replaceChildren(...items.map((it) => ladleCard(it, S)));
+    let dl = byId('ladle-ref-list');
+    if (!dl) { dl = document.createElement('datalist'); dl.id = 'ladle-ref-list'; app.appendChild(dl); }
+    dl.replaceChildren(...refractoryBrands().map((b) => new Option(b, b)));
     syncSaveAll();
     drawLadleLog();
   }
@@ -3150,6 +3188,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
       ...r,
       LifeTxt: r.LifeFrom != null && r.LifeFrom !== r.LifeTo ? `${fInt(r.LifeFrom)} → ${fInt(r.LifeTo)}` : r.LifeTo != null ? fInt(r.LifeTo) : '',
       StatusTxt: r.StatusFrom && r.StatusFrom !== r.StatusTo ? `${r.StatusFrom} → ${r.StatusTo}` : r.StatusTo || r.Note || '',
+      RefTxt: r.RefractoryTo === undefined && r.RefractoryFrom === undefined ? '' : r.RefractoryFrom ? `${r.RefractoryFrom} → ${r.RefractoryTo || 'cleared'}` : r.RefractoryTo || '',
       ByName: byName(r),
     }));
     $('#ladle-log-count').textContent = !lad.live ? 'The change log is kept with the live ladles.' : view.length ? `${fInt(view.length)} change${view.length === 1 ? '' : 's'}` : 'No changes yet.';
@@ -3158,7 +3197,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
     fillTable($('#ladle-log'), view, [
       { field: 'At', fmt: whenText }, { field: 'Ladle', num: true, cls: 'strong' }, { field: 'LifeTxt', num: true },
       { field: 'StatusTxt', render: (td, v, r) => { const to = r.StatusTo; if (!to || !LADLE_COLOR[to]) { td.textContent = v; return; } if (r.StatusFrom && r.StatusFrom !== to) td.append(r.StatusFrom + ' → '); const p = document.createElement('span'); p.className = 'st-pill'; p.style.background = LADLE_COLOR[to]; p.textContent = to; td.appendChild(p); } },
-      { field: 'ByName', cls: 'muted' },
+      { field: 'RefTxt' }, { field: 'ByName', cls: 'muted' },
     ], { defaultSort: { field: 'At', dir: 'desc' }, limit: 200 });
   }
 
@@ -3168,13 +3207,13 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
     const items = ladleItems();
     const todo = nums.map((n) => items.find((r) => r.Ladle === n)).filter((it) => it && isDirty(it));
     if (!todo.length) return;
-    const changes = todo.map((it) => { const d = lad.drafts.get(it.Ladle); return { it, Life: Math.max(0, Math.min(999, Math.round(+d.Life || 0))), Status: d.Status }; });
+    const changes = todo.map((it) => { const d = lad.drafts.get(it.Ladle); return { it, Life: Math.max(0, Math.min(999, Math.round(+d.Life || 0))), Status: d.Status, Refractory: refOf(d.Refractory) || null }; });
     lad.busy = true; syncSaveAll();
     ladleMsg(changes.length === 1 ? `Saving ladle ${changes[0].it.Ladle}…` : `Saving ${changes.length} ladles…`);
     try {
       if (lad.source === 'github') {
         const msg = changes.length === 1
-          ? `Ladle ${changes[0].it.Ladle}: life ${changes[0].Life}, ${changes[0].Status}`
+          ? `Ladle ${changes[0].it.Ladle}: life ${changes[0].Life}, ${changes[0].Status}` + (refOf(changes[0].Refractory) !== refOf(changes[0].it.Refractory) ? `, refractory ${changes[0].Refractory || 'cleared'}` : '')
           : `Ladles ${changes.map((c) => c.it.Ladle).join(', ')} updated`;
         await ghSave((obj, who) => {
           obj.items = Array.isArray(obj.items) ? obj.items : [];
@@ -3183,8 +3222,10 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
             const now = new Date().toISOString();
             let row = obj.items.find((r) => +r.Ladle === c.it.Ladle);
             if (!row) { row = { Ladle: c.it.Ladle, Life: 0, Status: null }; obj.items.push(row); }
-            obj.log.push({ At: now, Ladle: c.it.Ladle, LifeFrom: +row.Life, LifeTo: c.Life, StatusFrom: row.Status || null, StatusTo: c.Status, By: who });
-            Object.assign(row, { Life: c.Life, Status: c.Status, UpdatedAt: now, UpdatedBy: who });
+            const entry = { At: now, Ladle: c.it.Ladle, LifeFrom: +row.Life, LifeTo: c.Life, StatusFrom: row.Status || null, StatusTo: c.Status, By: who };
+            if (refOf(row.Refractory) !== refOf(c.Refractory)) Object.assign(entry, { RefractoryFrom: refOf(row.Refractory) || null, RefractoryTo: c.Refractory });
+            obj.log.push(entry);
+            Object.assign(row, { Life: c.Life, Status: c.Status, Refractory: c.Refractory, UpdatedAt: now, UpdatedBy: who });
           }
           obj.items.sort((a, b) => a.Ladle - b.Ladle);
           return obj;
@@ -3195,7 +3236,7 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
         const by = await myId();
         for (const c of changes) {
           const now = new Date().toISOString();
-          await retrying(() => db.api.doc('ladles/' + c.it.Ladle).set({ Ladle: c.it.Ladle, Life: c.Life, Status: c.Status, UpdatedAt: now, UpdatedBy: by || null }));
+          await retrying(() => db.api.doc('ladles/' + c.it.Ladle).set({ Ladle: c.it.Ladle, Life: c.Life, Status: c.Status, Refractory: c.Refractory, UpdatedAt: now, UpdatedBy: by || null }));
           const logId = now.replace(/\D/g, '').slice(0, 17) + '-' + c.it.Ladle;
           try { await retrying(() => db.api.doc('ladle_log/' + logId).set({ At: now, Ladle: c.it.Ladle, LifeFrom: +c.it.Life, LifeTo: c.Life, StatusFrom: c.it.Status || null, StatusTo: c.Status, By: by || null })); } catch (e) { /* the ladle itself is saved */ }
           lad.drafts.delete(c.it.Ladle);
@@ -3286,8 +3327,8 @@ html.vk-tv.vk-idle .st-fs { opacity: 0; }
   $('#ladle-log-csv').addEventListener('click', async () => {
     const rows = lad.logView || [];
     const q = (v) => { const t = v == null ? '' : String(v); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
-    const csv = [['When', 'Ladle', 'Life before', 'Life after', 'Status before', 'Status after', 'Note', 'By'].join(','),
-      ...rows.map((r) => [r.At, r.Ladle, r.LifeFrom, r.LifeTo, r.StatusFrom, r.StatusTo, r.Note, r.ByName].map(q).join(','))].join('\r\n');
+    const csv = [['When', 'Ladle', 'Life before', 'Life after', 'Status before', 'Status after', 'Refractory before', 'Refractory after', 'Note', 'By'].join(','),
+      ...rows.map((r) => [r.At, r.Ladle, r.LifeFrom, r.LifeTo, r.StatusFrom, r.StatusTo, r.RefractoryFrom, r.RefractoryTo, r.Note, r.ByName].map(q).join(','))].join('\r\n');
     const name = 'ladle-change-log-' + d3.timeFormat('%Y-%m-%d')(new Date()) + '.csv';
     if (db.downloads) { try { await db.downloads.save({ filename: name, data: csv }); } catch (e) { /* declined */ } return; }
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
