@@ -103,7 +103,7 @@ The password unlocks the GitHub key, and the key can change files in this reposi
 - **Dispositions.** Each heat is grouped as OK, Reapply, Divert, Return to furnace (RTF), Scrap or Unclassified.
 - **Duplicate heats.** A heat listed twice is counted once. The row with a disposition wins, then the latest date.
 - **Where the numbers come from.** Every heat, reading, disposition and ton comes from the two monthly Excel reports. The only things not in the Excel are the melter criteria (from the printed *Instructions for chemistry disposition* and *Vinton Grades Spec criteria*) and the billet price you pick for the estimated production loss.
-- **Spec toggle.** *Melter criteria* (the Operators page default) applies the furnace melter rules below. *Daily sheet* checks each heat against its own sheet's `SPEC.` row.
+- **Spec toggle.** *Melter criteria* (the Operators page default) applies the furnace melter rules below. *Daily sheet* checks each heat against its own sheet's `SPEC.` row. CE is not checked, since there is no CE spec.
 - **Readings toggle.** *Exact* compares the lab reading as reported. *Rounded to spec* first rounds it to the spec's decimal places (ASTM E29 style).
 - **Melter criteria.** From the *Instructions for chemistry disposition*, using the SPEC rows of the *Vinton Grades Spec criteria* sheet for 40/A615 and 60/A615 (#4 to #11). Grades and sizes not on that sheet, such as 60(A706/A615) DUAL and 80/A615, use the `SPEC.` row on their daily sheet. The Data & definitions page lists every range.
   - **C, Mn, Si, V** must be inside the OK range: 90% of the low spec up to the max spec. Outside it is *out of spec*.
