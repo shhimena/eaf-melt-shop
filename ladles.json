@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-10-22T14:29:49.301Z",
+ "updatedAt": "2026-10-23T14:43:21.334Z",
  "settings": {
   "max": 75,
   "warn": 50,
@@ -8,26 +8,26 @@
  "items": [
   {
    "Ladle": 1,
-   "Life": 12,
+   "Life": 17,
    "Status": "In Use",
-   "UpdatedAt": "2026-10-22T14:29:13.395Z",
-   "UpdatedBy": "Javier",
+   "UpdatedAt": "2026-10-23T14:43:21.334Z",
+   "UpdatedBy": "Javier Lares",
    "Refractory": "Kel"
   },
   {
    "Ladle": 2,
-   "Life": 28,
+   "Life": 30,
    "Status": "In Use",
-   "UpdatedAt": "2026-10-22T14:29:26.849Z",
-   "UpdatedBy": "Javier",
+   "UpdatedAt": "2026-10-23T14:43:21.334Z",
+   "UpdatedBy": "Javier Lares",
    "Refractory": "Kel"
   },
   {
    "Ladle": 3,
-   "Life": 21,
+   "Life": 25,
    "Status": "In Use",
-   "UpdatedAt": "2026-10-22T14:29:38.460Z",
-   "UpdatedBy": "Javier",
+   "UpdatedAt": "2026-10-23T14:43:21.334Z",
+   "UpdatedBy": "Javier Lares",
    "Refractory": "Ku"
   },
   {
@@ -53,10 +53,10 @@
   },
   {
    "Ladle": 7,
-   "Life": 40,
+   "Life": 45,
    "Status": "In Use",
-   "UpdatedAt": "2026-10-22T14:29:49.301Z",
-   "UpdatedBy": "Javier",
+   "UpdatedAt": "2026-10-23T14:43:21.334Z",
+   "UpdatedBy": "Javier Lares",
    "Refractory": "Ku"
   },
   {
@@ -434,6 +434,42 @@
    "By": "Javier",
    "RefractoryFrom": null,
    "RefractoryTo": "Ku"
+  },
+  {
+   "At": "2026-10-23T14:43:21.334Z",
+   "Ladle": 1,
+   "LifeFrom": 12,
+   "LifeTo": 17,
+   "StatusFrom": "In Use",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-23T14:43:21.334Z",
+   "Ladle": 2,
+   "LifeFrom": 28,
+   "LifeTo": 30,
+   "StatusFrom": "In Use",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-23T14:43:21.334Z",
+   "Ladle": 3,
+   "LifeFrom": 21,
+   "LifeTo": 25,
+   "StatusFrom": "In Use",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
+  },
+  {
+   "At": "2026-10-23T14:43:21.334Z",
+   "Ladle": 7,
+   "LifeFrom": 40,
+   "LifeTo": 45,
+   "StatusFrom": "In Use",
+   "StatusTo": "In Use",
+   "By": "Javier Lares"
   }
  ],
  "lock": {
